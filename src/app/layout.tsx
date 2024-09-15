@@ -32,7 +32,7 @@ export default function RootLayout({
         {/* favicon */}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased p-4`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

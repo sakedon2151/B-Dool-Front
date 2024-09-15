@@ -16,16 +16,7 @@ export default function ChannelParticipantList() {
             <p>username</p>
           </a>
         </li>
-        <li>
-          <a>
-            <div className="avatar online placeholder">
-              <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                <span className="text-xs">U</span>
-              </div>
-            </div>
-            <p>username</p>
-          </a>
-        </li>
+
         <li>
           <a>
             <div className="avatar online placeholder">

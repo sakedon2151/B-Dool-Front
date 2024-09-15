@@ -3,7 +3,7 @@
 // 해당 버튼 클릭시 
 export default function WorkspaceListNav() {
   return (
-    <div className="shadow-inner	">
+    <div className="shadow-inner">
       <ul className="menu p-1">
         
         {/* response list loop */}
@@ -108,10 +108,6 @@ export default function WorkspaceListNav() {
             <img className="w-full h-full object-cover" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/eed560189998237.65b50b647abf4.png" alt="workspace_thumbnail_img"/>
           </a>
         </li>
-
-        
-
-        
 
       </ul>
     </div>

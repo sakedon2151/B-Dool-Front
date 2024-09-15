@@ -6,16 +6,13 @@ import ChannelParticipantList from "@/app/components/channel/ChannelParticipantL
 import WorkspaceHeader from "@/app/components/workspace/WorkspaceHeader";
 import WorkspaceListNav from "@/app/components/workspace/WorkspaceListNav";
 
-import styles from "@/app/styles/globals.module.css"
-
 import { useEffect } from "react";
 
 export default function workspace() {
-  // body reset
   useEffect(() => {
-    document.body.classList.remove("p-4");
+    document.body.style.padding = "0"
     return () => {
-      document.body.classList.add("p-4");
+      document.body.style.padding = "1rem"
     };
   }, []);
 
@@ -24,10 +21,9 @@ export default function workspace() {
       <header className="border-b">
         <WorkspaceHeader/>
       </header>
+
       <main className="flex flex-col flex-grow">
-    
         <div className="flex flex-row flex-grow h-[100px]">
-          
           <nav className="overflow-y-auto box-border">
             <WorkspaceListNav/>
           </nav>
@@ -48,7 +44,6 @@ export default function workspace() {
           <aside className="w-48 border-l box-border">
             <ChannelParticipantList/>
           </aside>
-        
         </div>
 
         <div className="flex flex-row border-t">

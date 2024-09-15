@@ -27,6 +27,9 @@ html, body {
   overscroll-behavior: none;
 }
 
+body {
+  padding: 1rem;
+}
 /* animation */
 
 
