@@ -12,40 +12,35 @@ export default function ChannelMessageInput() {
 
   const maxMessageLength = 100;
 
-  // textarea 높이 증가 핸들러
+  // textarea height control handler
   const handleResizeHeight = useCallback(() => {
     if (textarea.current) {
-      textarea.current.style.height = '3rem'; // height 초기화
+      textarea.current.style.height = '3rem';
       textarea.current.style.height = `${textarea.current.scrollHeight}px`;
     }
   }, []);
 
   // onChange useState & resizeHight
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value); // textarea 에서 발생하는 변화 저장
-    handleResizeHeight(); // 줄바꿈에 대응하기 위해 높이 증가 핸들러 호출
+    setMessage(e.target.value);
+    handleResizeHeight();
   };
 
-  // textarea 엔터키 핸들러
+  // textarea keyboard enter handler
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') { // 키보드 이벤트 e 의 대상은 enter 키로 설정
-      if (!e.shiftKey) { // 줄바꿈 키가 아닌 엔터 인식시 
-        e.preventDefault(); // enter 로 인한 새로고침 방지
-        handleSubmit(e); // form 태그 submit 발생
+    if (e.key === 'Enter') {
+      if (!e.shiftKey) { 
+        e.preventDefault();
+        handleSubmit(e);
       }
     }
   };
 
-  // 폼 제출 핸들러
+  // form submit handler
   const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
-    e.preventDefault(); // form 제출로 인한 세로고침 방지
-    
+    e.preventDefault();
     console.log("submit string:", message);
     setMessage('');
-    
-    // if (message.trim()) { 
-      
-    // }
   };
 
   return (
