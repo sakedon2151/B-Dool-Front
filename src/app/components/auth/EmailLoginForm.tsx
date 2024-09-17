@@ -5,7 +5,7 @@ export default function LoginForm() {
     <div className="bg-base-300 rounded-2xl p-8 text-center container">
       <h1 className=" mb-4 text-center text-2xl font-bold">이메일로 시작하기</h1>
 
-        <div className="divider"></div>
+      <div className="divider"></div>
 
       <form>
         <label className="input input-bordered flex items-center gap-2 mb-4">
