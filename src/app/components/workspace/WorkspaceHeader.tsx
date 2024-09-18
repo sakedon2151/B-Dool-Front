@@ -1,5 +1,5 @@
-import { IoSearch } from "react-icons/io5";
 import { HiOutlineBell } from "react-icons/hi";
+import { LuCalendarCheck2 } from "react-icons/lu";
 
 // workspace page component
 export default function WorkspaceHeader() {
@@ -12,9 +12,9 @@ export default function WorkspaceHeader() {
         </div>
         
         <div className="navbar-end">
-          <div className="tooltip tooltip-bottom" data-tip="검색">
+          <div className="tooltip tooltip-bottom" data-tip="일정">
             <button className="btn btn-ghost btn-circle">
-              <IoSearch className="w-5 h-5"/>
+              <LuCalendarCheck2 className="w-5 h-5"/>
             </button>
           </div>
           

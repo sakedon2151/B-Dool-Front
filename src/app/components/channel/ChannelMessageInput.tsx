@@ -4,8 +4,6 @@ import { IoMdSend } from "react-icons/io";
 
 // channel message send input component
 
-
-
 export default function ChannelMessageInput() {
 
   const [message, setMessage] = useState('')
@@ -56,7 +54,7 @@ export default function ChannelMessageInput() {
     <div className="">
       <form className="p-2 flex gap-2" onSubmit={handleSubmit}>
         <div className="flex flex-grow w-full relative"> 
-          <textarea value={message} maxLength={MAX_MESSAGE_LENGTH} ref={textarea} onChange={handleTextarea} onKeyDown={handleKeyDown} name="message" className="textarea textarea-bordered resize-none w-full h-12 leading-8" placeholder="메시지를 입력하세요."></textarea>
+          <textarea value={message} maxLength={MAX_MESSAGE_LENGTH} ref={textarea} onChange={handleTextarea} onKeyDown={handleKeyDown} name="message" className="textarea textarea-bordered resize-none w-full h-12 max-h-36 leading-8" placeholder="메시지를 입력하세요."></textarea>
           <button type="submit" className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center">
             <IoMdSend className="w-5 h-5"/>
           </button>

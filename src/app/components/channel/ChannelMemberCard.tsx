@@ -10,6 +10,7 @@ export default function ChannelMemberCard() {
             <span>U</span>
           </div>
         </div>
+        
         <div>
           <p>username</p>
           <p>status</p>

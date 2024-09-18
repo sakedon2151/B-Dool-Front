@@ -21,6 +21,12 @@
 }
 
 /* my custom global css */
+.chat-bubble-edit {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: auto;
+}
+
 
 /* no overscroll. like a native app */
 html, body {

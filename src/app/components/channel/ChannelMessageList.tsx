@@ -45,7 +45,7 @@ export default function ChannelMessageList() {
                 <div className="chat-footer">3</div>
             </div>
 
-            <div className="chat chat-end">
+            <div className="chat chat-end ">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
                         <img alt="profile_img" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/eed560189998237.65b50b647abf4.png"/>
@@ -58,6 +58,7 @@ export default function ChannelMessageList() {
                 <div className="chat-bubble">이것은 줄바꿈이 있는<br/>글자 입니다.</div>
                 <div className="chat-footer">3</div>
             </div>
+
             <div className="chat chat-end">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
@@ -71,7 +72,8 @@ export default function ChannelMessageList() {
                 <div className="chat-bubble">이것은 그냥 긴 글자입니다 이것은 그냥 긴 글자입니다.</div>
                 <div className="chat-footer">3</div>
             </div>
-            {/* <div className="chat chat-end">
+
+            <div className="chat chat-end">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
                         <img alt="profile_img" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/eed560189998237.65b50b647abf4.png"/>
@@ -83,7 +85,8 @@ export default function ChannelMessageList() {
                 </div>
                 <div className="chat-bubble">100문자메시지입니다100문자메시지입니다100문자메시지입니다100문자메시지입니다100문자메시지입니다100문자메시지입니다100문자메시지입니다100문자메시지입니다100문자메시지입니다1</div>
                 <div className="chat-footer">3</div>
-            </div> */}
+            </div>
+
             <div className="chat chat-end">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
@@ -92,11 +95,12 @@ export default function ChannelMessageList() {
                 </div>
                 <div className="chat-header">
                     username
-                    <time className="text-xs opacity-50">12:30</time>
+                    <time className="text-xs opacity-50 pl-1">12:30</time>
                 </div>
                 <div className="chat-bubble">내 메시지 입니다.</div>
                 <div className="chat-footer">3</div>
             </div>
+            
             <div className="chat chat-end">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
@@ -105,11 +109,12 @@ export default function ChannelMessageList() {
                 </div>
                 <div className="chat-header">
                     username
-                    <time className="text-xs opacity-50">12:30</time>
+                    <time className="text-xs opacity-50 pl-1">12:30</time>
                 </div>
                 <div className="chat-bubble">내 메시지 입니다.</div>
                 <div className="chat-footer">3</div>
             </div>
+
             <div className="chat chat-end">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
@@ -118,11 +123,12 @@ export default function ChannelMessageList() {
                 </div>
                 <div className="chat-header">
                     username
-                    <time className="text-xs opacity-50">12:30</time>
+                    <time className="text-xs opacity-50 pl-1">12:30</time>
                 </div>
                 <div className="chat-bubble">내 메시지 입니다.</div>
                 <div className="chat-footer">3</div>
             </div>
+
             <div className="chat chat-end">
                 <div className="chat-image avatar">
                     <div className="w-10 rounded-full">
@@ -131,20 +137,7 @@ export default function ChannelMessageList() {
                 </div>
                 <div className="chat-header">
                     username
-                    <time className="text-xs opacity-50">12:30</time>
-                </div>
-                <div className="chat-bubble">내 메시지 입니다.</div>
-                <div className="chat-footer">3</div>
-            </div>
-            <div className="chat chat-end">
-                <div className="chat-image avatar">
-                    <div className="w-10 rounded-full">
-                        <img alt="profile_img" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/eed560189998237.65b50b647abf4.png"/>
-                    </div>
-                </div>
-                <div className="chat-header">
-                    username
-                    <time className="text-xs opacity-50">12:30</time>
+                    <time className="text-xs opacity-50 pl-1">12:30</time>
                 </div>
                 <div className="chat-bubble">내 메시지 입니다.</div>
                 <div className="chat-footer">3</div>

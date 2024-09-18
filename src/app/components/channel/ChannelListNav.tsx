@@ -1,7 +1,6 @@
-// workspace page component
 import { HiHashtag, HiOutlineStar } from "react-icons/hi2";
 
-
+// workspace page component
 
 export default function ChannelListNav() {
     return (
