@@ -1,116 +1,86 @@
-import { useState } from "react";
+import dummyProfiles from "@/app/tests/dummyProfiles";
+import { useEffect, useState } from "react";
 import ParticipantModal from "./ParticipantModal";
 
-interface Profile { // 추후 모델 분리
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
-
-const profiles: Profile[] = [ // test object
-  { id: 1, name: "User 1", email: "user1@example.com", role: "Admin" },
-  { id: 2, name: "User 2", email: "user2@example.com", role: "Member" },
-  { id: 3, name: "User 3", email: "user3@example.com", role: "Member" },
-];
-
-// workspace page component
 export default function ChannelParticipantList() {
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [profiles, setProfiles] = useState<ProfileModel[]>([])
+  const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
+  const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
 
-  const handleProfileClick = (profile: Profile) => {
+  const onlineProfiles = profiles.filter(profile => profile.isOnline);
+  const offlineProfiles = profiles.filter(profile => !profile.isOnline);
+
+  const handleProfileClick = (profile: ProfileModel, event: React.MouseEvent) => {
+    const liElement = (event.target as HTMLElement).closest('li');
+    if (liElement) {
+      const rect = liElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const modalHeight = 220; // 임의 지정
+      if (rect.bottom + modalHeight > windowHeight) {
+        setModalPosition({ 
+          top: 'auto',
+          bottom: `${windowHeight - rect.bottom}px`
+        });
+      } else {
+        setModalPosition({ 
+          top: `${rect.top}px`,
+          bottom: 'auto'
+        });
+      }
+    }
     setSelectedProfile(profile);
+    document.getElementById('participant-modal')?.showModal();
   };
 
-  const handleCloseModal = () => {
-    setSelectedProfile(null);
-  };
+  useEffect(() => {
+    setProfiles(dummyProfiles)
+  }, [])  
 
   return (
-    <div className="">
+    <div>
       <ul className="menu">
-        <li className="menu-title">온라인 - 6</li>
-
-        {/* map loop */}
-        {profiles.map((profile) => (
-          <li key={profile.id} onClick={() => handleProfileClick(profile)}>
+        <li className="menu-title">온라인 - {onlineProfiles.length}</li>
+        {onlineProfiles.map((profile) => (
+          <li key={profile.id} onClick={(e) => handleProfileClick(profile, e)}>
             <a>
               <div className="avatar online placeholder">
                 <div className="bg-neutral text-neutral-content w-8 rounded-full">
                   <span className="text-xs">U</span>
                 </div>
               </div>
-              <p>{profile.name}</p>
+              <p className="truncate whitespace-nowrap overflow-hidden">{profile.nickname}</p>
             </a>
           </li>
         ))}
-
-        {/* <li>
-          <a>
-            <div className="avatar online placeholder">
-              <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                <span className="text-xs">U</span>
-              </div>
-            </div>
-            <p>username</p>
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <div className="avatar online placeholder">
-              <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                <span className="text-xs">U</span>
-              </div>
-            </div>
-            <p>username</p>
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <div className="avatar online placeholder">
-              <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                <span className="text-xs">U</span>
-              </div>
-            </div>
-            <p>username</p>
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <div className="avatar online placeholder">
-              <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                <span className="text-xs">U</span>
-              </div>
-            </div>
-            <p>username</p>
-          </a>
-        </li> */}
       </ul>
-
-      {/* <div className="divider"></div> */}
 
       <ul className="menu">
-        <li className="menu-title">오프라인 - 1</li>
-
-        {/* map loop */}
-        <li>
-          <a>
-            <div className="avatar offline placeholder">
-              <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                <span className="text-xs">U</span>
+        <li className="menu-title">오프라인 - {offlineProfiles.length}</li>
+        {offlineProfiles.map((profile) => (
+          <li key={profile.id} onClick={(e) => handleProfileClick(profile, e)}>
+            <a>
+              <div className="avatar offline placeholder">
+                <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                  <span className="text-xs">U</span>
+                </div>
               </div>
-            </div>
-            <p>username</p>
-          </a>
-        </li>
+              <p className="truncate whitespace-nowrap overflow-hidden">{profile.nickname}</p>
+            </a>
+          </li>
+        ))}
       </ul>
 
-      {selectedProfile && ( // portal model
-        <ParticipantModal profile={selectedProfile} onClose={handleCloseModal} />
-      )}
+      <dialog id="participant-modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box participant-modal-box" style={{
+          top: modalPosition.top,
+          bottom: modalPosition.bottom
+        }}>
+          <ParticipantModal selectedProfile={selectedProfile}/>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }

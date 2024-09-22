@@ -10,15 +10,15 @@ export default function auth() {
   const router = useRouter()
 
   return (
-    <>
+    <div className="p-4">
       <WebHeader />
       <main>
-        <div className="card bg-base-200 rounded-2xl p-8 h-dvh items-center">
+        <div className="bg-base-200 rounded-2xl p-8">
           <LoginForm/>
           <button onClick={() => router.push(`/workspace/${1}`)} className="btn btn-warning mt-4">bypass</button>
         </div>
       </main>
       <WebFooter />
-    </>
+    </div>
   );
 }

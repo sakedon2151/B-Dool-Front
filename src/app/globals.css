@@ -20,22 +20,21 @@
   }
 }
 
-/* my custom global css */
-.chat-bubble-edit {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  width: auto;
+/* custom global css */
+@media (min-width: 640px) {
+  .participant-modal-box {
+    width: auto !important;
+    position: fixed;
+    right: 12rem;
+    padding: 1rem;
+  }
 }
-
 
 /* no overscroll. like a native app */
 html, body {
   overscroll-behavior: none;
 }
 
-body {
-  padding: 1rem;
-}
 /* animation */
 
 

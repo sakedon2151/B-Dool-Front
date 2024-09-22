@@ -8,16 +8,7 @@ import ChannelParticipantList from "@/app/components/channel/ChannelParticipantL
 import WorkspaceHeader from "@/app/components/workspace/WorkspaceHeader";
 import WorkspaceListNav from "@/app/components/workspace/WorkspaceListNav";
 
-import { useEffect } from "react";
-
 export default function workspace() {
-  
-  useEffect(() => {
-    document.body.style.padding = "0"
-    return () => {
-      document.body.style.padding = "1rem"
-    };
-  }, []);
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden">
