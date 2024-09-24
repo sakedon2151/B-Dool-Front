@@ -4,7 +4,7 @@ interface NotificationModel {
     content: string, // 알림 내용
     createdAt: Date, // 생성일시
     readAt: Date, // 확인일시
-    typeName: string, // 알림 유형
+    typeName: string, // 알림 유형 (메시지, 캘린더, 시스템)
     
     profileId: number // 프로필 ID
 }

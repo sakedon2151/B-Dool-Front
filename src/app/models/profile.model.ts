@@ -13,3 +13,19 @@ interface ProfileModel {
     workspaceId: number, // 워크스페이스 ID
     memberId: number // 멤버 ID
 }
+
+// const initialProfile: ProfileModel = {
+//     id: 0,
+//     name: "",
+//     nickname: "",
+//     position: "",
+//     status: "",
+//     profileImgUrl: "",
+//     isOnline: false,
+//     isOwner: false,
+//     createdAt: new Date,
+//     updatedAt: new Date,
+//     email: "",
+//     workspaceId: 0,
+//     memberId: 0
+// }

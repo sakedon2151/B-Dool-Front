@@ -7,7 +7,7 @@ export default function Home() {
     <div className="p-4">
       <WebHeader />
       <main>
-        <div className="bg-base-200 rounded-2xl p-4">
+        <div className="bg-base-200 rounded-btn p-4">
           <h2>랜딩 페이지</h2>
         </div>
       </main>

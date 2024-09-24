@@ -1,12 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 
-// index, auth page component
 export default function WebHeader() {
   const router = useRouter();
 
   return (
-    <header className="bg-base-200 rounded-2xl mb-4">
+    <header className="bg-base-200 rounded-btn mb-4">
       <div className="navbar">
         <div className="navbar-start">
           <a className="btn btn-ghost text-lg" href="/">

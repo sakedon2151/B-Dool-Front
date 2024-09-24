@@ -51,23 +51,21 @@ export default function ChannelMessageInput() {
   };
 
   return (
-    <div className="">
-      <form className="p-2 flex gap-2" onSubmit={handleSubmit}>
-        <div className="flex flex-grow w-full relative"> 
-          <textarea value={message} maxLength={MAX_MESSAGE_LENGTH} ref={textarea} onChange={handleTextarea} onKeyDown={handleKeyDown} name="message" className="textarea textarea-bordered resize-none w-full h-12 max-h-36 leading-8" placeholder="메시지를 입력하세요."></textarea>
-          <button type="submit" className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center">
-            <IoMdSend className="w-5 h-5"/>
-          </button>
-          <div className="text-xs text-gray-500 absolute bottom-0 right-[54px] h-[48px] leading-[48px]">
-            {message.length}/{MAX_MESSAGE_LENGTH}
-          </div>
+    <form className="p-2 flex gap-2" onSubmit={handleSubmit}>
+      <div className="flex flex-grow w-full relative"> 
+        <textarea value={message} maxLength={MAX_MESSAGE_LENGTH} ref={textarea} onChange={handleTextarea} onKeyDown={handleKeyDown} name="message" className="textarea textarea-bordered resize-none w-full h-12 max-h-36 leading-8" placeholder="메시지를 입력하세요."></textarea>
+        <button type="submit" className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center">
+          <IoMdSend className="w-5 h-5"/>
+        </button>
+        <div className="text-xs text-gray-500 absolute bottom-0 right-[54px] h-[48px] leading-[48px]">
+          {message.length}/{MAX_MESSAGE_LENGTH}
         </div>
-        <div className="tooltip tooltip-top" data-tip="파일 올리기">
-          <button type="button" className="btn m-auto">
-            <FaFileArrowUp className="w-5 h-5"/>
-          </button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div className="tooltip tooltip-top" data-tip="파일 올리기">
+        <button type="button" className="btn m-auto">
+          <FaFileArrowUp className="w-5 h-5"/>
+        </button>
+      </div>
+    </form>
   );
 }

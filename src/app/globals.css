@@ -20,21 +20,23 @@
   }
 }
 
-/* custom global css */
-@media (min-width: 640px) {
+/* tablet, mobile layout */
+/* @media (min-width: 640px) {
   .participant-modal-box {
-    width: auto !important;
     position: fixed;
     right: 12rem;
     padding: 1rem;
+    max-width: 30rem !important;
   }
-}
+
+  .account-modal-box {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+  }
+} */
 
 /* no overscroll. like a native app */
 html, body {
   overscroll-behavior: none;
 }
-
-/* animation */
-
-

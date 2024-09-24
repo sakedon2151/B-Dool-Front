@@ -21,10 +21,10 @@ export default function ParticipantModal({selectedProfile}: ParticipantModalProp
         </div>
         <div>
           <p className="font-bold text-lg">{selectedProfile?.nickname}</p>
-          <p>{selectedProfile?.position}</p>
+          <p className="text-nowrap">{selectedProfile?.position}</p>
         </div>
-        <div>
-          <p className="">{selectedProfile.status}</p>
+        <div className="w-full text-right">
+          <p>{selectedProfile.status}</p>
         </div>
       </div>
       <div className="divider my-0"></div>
@@ -32,7 +32,7 @@ export default function ParticipantModal({selectedProfile}: ParticipantModalProp
         <p>성함: {selectedProfile?.name}</p>
         <p>이메일: {selectedProfile?.email}</p>
       </div>
-      <button className="btn btn-wide w-full">Direct Message</button>
+      <button className="btn w-full">Direct Message</button>
     </div>
   );
 }

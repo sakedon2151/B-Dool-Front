@@ -37,7 +37,7 @@ export default function ChannelParticipantList() {
   }, [])  
 
   return (
-    <div>
+    <>
       <ul className="menu">
         <li className="menu-title">온라인 - {onlineProfiles.length}</li>
         {onlineProfiles.map((profile) => (
@@ -70,8 +70,8 @@ export default function ChannelParticipantList() {
         ))}
       </ul>
 
-      <dialog id="participant-modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box participant-modal-box" style={{
+      <dialog id="participant-modal" className="modal modal-bottom lg:modal-middle">
+        <div className="modal-box lg:fixed lg:right-64 lg:p-4" style={{
           top: modalPosition.top,
           bottom: modalPosition.bottom
         }}>
@@ -81,6 +81,6 @@ export default function ChannelParticipantList() {
           <button>close</button>
         </form>
       </dialog>
-    </div>
+    </>
   );
 }
