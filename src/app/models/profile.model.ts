@@ -14,6 +14,18 @@ interface ProfileModel {
   memberId: number; // 멤버 ID
 }
 
+interface ProfileListRequest {
+  workspaceId: number;
+}
+
+interface ProfileListResponse {
+  profiles: ProfileModel[];
+
+  // id: number; // 프로필 모델 PK
+  // nickname: string; // 닉네임
+  // isOnline: boolean; // 접속 여부
+}
+
 // const initialProfile: ProfileModel = {
 //     id: 0,
 //     name: "",

@@ -70,7 +70,7 @@ export default function workspace({ params }: WorkspacePageProps) {
             <div className="h-dvh flex flex-col overflow-hidden bg-base-100">
               <div className="flex flex-grow h-[100px]">
                 <aside className="w-[255px] border-l box-border overflow-y-auto">
-                  <ChannelParticipantList/>
+                  <ChannelParticipantList workspaceId={workspaceId} />
                 </aside>
               </div>
             </div>
