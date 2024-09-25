@@ -4,7 +4,6 @@ import WebFooter from "@/app/components/index/WebFooter";
 import WebHeader from "@/app/components/index/WebHeader";
 import { useRouter } from "next/navigation";
 
-// login, register page
 export default function auth() {
   const router = useRouter()
 

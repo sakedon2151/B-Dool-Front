@@ -1,10 +1,19 @@
 "use client";
+import { authService } from "@/app/services/member/member.api";
 import { useEffect, useRef, useState } from "react";
 
-export default function VerificationCodeForm() {
+interface VerificationCodeFormProps {
+  email: string;
+  onSuccess: (member: MemberModel) => void;
+}
+
+export default function VerificationCodeForm({ email, onSuccess }: VerificationCodeFormProps) {
   
   const CODE_LENGTH = 6
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -12,7 +21,7 @@ export default function VerificationCodeForm() {
   }, []);
 
   const handleChange = (index: number, value: string) => {
-    if (value.length > 1) return; // 한 글자만 입력 가능
+    if (value.length > 1) return;
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
@@ -31,26 +40,55 @@ export default function VerificationCodeForm() {
   };
 
   const verifyCode = async (fullCode: string) => {
-    // 여기에 axios를 사용한 코드 검증 로직
     console.log('Verifying code:', fullCode);
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await authService.verifyCode({email, code: fullCode});
+      if (response.member) {
+        onSuccess(response.member);
+      } else {
+        setError('인증 코드가 잘못되었습니다. 다시 시도해 주세요.');
+        resetCode();
+      }
+    } catch (err) {
+      setError('오류가 발생했습니다. 다시 시도해 주세요.');
+      console.error('Verification error:', err);
+      resetCode();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetCode = () => {
+    setCode(Array(CODE_LENGTH).fill(''));
+    inputRefs.current[0]?.focus();
   };
 
   return (
-    <div className="flex gap-2 mb-4">
-      {code.map((digit, index) => (
-        <input 
-          key={index}
-          ref={(el: HTMLInputElement | null) => {inputRefs.current[index] = el}}
-          type="text" 
-          className="input input-bordered w-full text-center font-bold text-lg p-0" 
-          placeholder="-"
-          value={digit}
+    <div>
+      <div className="flex gap-2 mb-4">
+        {code.map((digit, index) => (
+          <input 
+            key={index}
+            ref={(el) => {inputRefs.current[index] = el}}
+            type="text" 
+            className="input input-bordered w-full text-center font-bold text-lg p-0" 
+            placeholder="-"
+            value={digit}
 
-          onChange={e => handleChange(index, e.target.value)}
-          onKeyDown={e => handleKeyDown(index, e)}
-          maxLength={1}
-        />  
-      ))}
+            onChange={e => handleChange(index, e.target.value)}
+            onKeyDown={e => handleKeyDown(index, e)}
+            maxLength={1}
+
+            disabled={loading}
+          />  
+        ))}
+      </div>
+      {error && <p className="text-red-500 mb-2">{error}</p>}
+      {loading && <p className="text-blue-500 mb-2">진행중...</p>}
     </div>
+    
   );
 }

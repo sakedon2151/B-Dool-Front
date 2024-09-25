@@ -3,7 +3,6 @@ import { LuCalendarCheck2 } from "react-icons/lu";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineVideoCamera, HiOutlineBell } from "react-icons/hi";
 
-// workspace page component
 export default function WorkspaceHeader() {
   return (
     <div className="navbar">
