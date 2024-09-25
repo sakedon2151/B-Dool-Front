@@ -1,12 +1,10 @@
-type SessionType = 'VIDEO_CONFERENCE' | 'SCREEN_SHARE'
+type SessionType = "VIDEO_CONFERENCE" | "SCREEN_SHARE";
 
 interface SessionModel {
-  id: number
-  startAt: Date
-  endAt: Date
-
-  profileId: number
-  sessionType: SessionType
-  
-  profileId2: number
+  id: number;
+  startAt: string;
+  endAt: string;
+  profileId: number;
+  sessionType: SessionType;
+  profileId2: number;
 }

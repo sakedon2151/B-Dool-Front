@@ -1,21 +1,20 @@
 interface MemberModel {
-    id: number
-    email: string
-    createdAt: Date
+  id: number;
+  email: string;
+  createdAt: string;
 }
 
-// request
 interface LoginRequest {
-    email: string
-    token?: string
-}
-interface VerificationRequest {
-    email: string // 보낼지 말지 고민중
-    code: string
+  email: string;
+  token?: string;
 }
 
-// response
 interface LoginResponse {
-    member: MemberModel
-    token: string
+  member: MemberModel;
+  token: string;
+}
+
+interface VerificationRequest {
+  email: string; // 보낼지 말지 고민중
+  code: string;
 }

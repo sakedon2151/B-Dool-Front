@@ -13,9 +13,9 @@ interface ChannelModel {
 }
 
 interface ChannelListRequest {
-  workspaceId: number
+  workspaceId: number;
 }
 
 interface ChannelListResponse {
-  channels: ChannelModel[]
+  channels: ChannelModel[];
 }
