@@ -1,3 +1,4 @@
+// fullModel
 interface NotificationModel {
   id: number; // 알림 모델 PK
   content: string; // 알림 내용

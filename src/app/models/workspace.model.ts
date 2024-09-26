@@ -1,3 +1,4 @@
+// fullModel
 interface WorkspaceModel {
   id: number; // 워크스페이스 모델 PK
   name: string; // 워크스페이스 이름

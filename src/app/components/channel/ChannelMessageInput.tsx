@@ -1,16 +1,18 @@
+import { useWebSocket } from "@/app/hooks/useWebSocket";
+import { useChannelStore } from "@/app/stores/channelStores";
 import { useCallback, useRef, useState } from "react";
 import { FaFileArrowUp } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 
-// channel message send input component
-
 export default function ChannelMessageInput() {
+  const selectedChannel = useChannelStore((state) => state.selectedChannel)
+  const channelId = selectedChannel?.channelId
+  const { sendMessage } = useWebSocket(channelId);
 
   const [message, setMessage] = useState('')
   const textarea = useRef<HTMLTextAreaElement>(null);
   const MAX_MESSAGE_LENGTH = 100;
-
-  // textarea height control handler
+  
   const handleResizeHeight = useCallback(() => {
     if (textarea.current) {
       textarea.current.style.height = '3rem';
@@ -18,7 +20,6 @@ export default function ChannelMessageInput() {
     }
   }, []);
 
-  // onChange useState & resizeHight & maxLengthIssue
   const handleTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length > MAX_MESSAGE_LENGTH) {
       e.target.value = e.target.value.slice(0, MAX_MESSAGE_LENGTH)
@@ -27,24 +28,21 @@ export default function ChannelMessageInput() {
     handleResizeHeight();
   };
 
-  // textarea keyboard enter handler
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      if (!e.shiftKey) { 
-        e.preventDefault();
-        handleSubmit(e);
-      }
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
     }
   };
 
-  // form submit handler
   const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     if (message.trim() === '') {
       return;
     }
-    console.log("submit string:", message);
+    sendMessage(message);
     setMessage('');
+    console.log("submit string:", message);
     if (textarea.current) {
       textarea.current.style.height = '3rem'
     }
@@ -53,7 +51,18 @@ export default function ChannelMessageInput() {
   return (
     <form className="p-2 flex gap-2" onSubmit={handleSubmit}>
       <div className="flex flex-grow w-full relative"> 
-        <textarea value={message} maxLength={MAX_MESSAGE_LENGTH} ref={textarea} onChange={handleTextarea} onKeyDown={handleKeyDown} name="message" className="textarea textarea-bordered resize-none w-full h-12 max-h-36 leading-8" placeholder="메시지를 입력하세요."></textarea>
+        
+        <textarea 
+          value={message} 
+          maxLength={MAX_MESSAGE_LENGTH} 
+          ref={textarea} 
+          onChange={handleTextarea} 
+          onKeyDown={handleKeyDown} 
+          name="message" 
+          className="textarea textarea-bordered resize-none w-full h-12 max-h-36 leading-8" 
+          placeholder="메시지를 입력하세요."
+        ></textarea>
+
         <button type="submit" className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center">
           <IoMdSend className="w-5 h-5"/>
         </button>

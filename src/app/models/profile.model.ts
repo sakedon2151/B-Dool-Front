@@ -1,3 +1,4 @@
+// fullModel
 interface ProfileModel {
   id: number; // 프로필 모델 PK
   name: string; // 이름
@@ -13,31 +14,20 @@ interface ProfileModel {
   workspaceId: number; // 워크스페이스 ID
   memberId: number; // 멤버 ID
 }
-
-interface ProfileListRequest {
-  workspaceId: number;
+interface ProfileListModel {
+  id: number;
+  nickname: string;
+  isOnline: boolean;
+  profileImgUrl: string;
 }
-
-interface ProfileListResponse {
-  profiles: ProfileModel[];
-
-  // id: number; // 프로필 모델 PK
-  // nickname: string; // 닉네임
-  // isOnline: boolean; // 접속 여부
+interface ProfileModalModel {
+  id: number;
+  name: string;
+  nickname: string;
+  position: string;
+  status: string;
+  profileImgUrl: string;
+  isOnline: boolean;
+  isOwner: boolean;
+  email: string;
 }
-
-// const initialProfile: ProfileModel = {
-//     id: 0,
-//     name: "",
-//     nickname: "",
-//     position: "",
-//     status: "",
-//     profileImgUrl: "",
-//     isOnline: false,
-//     isOwner: false,
-//     createdAt: new Date,
-//     updatedAt: new Date,
-//     email: "",
-//     workspaceId: 0,
-//     memberId: 0
-// }

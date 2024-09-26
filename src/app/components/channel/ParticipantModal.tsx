@@ -1,9 +1,8 @@
 interface ParticipantModalProps {
-  selectedProfile: ProfileModel | null
+  selectedProfile: ProfileListModel | null
 }
 
 export default function ParticipantModal({selectedProfile}: ParticipantModalProps) {
-  
   // props null 예외처리 필요
   if (!selectedProfile) return null;
   

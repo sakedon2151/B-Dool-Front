@@ -1,5 +1,5 @@
+// fullModel
 type RecurrenceType = "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY" | "CUSTOM";
-
 interface RecurrenceModel {
   id: number; // PK
   recurrenceType: RecurrenceType;

@@ -1,5 +1,5 @@
+// fullModel
 type EventScopeType = "WORKSPACE" | "CHANNEL" | "PERSONAL";
-
 interface EventModel {
   id: number; // event PK
   title: string;

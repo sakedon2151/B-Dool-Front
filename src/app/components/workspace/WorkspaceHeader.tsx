@@ -2,8 +2,11 @@ import { HiHashtag } from "react-icons/hi2";
 import { LuCalendarCheck2 } from "react-icons/lu";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineVideoCamera, HiOutlineBell } from "react-icons/hi";
+import { useChannelStore } from "@/app/stores/channelStores";
 
 export default function WorkspaceHeader() {
+  const selectedChannel = useChannelStore((state) => state.selectedChannel)
+  
   return (
     <div className="navbar">
       <div className="navbar-start flex gap-2 ml-14 lg:m-0">
@@ -16,7 +19,7 @@ export default function WorkspaceHeader() {
           <h2 className="font-bold">WORKSPACE NAME</h2>
           <div className="flex items-center">
             <HiHashtag className="w-4 h-4"/>
-            <p>Channel 1</p>
+            <p>{selectedChannel?.name}</p>
           </div>
         </div>
       </div>

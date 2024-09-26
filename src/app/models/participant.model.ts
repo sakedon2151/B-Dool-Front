@@ -1,3 +1,4 @@
+// fullModel
 interface ParticipantModel {
   id: number;
   channelId: number;

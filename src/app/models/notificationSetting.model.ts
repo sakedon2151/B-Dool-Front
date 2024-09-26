@@ -1,3 +1,4 @@
+// fullModel
 interface NotificationSettingModel {
   id: number; // 알림 설정 모델 PK
   type: string; // 알림 타입

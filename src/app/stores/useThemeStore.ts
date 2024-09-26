@@ -1,11 +1,8 @@
-// import { create } from 'zustand'
-// import { persist, createJSONStorage } from 'zustand/middleware'
+// import { create } from "zustand";
 
-// const useThemeStore = create(
-//     persist(
-//         (set) => ({
-//             isDarkMode: false,
-//             toggleDarkMode: () => set((state: any) => ({isDarkMode: !state.isDarkMode}))
-// }))
+// const useThemeStore = create((set) => ({
+//   isDarkMode: false,
+//   toggleTheme: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
+// }));
 
-// export useThemeStore
+// export default useThemeStore

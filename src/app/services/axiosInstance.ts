@@ -37,6 +37,6 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
 };
 
 // 각 MSA 서버에 대한 axios 인스턴스 생성
-export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://211.188.50.55:8080/api');
-export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_USER_API_URL || 'http://211.188.50.29:8080/api');
-export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_PRODUCT_API_URL || 'http://localhost:3003/api');
+export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_API_URL || 'http://211.188.50.55:8080/api');
+export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_B_API_URL || 'http://211.188.50.29:8080/api');
+export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_API_URL || 'http://110.165.19.160:8080/api');

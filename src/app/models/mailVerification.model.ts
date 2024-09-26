@@ -1,3 +1,4 @@
+// fullModel
 interface MailVerification {
   id: number;
   email: string;

@@ -1,22 +1,34 @@
-import dummyMessages from "@/app/tests/dummyMessages";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import ChannelMessage from "./ChannelMessage";
-import { formatDateToDividerDay } from "@/app/utils/formatDate";
 import React from "react";
+import { useWebSocket } from "@/app/hooks/useWebSocket";
+import { useChannelStore } from "@/app/stores/channelStores";
 
 export default function ChannelMessageList() {
-  const [messages, setMessages] = useState<MessageModel[]>([]);
+  const selectedChannel = useChannelStore((state) => state.selectedChannel)
+  const { messages, loadMoreMessages } = useWebSocket(selectedChannel?.channelId);
+  const messageAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const messageArea = messageAreaRef.current;
+    if (messageArea) {
+      messageArea.scrollTop = messageArea.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleScroll = () => {
+    const messageArea = messageAreaRef.current;
+    if (messageArea && messageArea.scrollTop === 0) {
+      loadMoreMessages();
+    }
+  };
 
   let currentDate = "";
 
-  useEffect(() => {
-    setMessages(dummyMessages);
-  }, []);
-
   return (
-    <div className="p-4">
+    <div className="p-4" onScroll={handleScroll}>
       {messages.map((message) => {
-        const messageDate = formatDateToDividerDay(message.createdAt);
+        const messageDate = message.createdAt;
         let divider = null;
         if (messageDate !== currentDate) {
           currentDate = messageDate;
@@ -27,7 +39,7 @@ export default function ChannelMessageList() {
           );
         }
         return (
-          <React.Fragment key={`message-group-${message.id}`}>
+          <React.Fragment key={message.messageId}>
             {divider}
             <ChannelMessage assignedMessage={message} />
           </React.Fragment>

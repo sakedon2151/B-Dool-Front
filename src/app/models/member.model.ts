@@ -1,3 +1,4 @@
+// fullModel
 interface MemberModel {
   id: number;
   email: string;

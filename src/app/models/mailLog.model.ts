@@ -1,3 +1,4 @@
+// fullModel
 interface MailLogModel {
   id: number;
   email: string;

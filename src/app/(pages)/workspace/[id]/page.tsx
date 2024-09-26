@@ -1,11 +1,11 @@
 "use client";
-import ChannelListNav from "@/app/components/channel/ChannelListNav";
+import ChannelList from "@/app/components/channel/ChannelList";
 import ChannelMemberCard from "@/app/components/channel/ChannelMemberCard";
 import ChannelMessageInput from "@/app/components/channel/ChannelMessageInput";
 import ChannelMessageList from "@/app/components/channel/ChannelMessageList";
 import ChannelParticipantList from "@/app/components/channel/ChannelParticipantList";
 import WorkspaceHeader from "@/app/components/workspace/WorkspaceHeader";
-import WorkspaceListNav from "@/app/components/workspace/WorkspaceListNav";
+import WorkspaceList from "@/app/components/workspace/WorkspaceList";
 
 interface WorkspacePageProps {
   params: {
@@ -82,10 +82,10 @@ export default function workspace({ params }: WorkspacePageProps) {
         <div className="h-dvh flex flex-col overflow-hidden bg-base-100">
           <div className="flex flex-row flex-grow h-[100px]">
             <nav className="overflow-y-auto flex-shrink-0 ">
-              <WorkspaceListNav/>
+              <WorkspaceList/>
             </nav>
             <aside className="w-48 border-r box-border overflow-y-auto flex-shrink-0">
-              <ChannelListNav workspaceId={workspaceId}/>
+              <ChannelList workspaceId={workspaceId}/>
             </aside>
           </div>
           <div className="w-64 border-r border-t">

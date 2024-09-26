@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import ParticipantModal from "./ParticipantModal";
 import { profileService } from "@/app/services/profile/profile.api";
+import useSSE from "@/app/hooks/useSSE";
 
 interface ChannelParticipantListProps {
   workspaceId: number;
 }
 
 export default function ChannelParticipantList({ workspaceId }: ChannelParticipantListProps) {
-  const [profiles, setProfiles] = useState<ProfileModel[]>([])
+  const [profiles, setProfiles] = useState<ProfileListModel[]>([])
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<ProfileListModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
 
   const onlineProfiles = profiles.filter(profile => profile.isOnline);
   const offlineProfiles = profiles.filter(profile => !profile.isOnline);
 
-  const handleProfileClick = (profile: ProfileModel, event: React.MouseEvent) => {
+  const handleProfileClick = (profile: ProfileListModel, event: React.MouseEvent) => {
     const liElement = (event.target as HTMLElement).closest('li');
     if (liElement) {
       const rect = liElement.getBoundingClientRect();
@@ -41,18 +42,12 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
 
   useEffect(() => {
     fetchProfiles(workspaceId)
-    connectSSE()
-  }, [])  
+  }, [workspaceId])  
 
   const fetchProfiles = async (workspaceId: number) => {
     try {
-      const response = await profileService.getAllProfileByWorkspaceId({ workspaceId })
-      if (Array.isArray(response)) {
-        setProfiles(response)
-      } else {
-        console.error('Unexpected response format:', response);
-        setError('채널 데이터 형식이 올바르지 않습니다.');
-      }
+      const response = await profileService.getAllByWorkspaceId(workspaceId)
+      setProfiles(response)
     } catch (error) {
       console.error('error', error);
       setError('프로필 목록을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.')
@@ -61,40 +56,32 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
     }
   };
 
-  const connectSSE = () => {
-    const eventSource = new EventSource(`http://211.188.50.55:8080/api/sse/subscribe`);
-    eventSource.addEventListener('nickname-change', (event: MessageEvent) => {
-      const updatedProfile: ProfileModel = JSON.parse(event.data);
-      setProfiles(prevProfiles => 
-        prevProfiles.map(profile =>
-          profile.id === updatedProfile.id
-            ? { ...profile, nickname: updatedProfile.nickname }
-            : profile
-        )
-      );
-    });
-
-    eventSource.addEventListener('online-status-change', (event: MessageEvent) => {
-      const updatedProfile: ProfileModel = JSON.parse(event.data);
-      setProfiles(prevProfiles => 
-        prevProfiles.map(profile =>
-          profile.id === updatedProfile.id
-            ? { ...profile, isOnline: updatedProfile.isOnline }
-            : profile
-        )
-      );
-    });
-
-    eventSource.onerror = (error) => {
-      console.error("SSE error:", error);
-      eventSource.close();
-      setTimeout(connectSSE, 5000);  // 5초 후 재연결 시도
-    };
-
-    return () => {
-      eventSource.close();
-    };
+  const handleNicknameChange = (updatedProfile: ProfileModel) => {
+    setProfiles(prevProfiles => 
+      prevProfiles.map(profile =>
+        profile.id === updatedProfile.id
+          ? { ...profile, nickname: updatedProfile.nickname }
+          : profile
+      )
+    );
   };
+
+  const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
+    setProfiles(prevProfiles => 
+      prevProfiles.map(profile =>
+        profile.id === updatedProfile.id
+          ? { ...profile, isOnline: updatedProfile.isOnline }
+          : profile
+      )
+    );
+  };
+
+  // SSE Custom Hook
+  const sseUrl = 'http://211.188.50.55:8080/api/sse/subscribe'
+  useSSE(sseUrl, {
+    'nickname-change': handleNicknameChange,
+    'online-status-change': handleOnlineStatusChange
+  });
 
   return (
     <>

@@ -1,5 +1,5 @@
+// fullModel
 type StatusType = "PENDING" | "OK" | "NO";
-
 interface AttendeeModel {
   id: number;
   status: StatusType;

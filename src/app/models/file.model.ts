@@ -1,3 +1,4 @@
+// fullModel
 interface FileModel {
   id: number;
   fName: string;
