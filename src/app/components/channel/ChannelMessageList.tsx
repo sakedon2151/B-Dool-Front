@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChannelMessage from "./ChannelMessage";
 import React from "react";
 import { useWebSocket } from "@/app/hooks/useWebSocket";
@@ -8,6 +8,7 @@ export default function ChannelMessageList() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel)
   const { messages, loadMoreMessages } = useWebSocket(selectedChannel?.channelId);
   const messageAreaRef = useRef<HTMLDivElement>(null);
+  const [prevChannelId, setPrevChannelId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const messageArea = messageAreaRef.current;
@@ -15,6 +16,12 @@ export default function ChannelMessageList() {
       messageArea.scrollTop = messageArea.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (selectedChannel?.channelId !== prevChannelId) {
+      setPrevChannelId(selectedChannel?.channelId);
+    }
+  }, [selectedChannel?.channelId, prevChannelId]);
 
   const handleScroll = () => {
     const messageArea = messageAreaRef.current;
@@ -26,7 +33,7 @@ export default function ChannelMessageList() {
   let currentDate = "";
 
   return (
-    <div className="p-4" onScroll={handleScroll}>
+    <div className="p-4" ref={messageAreaRef} onScroll={handleScroll}>
       {messages.map((message) => {
         const messageDate = message.createdAt;
         let divider = null;

@@ -14,9 +14,17 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
 
+  // 메세지 및 페이지네이션 초기화 함수
+  const resetState = useCallback(() => {
+    setMessages([]);
+    setCurrentPage(0);
+  }, []);
+
+  // 컴포넌트 마운트시 초기 실행 함수 - websocket 연결
   useEffect(() => {
     if (!channelId) return;
-    const socket = new SockJS("/ws/chat");
+    resetState();
+    const socket = new SockJS("http://211.188.50.29:8080/ws/chat");
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
@@ -25,6 +33,7 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
           const newMessage: MessageModel = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
+        loadInitialMessages(channelId);
       },
       onStompError: (frame) => {
         console.error('STOMP 에러:', frame.headers['message']);
@@ -33,8 +42,10 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
+
     client.activate();
     setStompClient(client);
+
     return () => {
       if (client.active) {
         client.deactivate();
@@ -42,39 +53,48 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
     };
   }, [channelId]);
 
+  // 초기 메시지 요청
+  const loadInitialMessages = useCallback((channelId: string) => {
+    serverBAxios.get<MessageModel[]>(`/messages/${channelId}`, {
+      params: {
+        page: 0,
+        size: 10
+      }
+    })
+    .then((response) => {
+      const newMessages: MessageModel[] = response.data;
+      setMessages(newMessages.reverse());
+      setCurrentPage(1);
+    })
+    .catch((error) => {
+      console.error("Error loading initial messages:", error);
+    });
+  }, []);
+
+  // 메시지 전송 함수
   const sendMessage = useCallback(
     (content: string) => {
-      if (!channelId) {
-        console.error("채널 ID가 없습니다.")
+      if (!channelId || !stompClient || !stompClient.active) {
+        console.error("메시지를 보낼 수 없습니다. 연결 상태를 확인해주세요.")
         return ;
       }
-      if (!stompClient) {
-        console.error("STOMP 클라이언트가 초기화되지 않았습니다.");
-        return;
-      }
-      if (!stompClient.active) {
-        console.error("STOMP 클라이언트가 활성화되지 않았습니다. 재연결을 시도합니다...");
-        // 여기에 재연결 로직 추가
-        return;
-      }
-      if (stompClient && stompClient.active) {
-        try {
-          stompClient.publish({
-            destination: `/app/message/${channelId}`,
-            body: JSON.stringify({
-              content,
-              channelId,
-              profileId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b", // 실제 사용시 현재 로그인한 사용자 ID로 대체
-            }),
-          });
-        } catch (error) {
-          console.error("메시지 전송 실패:", error);
-        }
+      try {
+        stompClient.publish({
+          destination: `/app/message/${channelId}`,
+          body: JSON.stringify({
+            content,
+            channelId,
+            profileId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b", // 실제 사용시 현재 로그인한 사용자 ID로 대체
+          }),
+        });
+      } catch (error) {
+        console.error("메시지 전송 실패:", error);
       }
     },
     [stompClient, channelId]
   );
 
+  // 메시지 추가 요청 함수
   const loadMoreMessages = useCallback(() => {
     if (!channelId) return;
     serverBAxios.get<MessageModel[]>(`/messages/${channelId}`, {
@@ -96,11 +116,11 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
     });
   }, [channelId, currentPage]);
 
-  useEffect(() => {
-    if (channelId) {
-      loadMoreMessages();
-    }
-  }, [channelId, loadMoreMessages]);
+  // useEffect(() => {
+  //   if (channelId) {
+  //     loadMoreMessages();
+  //   }
+  // }, [channelId, loadMoreMessages]);
 
   return { messages, sendMessage, loadMoreMessages };
 };
