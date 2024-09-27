@@ -1,10 +1,12 @@
+import { MessageBubbleModel } from "@/app/models/message.model";
+import React from "react";
 import { useEffect, useState } from "react";
 
 interface MessageProps {
-  assignedMessage: MessageModel
+  selectedMessage: MessageBubbleModel
 }
 
-export default function ChannelMessage({assignedMessage}: MessageProps) {
+export default function ChannelMessage({selectedMessage}: MessageProps) {
   // const [findedProfile, setFindedProfile] = useState<ProfileModel>()
   // const currentProfileId = 1 // 추후 store 를 통해 현재 로그인 대상 프로필 id 대입
   // const isCurrentProfileMessage: boolean = assignedMessage.profileId === currentProfileId;
@@ -16,22 +18,37 @@ export default function ChannelMessage({assignedMessage}: MessageProps) {
   //   setFindedProfile(matchingProfile || null);
   // }, [assignedMessage.profileId])
 
+  const renderMessageContent = (content: string) => {
+    return content.split('\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        {index < content.split('\n').length - 1 && <br />}
+      </React.Fragment>
+    ));
+  };
+
   return (
     <div className={`chat ${isCurrentProfileMessage ? 'chat-end' : 'chat-start'} py-2`}>
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
-          {/* <img
+          <img
             alt="profile_img"
-            src={findedProfile.profileImgUrl}
-          /> */}
+            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+          />
         </div>
       </div>
+      
       <div className="chat-header">
         {/* {findedProfile.nickname} */}
-        <time className="text-xs opacity-50 pl-1">{assignedMessage.createdAt}</time>
+        name
+        <time className="pl-1 text-xs opacity-50">{selectedMessage.sendDate}</time>
       </div>
-      <div className="chat-bubble">{assignedMessage.content}</div>
-      {/* <div className="chat-footer">3</div> */}
+      
+      <div className="chat-bubble">
+        {renderMessageContent(selectedMessage.content)}
+      </div>
+      
+      <div className="chat-footer">3</div>
     </div>
   );
 }

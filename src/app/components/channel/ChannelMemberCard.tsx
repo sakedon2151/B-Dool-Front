@@ -1,24 +1,23 @@
 import { FaGear } from "react-icons/fa6";
-import AccountModal from "../profile/AccountModal";
+import ProfileModal from "../member/ProfileModal";
 
 export default function ChannelMemberCard() {
   return (
     <>
-      <div className="flex justify-between items-center p-2">
+      <div className="flex items-center justify-between p-2">
         <div className="flex gap-4">
           <div className="avatar online placeholder">
-            <div className="bg-neutral text-neutral-content w-12 rounded-full">
+            <div className="w-12 rounded-full bg-neutral text-neutral-content">
               <span>U</span>
             </div>
           </div>
-          
           <div>
             <p>username</p>
             <p>status</p>
           </div>
         </div>
         
-        <button className="btn btn-circle bg-transparent" onClick={()=>document.getElementById('account-modal')?.showModal()}>
+        <button className="bg-transparent btn btn-circle" onClick={()=>document.getElementById('account-modal')?.showModal()}>
           <FaGear className="w-5 h-5"/>
         </button>
       </div>
@@ -26,9 +25,9 @@ export default function ChannelMemberCard() {
       <dialog id="account-modal" className="modal modal-bottom lg:modal-middle">
         <div className="modal-box lg:fixed lg:bottom-4 lg:left-4">
           <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <button className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">✕</button>
           </form>
-          <AccountModal/>
+          <ProfileModal/>
         </div>
       </dialog>
     </>

@@ -1,7 +1,7 @@
 "use client"
 import LoginForm from "@/app/components/auth/EmailLoginForm";
-import WebFooter from "@/app/components/index/WebFooter";
-import WebHeader from "@/app/components/index/WebHeader";
+import WebFooter from "@/app/components/common/WebFooter";
+import WebHeader from "@/app/components/common/WebHeader";
 import { useRouter } from "next/navigation";
 
 export default function auth() {

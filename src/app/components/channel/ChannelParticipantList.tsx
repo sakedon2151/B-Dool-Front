@@ -9,12 +9,12 @@ interface ChannelParticipantListProps {
 
 export default function ChannelParticipantList({ workspaceId }: ChannelParticipantListProps) {
   const [profiles, setProfiles] = useState<ProfileListModel[]>([])
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const [selectedProfile, setSelectedProfile] = useState<ProfileListModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
-
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
   const onlineProfiles = profiles.filter(profile => profile.isOnline);
   const offlineProfiles = profiles.filter(profile => !profile.isOnline);
 
@@ -23,7 +23,7 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
     if (liElement) {
       const rect = liElement.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const modalHeight = 220; // 임의 지정
+      const modalHeight = 220;
       if (rect.bottom + modalHeight > windowHeight) {
         setModalPosition({ 
           top: 'auto',
@@ -46,7 +46,7 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
 
   const fetchProfiles = async (workspaceId: number) => {
     try {
-      const response = await profileService.getAllByWorkspaceId(workspaceId)
+      const response = await profileService.getProfileList(workspaceId)
       setProfiles(response)
     } catch (error) {
       console.error('error', error);
@@ -91,11 +91,11 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
           <li key={profile.id} onClick={(e) => handleProfileClick(profile, e)}>
             <a>
               <div className="avatar online placeholder">
-                <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                <div className="w-8 rounded-full bg-neutral text-neutral-content">
                   <span className="text-xs">U</span>
                 </div>
               </div>
-              <p className="truncate whitespace-nowrap overflow-hidden">{profile.nickname}</p>
+              <p className="overflow-hidden truncate whitespace-nowrap">{profile.nickname}</p>
             </a>
           </li>
         ))}
@@ -107,11 +107,11 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
           <li key={profile.id} onClick={(e) => handleProfileClick(profile, e)}>
             <a>
               <div className="avatar offline placeholder">
-                <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                <div className="w-8 rounded-full bg-neutral text-neutral-content">
                   <span className="text-xs">U</span>
                 </div>
               </div>
-              <p className="truncate whitespace-nowrap overflow-hidden">{profile.nickname}</p>
+              <p className="overflow-hidden truncate whitespace-nowrap">{profile.nickname}</p>
             </a>
           </li>
         ))}
@@ -122,7 +122,9 @@ export default function ChannelParticipantList({ workspaceId }: ChannelParticipa
           top: modalPosition.top,
           bottom: modalPosition.bottom
         }}>
-          <ParticipantModal selectedProfile={selectedProfile}/>
+          {selectedProfile && (
+            <ParticipantModal profileId={selectedProfile.id}/>
+          )}
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

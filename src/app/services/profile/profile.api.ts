@@ -1,12 +1,15 @@
 import { serverAAxios } from "../axiosInstance";
 
 export const profileService = {
-  getAllByWorkspaceId: async (workspaceId: number): Promise<ProfileListModel[]> => {
-    const response = await serverAAxios.get<ProfileListModel[]>(`/profiles/workspace/${workspaceId}`)
+  getProfileList: async (workspaceId: number): Promise<ProfileListModel[]> => {
+    const response = await serverAAxios.get<ProfileListModel[]>(`/profiles/workspace/${workspaceId}`);
     return response.data;
   },
 
-  // getModalData
+  getProfileModal: async (profileId: number): Promise<ProfileModalModel> => {
+    const response = await serverAAxios.get<ProfileModalModel>(`/profiles/${profileId}`);
+    return response.data
+  },
 
 
 };

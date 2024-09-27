@@ -1,26 +1,44 @@
 import { useState, useEffect, useCallback } from "react";
 import SockJS from "sockjs-client";
 import { Client, Message } from "@stomp/stompjs";
-import { serverBAxios } from "../services/axiosInstance";
+import { webSocketService } from "../services/message/message.api";
+import { MessageModel } from "../models/message.model";
 
 interface WebSocketHook {
   messages: MessageModel[];
   sendMessage: (content: string) => void;
-  loadMoreMessages: () => void;
+  loadMoreMessages: () => Promise<void>;
+  hasMore: boolean;
 }
 
-export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
+export const useWebSocket = (channelId: string): WebSocketHook => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   // 메세지 및 페이지네이션 초기화 함수
   const resetState = useCallback(() => {
     setMessages([]);
     setCurrentPage(0);
+    setHasMore(true);
+  }, []);
+  
+  // 초기 메시지 요청 함수
+  const loadInitialMessages = useCallback((channelId: string) => {
+    webSocketService.getMessageList(channelId, 0, 10)
+    .then((response) => {
+      const newMessages: MessageModel[] = response.data;
+      setMessages(newMessages.reverse());
+      setCurrentPage(1);
+      setHasMore(newMessages.length === 10);
+    })
+    .catch((error) => {
+      console.error("Error loading initial messages:", error);
+    });
   }, []);
 
-  // 컴포넌트 마운트시 초기 실행 함수 - websocket 연결
+  // 컴포넌트 마운트시 초기 실행 - websocket 연결
   useEffect(() => {
     if (!channelId) return;
     resetState();
@@ -42,35 +60,15 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
-
     client.activate();
     setStompClient(client);
-
     return () => {
       if (client.active) {
         client.deactivate();
       }
     };
-  }, [channelId]);
-
-  // 초기 메시지 요청
-  const loadInitialMessages = useCallback((channelId: string) => {
-    serverBAxios.get<MessageModel[]>(`/messages/${channelId}`, {
-      params: {
-        page: 0,
-        size: 10
-      }
-    })
-    .then((response) => {
-      const newMessages: MessageModel[] = response.data;
-      setMessages(newMessages.reverse());
-      setCurrentPage(1);
-    })
-    .catch((error) => {
-      console.error("Error loading initial messages:", error);
-    });
-  }, []);
-
+  }, [channelId, resetState, loadInitialMessages]);
+  
   // 메시지 전송 함수
   const sendMessage = useCallback(
     (content: string) => {
@@ -95,32 +93,29 @@ export const useWebSocket = (channelId: string | undefined): WebSocketHook => {
   );
 
   // 메시지 추가 요청 함수
-  const loadMoreMessages = useCallback(() => {
-    if (!channelId) return;
-    serverBAxios.get<MessageModel[]>(`/messages/${channelId}`, {
-      params: {
-        page: currentPage,
-        size: 10
-      }
-    })
-    .then((response) => {
-      const newMessages: MessageModel[] = response.data;
-      setMessages((prevMessages) => [
-        ...newMessages.reverse(),
-        ...prevMessages,
-      ]);
-      setCurrentPage((prevPage) => prevPage + 1);
-    })
-    .catch((error) => {
-      console.error("Error loading messages:", error);
-    });
-  }, [channelId, currentPage]);
+  const loadMoreMessages = useCallback((): Promise<void> => {
+    if (!channelId || !hasMore) return Promise.resolve();
+    return webSocketService.getMessageList(channelId, currentPage, 10)
+      .then((response) => {
+        const newMessages: MessageModel[] = response.data;
+        if (newMessages.length > 0) {
+          setMessages((prevMessages) => {
+            const uniqueNewMessages = newMessages.filter(
+              (newMsg) => !prevMessages.some((prevMsg) => prevMsg.messageId === newMsg.messageId)
+            );
+            return [...uniqueNewMessages.reverse(), ...prevMessages];
+          });
+          setCurrentPage((prevPage) => prevPage + 1);
+          setHasMore(newMessages.length === 10);
+        } else {
+          setHasMore(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading messages:", error);
+        return Promise.reject(error);
+      });
+  }, [channelId, currentPage, hasMore]);
 
-  // useEffect(() => {
-  //   if (channelId) {
-  //     loadMoreMessages();
-  //   }
-  // }, [channelId, loadMoreMessages]);
-
-  return { messages, sendMessage, loadMoreMessages };
+    return { messages, sendMessage, loadMoreMessages, hasMore };
 };

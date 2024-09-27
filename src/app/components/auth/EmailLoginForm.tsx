@@ -42,11 +42,11 @@ export default function LoginForm() {
 
   return (
     <div className="bg-base-300 rounded-btn p-4 lg:w-[640px]">      
-      <h2 className="text-center text-lg font-bold">이메일로 시작하기</h2>
-      <div className="divider mt-2"></div>
-      {error && <div className="alert alert-error mb-4">{error}</div>}
+      <h2 className="text-lg font-bold text-center">이메일로 시작하기</h2>
+      <div className="mt-2 divider"></div>
+      {error && <div className="mb-4 alert alert-error">{error}</div>}
       <form className="text-center">
-        <label className="input input-bordered flex items-center gap-2 mb-4">
+        <label className="flex items-center gap-2 mb-4 input input-bordered">
           <BiMailSend className="w-6 h-6 opacity-70"/>
           <input
             type="email"

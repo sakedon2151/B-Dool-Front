@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from "react";
 
-export default function AccountModal() {
+export default function ProfileModal() {
   
   // 프롭스로 들어온 profileImgUrl 대입할것
   const [profileImage, setProfileImage] = useState<string>("https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp")
@@ -26,14 +26,14 @@ export default function AccountModal() {
 
         <div className="avatar" onClick={() => {fileInput.current?.click()}}>
           <div className="w-24 rounded-btn">
-            <img src={profileImage} alt="profile image"/>
+            <img src={profileImage} alt="profile_image"/>
           </div>
         </div>
 
         <input ref={fileInput} className="hidden" accept="image/png, image/jpg, image/jpeg" type="file" onChange={handleImgChange} />
 
         <div className="">
-          <h2 className="font-bold text-2xl">NICKNAME</h2>
+          <h2 className="text-2xl font-bold">NICKNAME</h2>
           <p>성명</p>
           <p>직책</p>
         </div>

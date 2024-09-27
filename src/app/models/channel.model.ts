@@ -1,6 +1,6 @@
 // fullModel
 type ChannelType = "DEFAULT" | "CUSTOM" | "DM";
-interface ChannelModel {
+export interface ChannelModel {
   channelId: string; // 채널 모델 PK (UUID)
   workspaceId: number; // 워크스페이스 ID
   name: string; // 채널 이름
@@ -11,13 +11,13 @@ interface ChannelModel {
   profileId: string; // 채널 생성자 프로필 ID (UUID)
   channelType: ChannelType; // 채널 타입 (ENUM default, custom, dm)
 }
-interface ChannelListModel {
+export interface ChannelListModel {
   channelId: string;
   name: string;
   isPrivate: boolean;
   channelType: ChannelType;
 }
-interface ChannelMinimumModel {
+export interface ChannelMinimumModel {
   channelId: string;
   name: string;
 }

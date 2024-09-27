@@ -1,4 +1,3 @@
-// fullModel
 interface ProfileModel {
   id: number; // 프로필 모델 PK
   name: string; // 이름
@@ -20,7 +19,7 @@ interface ProfileListModel {
   isOnline: boolean;
   profileImgUrl: string;
 }
-interface ProfileModalModel {
+export interface ProfileModalModel {
   id: number;
   name: string;
   nickname: string;

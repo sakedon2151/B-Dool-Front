@@ -1,4 +1,3 @@
-// fullModel
 interface WorkspaceModel {
   id: number; // 워크스페이스 모델 PK
   name: string; // 워크스페이스 이름
@@ -8,3 +7,6 @@ interface WorkspaceModel {
   createAt: string; // 생성일시 (string 고려)
   memberId: number; // 맴버 ID - 1 ~ 30 으로 제한
 }
+
+// type WorkspaceListModel
+// type Workspace

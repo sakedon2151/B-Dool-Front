@@ -1,37 +1,49 @@
+import { profileService } from "@/app/services/profile/profile.api";
+import { useEffect, useState } from "react";
+
 interface ParticipantModalProps {
-  selectedProfile: ProfileListModel | null
+  profileId: number;
 }
 
-export default function ParticipantModal({selectedProfile}: ParticipantModalProps) {
-  // props null 예외처리 필요
-  if (!selectedProfile) return null;
-  
-  const getOnlineClass = (isOnline: boolean) => {
-    return isOnline ? 'online' : 'offline';
-  };
+export default function ParticipantModal({ profileId }: ParticipantModalProps) {
+  const [selectedProfile, setSelectedProfile] = useState<ProfileModalModel | null>(null);
+  const getOnlineStatus = (isOnline: boolean) => isOnline ? 'online' : 'offline';
 
+  useEffect(() => {
+    fetchProfile(profileId)
+  }, [profileId])
+
+  const fetchProfile = async (profileId: number) => {
+    try {
+      const response = await profileService.getProfileModal(profileId);
+      setSelectedProfile(response);
+    } catch (error) {
+      console.error('Failed to fetch profile:', error)
+    }
+  }
+  
   return (
     <div>
       <div className="flex items-center gap-4">
-        <div className={`avatar ${getOnlineClass(selectedProfile.isOnline)}`}>
+        <div className={`avatar ${getOnlineStatus(selectedProfile?.isOnline ?? false)}`}>
           <div className="w-12 h-12 rounded-full">
-            <img src={selectedProfile.profileImgUrl} alt="Profile Image"/>
+            <img src={selectedProfile?.profileImgUrl} alt="profile_image"/>
           </div>
         </div>
         <div>
-          <p className="font-bold text-lg">{selectedProfile?.nickname}</p>
+          <p className="text-lg font-bold">{selectedProfile?.nickname}</p>
           <p className="text-nowrap">{selectedProfile?.position}</p>
         </div>
         <div className="w-full text-right">
-          <p>{selectedProfile.status}</p>
+          <p>{selectedProfile?.status}</p>
         </div>
       </div>
-      <div className="divider my-0"></div>
+      <div className="my-0 divider"></div>
       <div className="mb-4">
         <p>성함: {selectedProfile?.name}</p>
         <p>이메일: {selectedProfile?.email}</p>
       </div>
-      <button className="btn w-full">Direct Message</button>
+      <button className="w-full btn">Direct Message</button>
     </div>
   );
 }

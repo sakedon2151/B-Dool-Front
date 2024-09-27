@@ -74,7 +74,7 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
             key={index}
             ref={(el) => {inputRefs.current[index] = el}}
             type="text" 
-            className="input input-bordered w-full text-center font-bold text-lg p-0" 
+            className="w-full p-0 text-lg font-bold text-center input input-bordered" 
             placeholder="-"
             value={digit}
 
@@ -86,8 +86,8 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
           />  
         ))}
       </div>
-      {error && <p className="text-red-500 mb-2">{error}</p>}
-      {loading && <p className="text-blue-500 mb-2">진행중...</p>}
+      {error && <p className="mb-2 text-red-500">{error}</p>}
+      {loading && <p className="mb-2 text-blue-500">진행중...</p>}
     </div>
     
   );

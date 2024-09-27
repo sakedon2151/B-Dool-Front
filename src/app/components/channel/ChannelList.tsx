@@ -1,3 +1,4 @@
+import { ChannelListModel } from "@/app/models/channel.model";
 import { channelService } from "@/app/services/channel/channel.api";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { useEffect, useState } from "react";
@@ -23,7 +24,7 @@ export default function ChannelList({ workspaceId }: ChannelListNavProps) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await channelService.getAllByWorkspaceId(workspaceId);
+      const response = await channelService.getChannelList(workspaceId);
       setChannels(response);
     } catch (error) {
       console.error('Failed to fetch channels:', error);
@@ -39,16 +40,30 @@ export default function ChannelList({ workspaceId }: ChannelListNavProps) {
         <details open>
           <summary className="font-bold ">워크스페이스 채널</summary>
           {!channels ? (
-            <p>채널 정보 불러오는 중</p>
+            <p>채널 불러오는 중</p>
           ) : channels.length === 0 ? (
-            <p>채널이 없습니다.</p>
+            <ul>
+              <li className="">
+                <a className="text-center">채널 추가하기</a>
+              </li>
+              <li>
+                  <a>
+                    <HiHashtag className="w-4 h-4" />
+                    <p className="overflow-hidden truncate whitespace-nowrap">111</p>
+                    <button>
+                      <HiOutlineStar className="w-4 h-4" />
+                    </button>
+                  </a>
+                </li>  
+
+            </ul>
           ) : (
             <ul>
               {channels.map((channel) => (
                 <li key={channel.channelId} onClick={() => setSelectedChannel(channel)}>
                   <a>
                     <HiHashtag className="w-4 h-4" />
-                    <p className="overflow-hidden whitespace-nowrap truncate">{channel.name}</p>
+                    <p className="overflow-hidden truncate whitespace-nowrap">{channel.name}</p>
                     <button>
                       <HiOutlineStar className="w-4 h-4" />
                     </button>

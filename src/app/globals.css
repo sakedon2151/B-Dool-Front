@@ -14,27 +14,17 @@
   }
 }
 
+/* @layer base {
+  html {
+    font-family: 'Pretendard';
+  }
+} */
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
-
-/* tablet, mobile layout */
-/* @media (min-width: 640px) {
-  .participant-modal-box {
-    position: fixed;
-    right: 12rem;
-    padding: 1rem;
-    max-width: 30rem !important;
-  }
-
-  .account-modal-box {
-    position: fixed;
-    bottom: 1rem;
-    left: 1rem;
-  }
-} */
 
 /* no overscroll. like a native app */
 html, body {
