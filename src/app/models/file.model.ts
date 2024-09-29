@@ -1,12 +1,20 @@
-// fullModel
-interface FileModel {
-  id: number;
-  fName: string;
-  path: string;
-  size: number;
-  extension: string;
+export interface FileModel {
+  fileId: string; // 파일 uuid pk
+  fName: string; // 파일 이름
+  path: string; // 파일 경로
+  size: number; // 파일 크기
+  extension: string; // 파일 확장자
   uploadedAt: string;
-  profileId: number;
-  channelId: number;
-  workspaceId: number;
+  profileId: string; // uuid
+  channelId: string; // uuid
+  workspaceId: string; // uuid
 }
+
+export interface FileUploadModel {
+  file: File;
+  profileId: string;
+  channelId: string;
+  workspaceId: string;
+}
+
+// Strict Type Model

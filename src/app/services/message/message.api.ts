@@ -1,6 +1,6 @@
 import { serverBAxios } from "../axiosInstance";
 
-export const webSocketService = {
+export const messageService = {
   getMessageList: (channelId: string, page: number, size: number) => 
     serverBAxios.get(`/messages/${channelId}`, { params: { page, size } }),
   

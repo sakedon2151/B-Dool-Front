@@ -1,8 +1,9 @@
-// fullModel
-interface ParticipantModel {
-  id: number;
-  channelId: number;
+export interface ParticipantModel {
+  participantId: string; // mongodb uuid pk
+  channelId: string; // uuid 
   favorited: boolean;
+  profileName: string;
   joinedAt: string;
-  participantName: string;
 }
+
+// Strict Type Model

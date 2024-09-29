@@ -1,4 +1,4 @@
-interface ProfileModel {
+export interface ProfileModel {
   id: number; // 프로필 모델 PK
   name: string; // 이름
   nickname: string; // 닉네임
@@ -13,20 +13,11 @@ interface ProfileModel {
   workspaceId: number; // 워크스페이스 ID
   memberId: number; // 멤버 ID
 }
-interface ProfileListModel {
-  id: number;
-  nickname: string;
-  isOnline: boolean;
-  profileImgUrl: string;
-}
-export interface ProfileModalModel {
-  id: number;
-  name: string;
-  nickname: string;
-  position: string;
-  status: string;
-  profileImgUrl: string;
-  isOnline: boolean;
-  isOwner: boolean;
-  email: string;
-}
+
+// Strict Type Model
+// export type FullProfileModel = ProfileModel;
+// export type ProfileModalModel = Omit<ProfileModel, 'workspaceId'>
+// export type ParticipantListModel = Pick<ProfileModel, 'id' | 'nickname' | 'isOnline' | 'profileImgUrl'>
+// export type ParticipantModalModel = Omit<ProfileModel, 'updatedAt' | 'workspaceId'>
+
+

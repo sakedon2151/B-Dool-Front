@@ -1,4 +1,3 @@
-// fullModel
 type DaysOfWeekType =
   | "SUNDAY"
   | "MONDAY"
@@ -7,7 +6,7 @@ type DaysOfWeekType =
   | "THURSDAY"
   | "FRIDAY"
   | "SATURDAY";
-interface DaysOfWeekModel {
+export interface DaysOfWeekModel {
   id: number; // daysOfWeek PK
   daysOfWeek: DaysOfWeekType;
   recurrenceId: number; // 일정반복 ID

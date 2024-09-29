@@ -2,23 +2,25 @@ import { useEffect, useState } from "react";
 import ParticipantModal from "./ParticipantModal";
 import { profileService } from "@/app/services/profile/profile.api";
 import useSSE from "@/app/hooks/useSSE";
+import { ParticipantListModel } from "@/app/models/profile.model";
 
 interface ParticipantListProps {
   workspaceId: number;
 }
 
 export default function ParticipantList({ workspaceId }: ParticipantListProps) {
-  const [profiles, setProfiles] = useState<ProfileListModel[]>([])
-  const [selectedProfile, setSelectedProfile] = useState<ProfileListModel | null>(null);
+  
+  const [participants, setParticipants] = useState<ParticipantListModel[]>([])
+  const [selectedProfile, setSelectedProfile] = useState<ParticipantListModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const onlineProfiles = profiles.filter(profile => profile.isOnline);
-  const offlineProfiles = profiles.filter(profile => !profile.isOnline);
+  const onlineProfiles = participants.filter(participant => participant.isOnline);
+  const offlineProfiles = participants.filter(participant => !participant.isOnline);
 
-  const handleProfileClick = (profile: ProfileListModel, event: React.MouseEvent) => {
+  const handleParticipantClick = (participant: ParticipantListModel, event: React.MouseEvent) => {
     const liElement = (event.target as HTMLElement).closest('li');
     if (liElement) {
       const rect = liElement.getBoundingClientRect();
@@ -36,18 +38,18 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
         });
       }
     }
-    setSelectedProfile(profile);
+    setSelectedProfile(participant);
     document.getElementById('participant-modal')?.showModal();
   };
 
   useEffect(() => {
-    fetchProfiles(workspaceId)
+    fetchParticipants(workspaceId)
   }, [workspaceId])  
 
-  const fetchProfiles = async (workspaceId: number) => {
+  const fetchParticipants = async (workspaceId: number) => {
     try {
       const response = await profileService.getProfileList(workspaceId)
-      setProfiles(response)
+      setParticipants(response)
     } catch (error) {
       console.error('error', error);
       setError('프로필 목록을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.')
@@ -56,7 +58,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
     }
   };
 
-  const handleNicknameChange = (updatedProfile: ProfileModel) => {
+  const handleNicknameChange = (updatedProfile: ParticipantListModel) => {
     setProfiles(prevProfiles => 
       prevProfiles.map(profile =>
         profile.id === updatedProfile.id
@@ -66,7 +68,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
     );
   };
 
-  const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
+  const handleOnlineStatusChange = (updatedProfile: ParticipantListModel) => {
     setProfiles(prevProfiles => 
       prevProfiles.map(profile =>
         profile.id === updatedProfile.id

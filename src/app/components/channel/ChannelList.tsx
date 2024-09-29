@@ -11,6 +11,7 @@ interface ChannelListProps {
 export default function ChannelList({ workspaceId }: ChannelListProps) {
   const setSelectedChannel = useChannelStore((state) => state.setSelectedChannel)
   const [channels, setChannels] = useState<ChannelListModel[]>([]);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

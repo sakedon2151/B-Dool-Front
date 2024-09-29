@@ -1,8 +1,7 @@
-// fullModel
 type ChannelType = "DEFAULT" | "CUSTOM" | "DM";
 export interface ChannelModel {
   channelId: string; // 채널 모델 PK (UUID)
-  workspaceId: number; // 워크스페이스 ID
+  workspacesId: number; // 워크스페이스 ID
   name: string; // 채널 이름
   isPrivate: boolean; // 채널 공개 여부
   createdAt: string; // 생성일시
@@ -11,13 +10,8 @@ export interface ChannelModel {
   profileId: string; // 채널 생성자 프로필 ID (UUID)
   channelType: ChannelType; // 채널 타입 (ENUM default, custom, dm)
 }
-export interface ChannelListModel {
-  channelId: string;
-  name: string;
-  isPrivate: boolean;
-  channelType: ChannelType;
-}
-export interface ChannelMinimumModel {
-  channelId: string;
-  name: string;
-}
+
+// Strict Type Model
+// export type ChannelStoreModel = ChannelModel;
+// export type ChannelListModel = Pick<ChannelModel, 'channelId' | 'name' | 'isPrivate' | 'channelType'> 
+

@@ -1,5 +1,4 @@
-// fullModel
-interface MailLogModel {
+export interface MailLogModel {
   id: number;
   email: string;
   subject: string;
@@ -7,3 +6,5 @@ interface MailLogModel {
   isSent: boolean;
   sentAt: string;
 }
+
+// Strict Type Model

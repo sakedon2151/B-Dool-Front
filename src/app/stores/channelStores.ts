@@ -1,17 +1,24 @@
 import { create } from "zustand";
-import { ChannelMinimumModel } from "../models/channel.model";
+import { ChannelStoreModel } from "../models/channel.model";
 
-interface MinimumChannelStore {
-  selectedChannel: ChannelMinimumModel;
-  setSelectedChannel: (channel: ChannelMinimumModel) => void;
+interface SelectedChannelStore {
+  selectedChannel: ChannelStoreModel;
+  setSelectedChannel: (channel: ChannelStoreModel) => void;
 }
 
-const DEFAULT_CHANNEL: ChannelMinimumModel = {
-  channelId: "default-channel-id",
-  name: "General"
-};
+const InitialSelectedChannelStore = {
+  channelId: '',
+  workspacesId: 1,
+  name: 'General Channel',
+  isPrivate: false,
+  createdAt: '',
+  updatedAt: '',
+  description: '전체 채널',
+  profileId: '',
+  channelType: 'DEFAULT' as const
+}
 
-export const useChannelStore = create<MinimumChannelStore>((set) => ({
-  selectedChannel: DEFAULT_CHANNEL,
+export const useChannelStore = create<SelectedChannelStore>((set) => ({
+  selectedChannel: InitialSelectedChannelStore,
   setSelectedChannel: (channel) => set({ selectedChannel: channel }),
 }));
