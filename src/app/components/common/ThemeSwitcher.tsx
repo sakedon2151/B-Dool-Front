@@ -21,7 +21,6 @@ export default function ThemeSwitcher() {
     >
       <option value="nord">Nord</option>
       <option value="dim">Dim</option>
-      {/* 다른 daisyUI 테마 옵션들을 여기에 추가할 수 있습니다 */}
     </select>
   );
 }

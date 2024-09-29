@@ -2,11 +2,11 @@ import { MessageBubbleModel } from "@/app/models/message.model";
 import React from "react";
 import { useEffect, useState } from "react";
 
-interface MessageProps {
+interface MessageBubbleProps {
   selectedMessage: MessageBubbleModel
 }
 
-export default function ChannelMessage({selectedMessage}: MessageProps) {
+export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   // const [findedProfile, setFindedProfile] = useState<ProfileModel>()
   // const currentProfileId = 1 // 추후 store 를 통해 현재 로그인 대상 프로필 id 대입
   // const isCurrentProfileMessage: boolean = assignedMessage.profileId === currentProfileId;

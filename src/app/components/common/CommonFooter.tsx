@@ -1,6 +1,6 @@
 import { FaGithub } from "react-icons/fa";
 
-export default function WebFooter() {
+export default function CommonFooter({}) {
   return (
     <footer className="p-4 mt-4 footer bg-base-200 rounded-btn">
       <nav className="flex items-center justify-between w-full">

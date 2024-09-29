@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import ChannelMessage from "./ChannelMessage";
+import ChannelMessage from "./MessageBubble";
 import { useWebSocket } from "@/app/hooks/useWebSocket";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { debounce } from 'lodash';  // lodash의 debounce 함수를 사용합니다. 필요시 설치해주세요.
 
-export default function ChannelMessageList() {
+export default function MessageList() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel);
   const { messages, loadMoreMessages, hasMore } = useWebSocket(selectedChannel.channelId);
   const messageAreaRef = useRef<HTMLDivElement>(null);

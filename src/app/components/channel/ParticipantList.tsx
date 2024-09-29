@@ -3,11 +3,11 @@ import ParticipantModal from "./ParticipantModal";
 import { profileService } from "@/app/services/profile/profile.api";
 import useSSE from "@/app/hooks/useSSE";
 
-interface ChannelParticipantListProps {
+interface ParticipantListProps {
   workspaceId: number;
 }
 
-export default function ChannelParticipantList({ workspaceId }: ChannelParticipantListProps) {
+export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   const [profiles, setProfiles] = useState<ProfileListModel[]>([])
   const [selectedProfile, setSelectedProfile] = useState<ProfileListModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });

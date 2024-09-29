@@ -4,11 +4,11 @@ import { useChannelStore } from "@/app/stores/channelStores";
 import { useEffect, useState } from "react";
 import { HiHashtag, HiOutlineStar, HiOutlineUser } from "react-icons/hi2";
 
-interface ChannelListNavProps {
+interface ChannelListProps {
   workspaceId: number;
 }
 
-export default function ChannelList({ workspaceId }: ChannelListNavProps) {
+export default function ChannelList({ workspaceId }: ChannelListProps) {
   const setSelectedChannel = useChannelStore((state) => state.setSelectedChannel)
   const [channels, setChannels] = useState<ChannelListModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);

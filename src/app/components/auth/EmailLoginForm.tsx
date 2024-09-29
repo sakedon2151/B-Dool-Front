@@ -1,10 +1,9 @@
 import { BiMailSend } from "react-icons/bi";
 import VerificationCodeForm from "./VerificationCodeForm";
 import { useState } from "react";
-import axios from "axios";
 import { authService } from "@/app/services/member/member.api";
 
-export default function LoginForm() {
+export default function EmailLoginForm() {
   const [email, setEmail] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);

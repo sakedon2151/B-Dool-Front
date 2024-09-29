@@ -1,26 +1,24 @@
 "use client"
 import LoginForm from "@/app/components/auth/EmailLoginForm";
-import WebFooter from "@/app/components/common/WebFooter";
-import WebHeader from "@/app/components/common/WebHeader";
+import CommonFooter from "@/app/components/common/CommonFooter";
+import CommonHeader from "@/app/components/common/CommonHeader";
 import { useRouter } from "next/navigation";
 
 export default function auth() {
   const router = useRouter()
 
   return (
-    <div className="p-4 h-dvh flex flex-col">
-      <WebHeader />
-      
+    <div className="flex flex-col p-4 h-dvh">
+      <CommonHeader />
       <main className="flex-grow">
-        <div className="bg-base-200 rounded-btn p-4 h-full flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center h-full p-4 bg-base-200 rounded-btn">
           
-          <LoginForm/>
-          <button onClick={() => router.push(`/workspace/${1}`)} className="btn btn-warning mt-4">bypass</button>
-
+          <LoginForm />
+          <button onClick={() => router.push("/workspace")} className="mt-4 btn btn-warning">bypass</button>
+        
         </div>
       </main>
-      
-      <WebFooter />
+      <CommonFooter />
     </div>
   );
 }
