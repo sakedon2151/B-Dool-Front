@@ -5,7 +5,9 @@ class SSEService {
   private eventCallbacks: { [key: string]: SSEEventCallback[] } = {};
 
   connect(url: string) {
-    this.disconnect(); // 기존 연결이 있다면 먼저 끊습니다.
+    
+    // 기존 연결이 있다면 먼저 해제
+    this.disconnect();
     this.eventSource = new EventSource(url);
 
     this.eventSource.onopen = () => {
@@ -50,7 +52,7 @@ class SSEService {
     }
     this.eventCallbacks[eventName].push(callback);
 
-    // 이미 연결된 상태라면 새 이벤트 리스너를 추가합니다.
+    // 이미 연결된 상태라면 새 이벤트 리스너를 추가
     if (this.eventSource) {
       this.eventSource.addEventListener(eventName, this.handleEvent(eventName));
     }

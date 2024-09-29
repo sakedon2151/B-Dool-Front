@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import SockJS from "sockjs-client";
 import { Client, Message } from "@stomp/stompjs";
 import { messageService } from "../services/message/message.api";
-import { MessageBubbleModel } from "../models/message.model";
+import { MessageModel } from "../models/message.model";
 
 interface WebSocketHook {
-  messages: MessageBubbleModel[];
+  messages: MessageModel[];
   sendMessage: (content: string) => void;
   loadMoreMessages: () => Promise<void>;
   hasMore: boolean;
@@ -13,7 +13,7 @@ interface WebSocketHook {
 
 export const useWebSocket = (channelId: string): WebSocketHook => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
-  const [messages, setMessages] = useState<MessageBubbleModel[]>([]);
+  const [messages, setMessages] = useState<MessageModel[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
@@ -26,9 +26,9 @@ export const useWebSocket = (channelId: string): WebSocketHook => {
   
   // 초기 메시지 요청 함수
   const loadInitialMessages = useCallback((channelId: string) => {
-    messageService.getMessageList(channelId, 0, 10)
+    messageService.getMessageAllByChannelId(channelId, 0, 10)
     .then((response) => {
-      const newMessages: MessageBubbleModel[] = response.data;
+      const newMessages: MessageModel[] = response.data;
       setMessages(newMessages.reverse());
       setCurrentPage(1);
       setHasMore(newMessages.length === 10);
@@ -48,7 +48,7 @@ export const useWebSocket = (channelId: string): WebSocketHook => {
       onConnect: () => {
         console.log("WebSocket에 연결되었습니다.");
         client.subscribe(`/topic/channel/${channelId}`, (message: Message) => {
-          const newMessage: MessageBubbleModel = JSON.parse(message.body);
+          const newMessage: MessageModel = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
         loadInitialMessages(channelId);
@@ -95,9 +95,9 @@ export const useWebSocket = (channelId: string): WebSocketHook => {
   // 메시지 추가 요청 함수
   const loadMoreMessages = useCallback((): Promise<void> => {
     if (!channelId || !hasMore) return Promise.resolve();
-    return messageService.getMessageList(channelId, currentPage, 10)
+    return messageService.getMessageAllByChannelId(channelId, currentPage, 10)
       .then((response) => {
-        const newMessages: MessageBubbleModel[] = response.data;
+        const newMessages: MessageModel[] = response.data;
         if (newMessages.length > 0) {
           setMessages((prevMessages) => {
             const uniqueNewMessages = newMessages.filter(

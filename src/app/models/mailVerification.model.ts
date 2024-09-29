@@ -1,3 +1,5 @@
+import { MemberModel } from "./member.model";
+
 export interface MailVerification {
   id: number;
   email: string;
