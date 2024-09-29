@@ -1,4 +1,4 @@
-import { useWebSocket } from "@/app/hooks/useWebSocket";
+import { useWebSocket } from "@/app/hooks/useWebsocket";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { useCallback, useRef, useState, useEffect } from "react";
 import { FaFileArrowUp } from "react-icons/fa6";

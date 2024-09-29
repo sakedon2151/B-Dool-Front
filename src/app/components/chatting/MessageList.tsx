@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChannelMessage from "./MessageBubble";
-import { useWebSocket } from "@/app/hooks/useWebSocket";
+import { useWebSocket } from "@/app/hooks/useWebsocket";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { debounce } from 'lodash';  // lodash의 debounce 함수를 사용합니다. 필요시 설치해주세요.
 
