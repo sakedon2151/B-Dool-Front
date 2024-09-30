@@ -119,6 +119,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
         ))}
       </ul>
 
+      {/* modal dialog */}
       <dialog id="participant-modal" className="modal modal-bottom lg:modal-middle">
         <div className="modal-box lg:fixed lg:right-64 lg:p-4" style={{
           top: modalPosition.top,

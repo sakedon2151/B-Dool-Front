@@ -3,7 +3,7 @@ import { LuCalendarCheck2 } from "react-icons/lu";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineVideoCamera, HiOutlineBell } from "react-icons/hi";
 import { useChannelStore } from "@/app/stores/channelStores";
-import CalenderModal from "../calender/CalenderModal";
+import CalendarModal from "../calendar/CalendarModal";
 
 export default function WorkspaceHeader() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel)
@@ -30,7 +30,7 @@ export default function WorkspaceHeader() {
           <div className="hidden lg:block">
             
             <div className="lg:tooltip lg:tooltip-bottom" data-tip="캘린더">
-              <button className="btn btn-ghost btn-circle" onClick={() => document.getElementById('calender_modal')?.showModal()} >
+              <button className="btn btn-ghost btn-circle" onClick={() => document.getElementById('calendar-modal')?.showModal()} >
                 <LuCalendarCheck2 className="w-5 h-5"/>
               </button>
             </div>
@@ -98,13 +98,13 @@ export default function WorkspaceHeader() {
       </div>
 
       {/* modal dialog */}
-      <dialog id="calender_modal" className="modal">
+      <dialog id="calendar-modal" className="modal">
         <div className="modal-box">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
           </form>
         
-          <CalenderModal/>
+          <CalendarModal/>
         
         </div>
       </dialog>

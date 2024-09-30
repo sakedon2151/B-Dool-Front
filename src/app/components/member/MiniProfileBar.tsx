@@ -22,6 +22,7 @@ export default function MiniProfileBar() {
         </button>
       </div>
 
+      {/* modal dialog */}
       <dialog id="profile-modal" className="modal modal-bottom lg:modal-middle">
         <div className="modal-box lg:fixed lg:bottom-4 lg:left-4">
           <form method="dialog">

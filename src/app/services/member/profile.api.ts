@@ -50,6 +50,12 @@ export const profileService = {
     return response.data;
   },
 
+  // GET - /api/profiles/member/{memberId}
+  getProfilesByMemberId: async (memberId: number): Promise<ProfileModel[]> => {
+    const response = await serverAAxios.get<ProfileModel[]>(`/profiles/member/${memberId}`);
+    return response.data;
+  },
+
   // GET /api/profiles/exists/{profileId}
   checkProfileExists: async (profileId: number): Promise<boolean> => {
     const response = await serverAAxios.get<boolean>(`/profiles/exists/${profileId}`);

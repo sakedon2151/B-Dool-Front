@@ -1,14 +1,19 @@
 import React, { useState } from 'react'
-import Calendar from 'react-calendar'
+import Calendar from 'react-calendar';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-export default function CalenderModal() {
+export default function CalendarModal() {
   const [value, onChange] = useState<Value>(new Date());
+  
   return (
     <div>
-      <Calendar onChange={onChange} value={value} />
+      <Calendar 
+        locale='ko'
+        onChange={() => onChange}
+        value={value}
+      />
     </div>
   )
 }

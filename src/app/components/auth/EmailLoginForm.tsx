@@ -36,15 +36,15 @@ export default function EmailLoginForm() {
   const handleVerificationSuccess = (member: MemberModel) => {
     console.log('Verification successful:', member);
     localStorage.setItem('jwtToken', (member as any).token);
-    // 동일한 member Id 속성을 가진 워크스페이스 리스트 컴포넌트 출력
+    
   };
 
   return (
-    <div className="bg-base-300 rounded-btn p-4 lg:w-[640px]">      
+    <div className="bg-base-300 rounded-btn p-4 lg:w-[768px] container">      
       <h2 className="text-lg font-bold text-center">이메일로 시작하기</h2>
       <div className="mt-2 divider"></div>
       {error && <div className="mb-4 alert alert-error">{error}</div>}
-      <form className="text-center">
+      <form className="text-center" onSubmit={handleSubmit}>
         <label className="flex items-center gap-2 mb-4 input input-bordered">
           <BiMailSend className="w-6 h-6 opacity-70"/>
           <input

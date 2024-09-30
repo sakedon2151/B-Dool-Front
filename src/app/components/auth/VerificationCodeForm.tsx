@@ -9,12 +9,10 @@ interface VerificationCodeFormProps {
 }
 
 export default function VerificationCodeForm({ email, onSuccess }: VerificationCodeFormProps) {
-  
   const CODE_LENGTH = 6
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -44,7 +42,6 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
     console.log('Verifying code:', fullCode);
     setLoading(true);
     setError('');
-
     try {
       const response = await authService.verifyCode({email, code: fullCode});
       if (response.member) {
@@ -78,11 +75,9 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
             className="w-full p-0 text-lg font-bold text-center input input-bordered" 
             placeholder="-"
             value={digit}
-
             onChange={e => handleChange(index, e.target.value)}
             onKeyDown={e => handleKeyDown(index, e)}
             maxLength={1}
-
             disabled={loading}
           />  
         ))}
