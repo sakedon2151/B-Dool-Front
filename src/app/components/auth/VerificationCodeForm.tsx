@@ -1,5 +1,6 @@
 "use client";
-import { authService } from "@/app/services/member/member.api";
+import { MemberModel } from "@/app/models/member.model";
+import { authService } from "@/app/services/auth/auth.api";
 import { useEffect, useRef, useState } from "react";
 
 interface VerificationCodeFormProps {

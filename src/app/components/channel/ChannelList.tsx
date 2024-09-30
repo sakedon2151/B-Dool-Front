@@ -1,4 +1,4 @@
-import { ChannelListModel } from "@/app/models/channel.model";
+import { ChannelModel } from "@/app/models/channel.model";
 import { channelService } from "@/app/services/channel/channel.api";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ interface ChannelListProps {
 
 export default function ChannelList({ workspaceId }: ChannelListProps) {
   const setSelectedChannel = useChannelStore((state) => state.setSelectedChannel)
-  const [channels, setChannels] = useState<ChannelListModel[]>([]);
+  const [channels, setChannels] = useState<ChannelModel[]>([]);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await channelService.getChannelList(workspaceId);
+      const response = await channelService.getChannelsByWorkspaceId(workspaceId);
       setChannels(response);
     } catch (error) {
       console.error('Failed to fetch channels:', error);
@@ -34,7 +34,7 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
       setIsLoading(false)
     }
   };
-
+  
   return (
     <ul className="menu">
       <li>
@@ -56,7 +56,6 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
                     </button>
                   </a>
                 </li>  
-
             </ul>
           ) : (
             <ul>

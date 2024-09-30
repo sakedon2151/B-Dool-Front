@@ -11,6 +11,18 @@ export interface ChannelModel {
   channelType: ChannelType; // 채널 타입 (ENUM default, custom, dm)
 }
 
+export const InitialChannel: ChannelModel = { // 추후 워크스페이스 입장시 파라미터 넣어서 초기 general channel 넣기 
+  channelId: "",
+  workspacesId: 0,
+  name: "General Channel",
+  isPrivate: false,
+  createdAt: "",
+  updatedAt: "",
+  description: "",
+  profileId: "",
+  channelType: "DEFAULT"
+};
+
 // Strict Type Model
 // export type ChannelStoreModel = ChannelModel;
 // export type ChannelListModel = Pick<ChannelModel, 'channelId' | 'name' | 'isPrivate' | 'channelType'> 

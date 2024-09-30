@@ -1,7 +1,8 @@
-import { BiMailSend } from "react-icons/bi";
-import VerificationCodeForm from "./VerificationCodeForm";
 import { useState } from "react";
-import { authService } from "@/app/services/member/member.api";
+import { MemberModel } from "@/app/models/member.model";
+import { authService } from "@/app/services/auth/auth.api";
+import VerificationCodeForm from "./VerificationCodeForm";
+import { BiMailSend } from "react-icons/bi";
 
 export default function EmailLoginForm() {
   const [email, setEmail] = useState<string>('');
@@ -15,7 +16,6 @@ export default function EmailLoginForm() {
     setError('');
     try {
       const token = localStorage.getItem('jwtToken');
-      
       const response = await authService.login({email});
       if (response.member) {
         console.log('Login successful:', response.member);
@@ -57,10 +57,7 @@ export default function EmailLoginForm() {
         </label>
 
         {showVerification ? (
-            <VerificationCodeForm
-              email={email}
-              onSuccess={handleVerificationSuccess}
-            />
+            <VerificationCodeForm email={email} onSuccess={handleVerificationSuccess} />
         ) : (
           <button className="btn" type="submit" disabled={loading}>
             {loading ? '처리 중...' : '로그인'}

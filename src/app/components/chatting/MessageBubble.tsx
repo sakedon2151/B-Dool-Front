@@ -1,9 +1,9 @@
-import { MessageBubbleModel } from "@/app/models/message.model";
+import { MessageModel } from "@/app/models/message.model";
 import React from "react";
 import { useEffect, useState } from "react";
 
 interface MessageBubbleProps {
-  selectedMessage: MessageBubbleModel
+  selectedMessage: MessageModel
 }
 
 export default function MessageBubble({selectedMessage}: MessageBubbleProps) {

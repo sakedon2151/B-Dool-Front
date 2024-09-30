@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChannelMessage from "./MessageBubble";
-import { useWebSocket } from "@/app/hooks/useWebsocket";
+import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { useChannelStore } from "@/app/stores/channelStores";
-import { debounce } from 'lodash';  // lodash의 debounce 함수를 사용합니다. 필요시 설치해주세요.
+import { debounce } from 'lodash';
 
 export default function MessageList() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel);
-  const { messages, loadMoreMessages, hasMore } = useWebSocket(selectedChannel.channelId);
+  const { messages, loadMoreMessages, hasMore } = useWebsocket(selectedChannel.channelId);
   const messageAreaRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
+  
   const prevMessagesLengthRef = useRef(0);
   const isInitialLoadRef = useRef(true);
   const isNearBottomRef = useRef(true);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const scrollToBottom = useCallback(() => {
     if (lastMessageRef.current) {
@@ -48,6 +51,7 @@ export default function MessageList() {
     prevMessagesLengthRef.current = messages.length;
   }, [messages, scrollToBottom]);
 
+  // 메시지 추가 호출
   const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       setIsLoading(true);
@@ -63,6 +67,7 @@ export default function MessageList() {
         })
         .catch((error) => {
           console.error("Failed to load more messages:", error);
+          setError(error);
         })
         .finally(() => {
           setIsLoading(false);
@@ -97,10 +102,13 @@ export default function MessageList() {
   return (
     <div className="h-full p-4 overflow-y-auto" ref={messageAreaRef}>
       {isLoading && (
-        <div className="text-center">Loading more messages...</div>
+        <div className="text-center">메시지 불러오는 중...</div>
+      )}
+      {error && (
+        <div className="text-center text-red-500">{error}</div>
       )}
       {messages.map((message, index) => {
-        const messageDate = message.sendDate;
+        const messageDate = new Date(message.sendDate).toLocaleDateString();
         let divider = null;
         if (messageDate !== currentDate) {
           currentDate = messageDate;
@@ -111,10 +119,7 @@ export default function MessageList() {
           );
         }
         return (
-          <div 
-            key={message.messageId} 
-            ref={index === messages.length - 1 ? lastMessageRef : null}
-          >
+          <div key={message.messageId} ref={index === messages.length - 1 ? lastMessageRef : null}>
             {divider}
             <ChannelMessage selectedMessage={message} />
           </div>

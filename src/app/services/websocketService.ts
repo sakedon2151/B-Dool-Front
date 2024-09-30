@@ -14,8 +14,9 @@ export class WebSocketService {
     this.client.deactivate();
   }
   subscribe(destination: string, callback: (message: any) => void) {
-    return this.client.subscribe(destination, callback);
+    return this.client.subscribe(destination, callback); // 에러 발생중
   }
+  
   send(destination: string, body: string) {
     this.client.publish({ destination, body });
   }

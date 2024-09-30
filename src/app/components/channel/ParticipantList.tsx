@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import ParticipantModal from "./ParticipantModal";
-import { profileService } from "@/app/services/profile/profile.api";
 import useSSE from "@/app/hooks/useSSE";
-import { ParticipantListModel } from "@/app/models/profile.model";
+import { ProfileModel } from "@/app/models/profile.model";
+import { profileService } from "@/app/services/member/profile.api";
 
 interface ParticipantListProps {
   workspaceId: number;
@@ -10,17 +10,17 @@ interface ParticipantListProps {
 
 export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   
-  const [participants, setParticipants] = useState<ParticipantListModel[]>([])
-  const [selectedProfile, setSelectedProfile] = useState<ParticipantListModel | null>(null);
+  const [profiles, setProfiles] = useState<ProfileModel[]>([])
+  const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const onlineProfiles = participants.filter(participant => participant.isOnline);
-  const offlineProfiles = participants.filter(participant => !participant.isOnline);
+  const onlineProfiles = profiles.filter(profiles => profiles.isOnline);
+  const offlineProfiles = profiles.filter(profiles => !profiles.isOnline);
 
-  const handleParticipantClick = (participant: ParticipantListModel, event: React.MouseEvent) => {
+  const handleProfileClick = (profile: ProfileModel, event: React.MouseEvent) => {
     const liElement = (event.target as HTMLElement).closest('li');
     if (liElement) {
       const rect = liElement.getBoundingClientRect();
@@ -38,18 +38,18 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
         });
       }
     }
-    setSelectedProfile(participant);
+    setSelectedProfile(profile);
     document.getElementById('participant-modal')?.showModal();
   };
 
   useEffect(() => {
-    fetchParticipants(workspaceId)
+    fetchProfiles(workspaceId)
   }, [workspaceId])  
 
-  const fetchParticipants = async (workspaceId: number) => {
+  const fetchProfiles = async (workspaceId: number) => {
     try {
-      const response = await profileService.getProfileList(workspaceId)
-      setParticipants(response)
+      const response = await profileService.getProfilesByWorkspaceId(workspaceId)
+      setProfiles(response)
     } catch (error) {
       console.error('error', error);
       setError('프로필 목록을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.')
@@ -58,7 +58,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
     }
   };
 
-  const handleNicknameChange = (updatedProfile: ParticipantListModel) => {
+  const handleNicknameChange = (updatedProfile: ProfileModel) => {
     setProfiles(prevProfiles => 
       prevProfiles.map(profile =>
         profile.id === updatedProfile.id
@@ -68,7 +68,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
     );
   };
 
-  const handleOnlineStatusChange = (updatedProfile: ParticipantListModel) => {
+  const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
     setProfiles(prevProfiles => 
       prevProfiles.map(profile =>
         profile.id === updatedProfile.id

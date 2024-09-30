@@ -1,22 +1,12 @@
 import { create } from "zustand";
-import { ChannelStoreModel } from "../models/channel.model";
+import { ChannelModel, InitialChannel } from "../models/channel.model";
 
 interface SelectedChannelStore {
-  selectedChannel: ChannelStoreModel;
-  setSelectedChannel: (channel: ChannelStoreModel) => void;
+  selectedChannel: ChannelModel;
+  setSelectedChannel: (channel: ChannelModel) => void;
 }
 
-const InitialSelectedChannelStore = {
-  channelId: '',
-  workspacesId: 1,
-  name: 'General Channel',
-  isPrivate: false,
-  createdAt: '',
-  updatedAt: '',
-  description: '전체 채널',
-  profileId: '',
-  channelType: 'DEFAULT' as const
-}
+const InitialSelectedChannelStore = InitialChannel;
 
 export const useChannelStore = create<SelectedChannelStore>((set) => ({
   selectedChannel: InitialSelectedChannelStore,

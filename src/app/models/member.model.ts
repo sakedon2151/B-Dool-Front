@@ -4,5 +4,11 @@ export interface MemberModel {
   createdAt: string;
 }
 
+export const InitialMember: MemberModel = {
+  id: 0,
+  email: '',
+  createdAt: ''
+}
+
 // Strict Type Model
 // export type FullMemberModel = MemberModel;

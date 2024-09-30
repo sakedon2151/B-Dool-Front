@@ -1,4 +1,5 @@
-import { profileService } from "@/app/services/profile/profile.api";
+import { ProfileModel } from "@/app/models/profile.model";
+import { profileService } from "@/app/services/member/profile.api";
 import { useEffect, useState } from "react";
 
 interface ParticipantModalProps {
@@ -6,7 +7,7 @@ interface ParticipantModalProps {
 }
 
 export default function ParticipantModal({ profileId }: ParticipantModalProps) {
-  const [selectedProfile, setSelectedProfile] = useState<ProfileModalModel | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
   const getOnlineStatus = (isOnline: boolean) => isOnline ? 'online' : 'offline';
 
   useEffect(() => {
@@ -15,7 +16,7 @@ export default function ParticipantModal({ profileId }: ParticipantModalProps) {
 
   const fetchProfile = async (profileId: number) => {
     try {
-      const response = await profileService.getProfileModal(profileId);
+      const response = await profileService.getProfileById(profileId);
       setSelectedProfile(response);
     } catch (error) {
       console.error('Failed to fetch profile:', error)

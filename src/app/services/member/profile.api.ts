@@ -4,7 +4,7 @@ import { serverAAxios } from "../axiosInstance";
 export const profileService = {
   
   // GET /api/profiles/{profileId}
-  getProfileById: async (profileId: string): Promise<ProfileModel> => {
+  getProfileById: async (profileId: number): Promise<ProfileModel> => {
     const response = await serverAAxios.get<ProfileModel>(`/profiles/${profileId}`);
     return response.data;
   },
@@ -16,7 +16,7 @@ export const profileService = {
   },
 
   // DELETE /api/profiles/{profileId}
-  deleteProfile: async (profileId: string): Promise<void> => {
+  deleteProfile: async (profileId: number): Promise<void> => {
     await serverAAxios.delete(`/profiles/${profileId}`);
   },
 
@@ -33,13 +33,13 @@ export const profileService = {
   },
 
   // PATCH /api/profiles/{profileId}/status
-  updateProfileStatus: async (profileId: string, status: string): Promise<ProfileModel> => {
+  updateProfileStatus: async (profileId: number, status: string): Promise<ProfileModel> => {
     const response = await serverAAxios.patch<ProfileModel>(`/profiles/${profileId}/status`, { status });
     return response.data;
   },
 
   // PATCH /api/profiles/{profileId}/online
-  updateProfileOnlineStatus: async (profileId: string, isOnline: boolean): Promise<ProfileModel> => {
+  updateProfileOnlineStatus: async (profileId: number, isOnline: boolean): Promise<ProfileModel> => {
     const response = await serverAAxios.patch<ProfileModel>(`/profiles/${profileId}/online`, { isOnline });
     return response.data;
   },
@@ -51,7 +51,7 @@ export const profileService = {
   },
 
   // GET /api/profiles/exists/{profileId}
-  checkProfileExists: async (profileId: string): Promise<boolean> => {
+  checkProfileExists: async (profileId: number): Promise<boolean> => {
     const response = await serverAAxios.get<boolean>(`/profiles/exists/${profileId}`);
     return response.data;
   },

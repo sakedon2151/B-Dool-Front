@@ -1,4 +1,4 @@
-import { useWebSocket } from "@/app/hooks/useWebsocket";
+import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { useCallback, useRef, useState, useEffect } from "react";
 import { FaFileArrowUp } from "react-icons/fa6";
@@ -6,7 +6,7 @@ import { IoMdSend } from "react-icons/io";
 
 export default function MessageInput() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel)
-  const { sendMessage } = useWebSocket(selectedChannel.channelId);
+  const { sendMessage } = useWebsocket(selectedChannel.channelId);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState('')
   const MAX_MESSAGE_LENGTH = 100;
@@ -39,7 +39,7 @@ export default function MessageInput() {
   const handleSubmit = useCallback(() => {
     if (message.trim() === '') { return; }
     const processedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();
-    sendMessage(processedMessage);
+    sendMessage(processedMessage); // 추후에 프로필 아이디도 매개로 보내줘야 함
     setMessage('');
     console.log("submit string:", processedMessage);
     if (textarea.current) {
@@ -68,7 +68,7 @@ export default function MessageInput() {
           {message.length}/{MAX_MESSAGE_LENGTH}
         </div>
       </div>
-      <div className="tooltip tooltip-top" data-tip="파일 올리기">
+      <div className="tooltip tooltip-top" data-tip="파일 업로드">
         <button type="button" className="m-auto btn">
           <FaFileArrowUp className="w-5 h-5"/>
         </button>

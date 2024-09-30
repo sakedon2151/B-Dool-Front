@@ -14,6 +14,23 @@ export interface ProfileModel {
   memberId: number; // 멤버 ID
 }
 
+export const InitialProfile: ProfileModel = {
+  id: 0,
+  name: "",
+  nickname: "",
+  position: "",
+  status: "",
+  profileImgUrl: "",
+  isOnline: false,
+  isOwner: false,
+  createdAt: "",
+  updatedAt: "",
+  email: "",
+  workspaceId: 0,
+  memberId: 0
+};
+
+
 // Strict Type Model
 // export type FullProfileModel = ProfileModel;
 // export type ProfileModalModel = Omit<ProfileModel, 'workspaceId'>
