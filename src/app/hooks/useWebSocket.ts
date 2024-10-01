@@ -1,68 +1,3 @@
-// import { useState, useEffect, useCallback, useRef } from 'react';
-// import { MessageModel } from '../models/message.model';
-// import { messageService } from '../services/message/message.api';
-
-// export const useWebsocket = (channelId: string) => {
-//   const [messages, setMessages] = useState<MessageModel[]>([]);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-//   const [hasMore, setHasMore] = useState(true);
-//   const msInstanceRef = useRef<messageService | null>(null);
-
-//   useEffect(() => {
-//     msInstanceRef.current = new messageService('http://211.188.50.29:8080/ws/chat');
-//     const msInstance = msInstanceRef.current;
-//     msInstance.connect();
-//     msInstance.subscribeToChannel(channelId, (newMessage) => {
-//       setMessages(prev => [...prev, newMessage]);
-//     });
-//     loadInitialMessages();
-//     return () => {
-//       if (msInstance) {
-//         msInstance.disconnect();
-//       }
-//     };
-//   }, [channelId]);
-
-//   const loadInitialMessages = async () => {
-//     if (!msInstanceRef.current) return;
-//     setIsLoading(true);
-//     try {
-//       const response = await msInstanceRef.current.getMessagesByChannelId(channelId, 0, 20);
-//       const initialMessages = response.data;
-//       setMessages(initialMessages.reverse());
-//       setHasMore(initialMessages.length === 20);
-//     } catch (err) {
-//       setError('Failed to load initial messages');
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const sendMessage = useCallback((content: string, profileId: string) => {
-//     if (msInstanceRef.current) {
-//       msInstanceRef.current.sendMessage(channelId, content, profileId);
-//     }
-//   }, [channelId]);
-
-//   const loadMoreMessages = useCallback(async () => {
-//     if (isLoading || !hasMore || !msInstanceRef.current) return;
-//     setIsLoading(true);
-//     try {
-//       const response = await msInstanceRef.current.getMessagesByChannelId(channelId, messages.length, 20);
-//       const olderMessages = response.data;
-//       setMessages(prev => [...olderMessages.reverse(), ...prev]);
-//       setHasMore(olderMessages.length === 20);
-//     } catch (err) {
-//       setError('Failed to load more messages');
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   }, [channelId, messages.length, isLoading, hasMore]);
-
-//   return { messages, sendMessage, loadMoreMessages, isLoading, error, hasMore };
-// };
-
 import { useState, useEffect, useCallback } from "react";
 import SockJS from "sockjs-client";
 import { Client, Message } from "@stomp/stompjs";
@@ -107,7 +42,7 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
   useEffect(() => {
     if (!channelId) return;
     resetState();
-    const socket = new SockJS("http://211.188.50.29:8080/ws/chat");
+    const socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_B_WEBSOCKET_URL as string);
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {

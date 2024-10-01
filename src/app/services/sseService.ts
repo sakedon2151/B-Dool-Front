@@ -5,8 +5,6 @@ class SSEService {
   private eventCallbacks: { [key: string]: SSEEventCallback[] } = {};
 
   connect(url: string) {
-    
-    // 기존 연결이 있다면 먼저 해제
     this.disconnect();
     this.eventSource = new EventSource(url);
 

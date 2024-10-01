@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "@stomp/stompjs": "^7.0.0",
+    "@tanstack/react-query": "^5.56.2",
     "@types/react-calendar": "^4.1.0",
     "@types/sockjs-client": "^1.5.4",
     "axios": "^1.7.7",
+    "date-fns": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "next": "14.2.8",
     "next-themes": "^0.3.0",
+    "nookies": "^2.5.2",
     "react": "^18",
     "react-calendar": "^5.0.0",
     "react-dom": "^18",
@@ -24,6 +28,7 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/lodash": "^4.17.9",
     "@types/node": "^20",
     "@types/react": "^18",

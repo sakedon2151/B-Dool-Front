@@ -1,10 +1,8 @@
 import { ChangeEvent, useRef, useState } from "react";
 
 export default function ProfileModal() {
-  
   // 프롭스로 들어온 profileImgUrl 대입할것
   const [profileImage, setProfileImage] = useState<string>("https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp")
-  
   const fileInput = useRef<HTMLInputElement>(null)
   
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {

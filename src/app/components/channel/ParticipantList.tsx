@@ -79,7 +79,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   };
 
   // SSE Custom Hook
-  const sseUrl = 'http://211.188.50.55:8080/api/sse/subscribe'
+  const sseUrl = process.env.NEXT_PUBLIC_SERVER_A_SSE_URL as string
   useSSE(sseUrl, {
     'nickname-change': handleNicknameChange,
     'online-status-change': handleOnlineStatusChange
