@@ -1,4 +1,6 @@
 import { MessageModel } from "@/app/models/message.model";
+import { toMessageTime } from "@/app/utils/formatDateTime";
+
 import React from "react";
 import { useEffect, useState } from "react";
 
@@ -41,7 +43,7 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
       <div className="chat-header">
         {/* {findedProfile.nickname} */}
         name
-        <time className="pl-1 text-xs opacity-50">{selectedMessage.sendDate}</time>
+        <time className="pl-1 text-xs opacity-50">{toMessageTime(selectedMessage.sendDate)}</time>
       </div>
       
       <div className="chat-bubble">

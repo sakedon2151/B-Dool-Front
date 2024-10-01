@@ -9,6 +9,7 @@
         "sockjs",
         "stompjs",
         "tailwindcss",
+        "tanstack",
         "verifiy",
         "zustand"
     ]

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { getToken } from '../utils/JsonWebToken';
+import { getToken } from '../utils/tokenController';
 
 // 기본 axios 인스턴스 생성 함수
 const createAxiosInstance = (baseURL: string): AxiosInstance => {
@@ -9,7 +9,7 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
-    withCredentials: true, // 쿠키를 포함한 요청을 보내도록 설정
+    // withCredentials: true, // 쿠키를 포함한 요청을 보내도록 설정
   });
 
   // 요청 인터셉터
@@ -47,3 +47,4 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
 export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_API_URL as string);
 export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_B_API_URL as string);
 export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_API_URL as string);
+export const serverTokenAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_TOKEN_URL as string)

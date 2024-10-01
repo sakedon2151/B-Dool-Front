@@ -6,9 +6,11 @@ export interface MessageModel {
   isEdited: boolean; // 수정 여부
   isDeleted: boolean; // 삭제 여부
   parentMessageId: string; // 이 자리에 uuid 값이 존재할 경우 그 메시지에 대한 답장이 됨
-  participantId: string; // uuid 작성자 프로필 uuid
-  nickName: string; // 작성자 닉네임
-  fileId: string; // uuid
+  profileId: number; // uuid 작성자 프로필 uuid
+  fileUrl: string;
+  
+  // nickName: string; // 작성자 닉네임
+  // fileId: string; // uuid
 }
 
 // Strict Type Model

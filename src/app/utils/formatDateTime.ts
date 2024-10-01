@@ -1,8 +1,15 @@
 import { format, parseISO, isToday, isYesterday, isThisYear } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 
-export const toMessageTime = (dateTimeString: string): string => {
+// 한국 시간대로 변환하는 함수
+const toKoreanTime = (dateTimeString: string): Date => {
   const date = parseISO(dateTimeString);
+  return toZonedTime(date, "Asia/Seoul");
+};
+
+export const toMessageTime = (dateTimeString: string): string => {
+  const date = toKoreanTime(dateTimeString);
 
   if (isToday(date)) {
     return format(date, "a h:mm", { locale: ko });
@@ -12,7 +19,7 @@ export const toMessageTime = (dateTimeString: string): string => {
 };
 
 export const toDayDividerTime = (dateTimeString: string): string => {
-  const date = parseISO(dateTimeString);
+  const date = toKoreanTime(dateTimeString);
 
   if (isToday(date)) {
     return "오늘";
@@ -23,4 +30,13 @@ export const toDayDividerTime = (dateTimeString: string): string => {
   } else {
     return format(date, "yyyy년 M월 d일", { locale: ko });
   }
+};
+
+// 범용적인 한국 시간 포맷팅 함수
+export const formatKoreanTime = (
+  dateTimeString: string,
+  formatString: string = "yyyy년 MM월 dd일 HH:mm:ss"
+): string => {
+  const date = toKoreanTime(dateTimeString);
+  return format(date, formatString, { locale: ko });
 };

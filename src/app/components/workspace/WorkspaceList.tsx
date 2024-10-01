@@ -12,7 +12,7 @@ export default function WorkspaceList() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const memberId = 5 // 임시. store 로 담은 member 객체 불러오기
+  const memberId = 1 // 임시. store 로 담은 member 객체 불러오기
 
   useEffect(() => {
     if (memberId) {

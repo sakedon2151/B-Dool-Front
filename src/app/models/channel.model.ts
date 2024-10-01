@@ -7,7 +7,7 @@ export interface ChannelModel {
   createdAt: string; // 생성일시
   updatedAt: string; // 수정일시
   description: string; // 채널설명
-  profileId: string; // 채널 생성자 프로필 ID (UUID)
+  profileId: number; // 채널 생성자 프로필 ID
   channelType: ChannelType; // 채널 타입 (ENUM default, custom, dm)
 }
 
@@ -19,7 +19,7 @@ export const InitialChannel: ChannelModel = { // 추후 워크스페이스 입�
   createdAt: "",
   updatedAt: "",
   description: "",
-  profileId: "",
+  profileId: 0,
   channelType: "DEFAULT"
 };
 

@@ -1,3 +1,5 @@
+type EntityType = 'MESSAGE' | 'PROFILE' | 'CHANNEL' | 'WORKSPACE';
+
 export interface FileModel {
   fileId: string; // 파일 uuid pk
   fName: string; // 파일 이름
@@ -8,6 +10,7 @@ export interface FileModel {
   profileId: string; // uuid
   channelId: string; // uuid
   workspaceId: string; // uuid
+  entityType: EntityType;
 }
 
 export interface FileUploadModel {

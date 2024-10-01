@@ -3,6 +3,7 @@ import ChannelMessage from "./MessageBubble";
 import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { useChannelStore } from "@/app/stores/channelStores";
 import { debounce } from 'lodash';
+import { toDayDividerTime } from "@/app/utils/formatDateTime";
 
 export default function MessageList() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel);
@@ -51,7 +52,6 @@ export default function MessageList() {
     prevMessagesLengthRef.current = messages.length;
   }, [messages, scrollToBottom]);
 
-  // 메시지 추가 호출
   const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       setIsLoading(true);
@@ -108,13 +108,13 @@ export default function MessageList() {
         <div className="text-center text-red-500">{error}</div>
       )}
       {messages.map((message, index) => {
-        const messageDate = new Date(message.sendDate).toLocaleDateString();
+        const messageDivider = toDayDividerTime(message.sendDate);
         let divider = null;
-        if (messageDate !== currentDate) {
-          currentDate = messageDate;
+        if (messageDivider !== currentDate) {
+          currentDate = messageDivider;
           divider = (
-            <div key={`date-${messageDate}`} className="text-xs opacity-50 divider">
-              {messageDate}
+            <div key={`date-${messageDivider}`} className="text-xs opacity-50 divider">
+              {messageDivider}
             </div>
           );
         }

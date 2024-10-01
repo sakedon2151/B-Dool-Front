@@ -3,6 +3,7 @@ import { MemberModel } from "@/app/models/member.model";
 import { authService } from "@/app/services/auth/auth.api";
 import VerificationCodeForm from "./VerificationCodeForm";
 import { BiMailSend } from "react-icons/bi";
+import { useRouter } from "next/navigation";
 
 export default function EmailLoginForm() {
   const [email, setEmail] = useState<string>('');
@@ -10,18 +11,18 @@ export default function EmailLoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
+  const setUser = useUserStore((state) => state.setUser);
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('jwtToken');
-      const response = await authService.login({email});
+      const response = await authService.({email});
       if (response.member) {
-        console.log('Login successful:', response.member);
-        // 전달받은 member object 를 zustand 로 store 에 저장
-        localStorage.setItem('jwtToken', response.token);
-        // 동일한 member Id 속성을 가진 워크스페이스 리스트 컴포넌트 출력
+        setUser(response.member);
+        router.push("/workspace");
       } else {
         setShowVerification(true);
       }
@@ -35,14 +36,17 @@ export default function EmailLoginForm() {
 
   const handleVerificationSuccess = (member: MemberModel) => {
     console.log('Verification successful:', member);
-    localStorage.setItem('jwtToken', (member as any).token);
-    
+    const handleVerificationSuccess = (member: MemberModel) => {
+      setUser(member);
+      router.push("/workspace");
+    };
   };
 
   return (
     <div className="bg-base-300 rounded-btn p-4 lg:w-[768px] container">      
       <h2 className="text-lg font-bold text-center">이메일로 시작하기</h2>
       <div className="mt-2 divider"></div>
+      
       {error && <div className="mb-4 alert alert-error">{error}</div>}
       <form className="text-center" onSubmit={handleSubmit}>
         <label className="flex items-center gap-2 mb-4 input input-bordered">
@@ -68,3 +72,7 @@ export default function EmailLoginForm() {
     </div>
   );
 }
+function useUserStore(arg0: (state: any) => any) {
+  throw new Error("Function not implemented.");
+}
+
