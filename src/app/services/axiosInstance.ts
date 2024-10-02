@@ -9,15 +9,18 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
-    // withCredentials: true, // 쿠키를 포함한 요청을 보내도록 설정
+    withCredentials: true, // 쿠키를 포함한 크로스 도메인 요청을 허용
   });
 
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      const token = getToken(); // request에 토큰 같이 보내기
+      const token = getToken(); // request에 access_token 같이 보내기
       if (token) {
+        console.log("i have token")
         config.headers['Authorization'] = `Bearer ${token}`;
+      } else {
+        console.log("i dont have token")
       }
       return config;
     },

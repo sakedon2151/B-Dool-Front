@@ -9,20 +9,24 @@ import React, { useEffect, useState } from 'react'
 export default function WorkspaceList() {
   const [workspaces, setWorkspaces] = useState<WorkspaceModel[]>([]);
   const [profiles, setProfiles] = useState<ProfileModel[]>([]);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const memberId = 1 // 임시. store 로 담은 member 객체 불러오기
 
   useEffect(() => {
-    if (memberId) {
-      fetchProfilesAndWorkspaces();
-    }
+    // if (memberId) {
+    //   fetchProfilesAndWorkspaces();
+    // }
+
+    fetchProfilesAndWorkspaces();
   }, [memberId]);
 
   const fetchProfilesAndWorkspaces = async () => {
     setIsLoading(true);
     setError(null);
+    
     try {
       const fetchedProfiles = await profileService.getProfilesByMemberId(memberId);
       setProfiles(fetchedProfiles);
@@ -31,7 +35,8 @@ export default function WorkspaceList() {
         .map(profile => profile.workspaceId)
         .filter((value, index, self) => self.indexOf(value) === index);
 
-      const fetchedWorkspaces = await workspaceService.getFilteredWorkspaceList(workspaceIds);
+      // const fetchedWorkspaces = await workspaceService.getFilteredWorkspaceList(workspaceIds);
+      const fetchedWorkspaces = await workspaceService.getWorkspaceList();
       setWorkspaces(fetchedWorkspaces);
     } catch (error) {
       console.error('Failed to fetch profiles or workspaces:', error);

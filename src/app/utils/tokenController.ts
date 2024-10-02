@@ -14,19 +14,19 @@ import jwt from 'jsonwebtoken'
 // 저장된 토큰 호출
 export const getToken = () => {
   const cookies = parseCookies();
-  return cookies.auth_token;
+  return cookies.access_token;
 };
 
 // 로그아웃시 강제 토큰 제거
 export const removeToken = () => {
-  destroyCookie(null, "auth_token");
+  destroyCookie(null, "access_token");
 };
 
 // 토큰 검증 - 추후 고려사항
-export const verifyToken = (token: string) => {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET as string) // 비밀키로 토큰검증
-  } catch {
-    return null
-  }
-}
+// export const verifyToken = (token: string) => {
+//   try {
+//     return jwt.verify(token, process.env.JWT_SECRET as string) // 비밀키로 토큰검증
+//   } catch {
+//     return null
+//   }
+// }
