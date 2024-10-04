@@ -26,13 +26,19 @@ export const memberService = {
     return response.data;
   },
 
+  // GET - /api/members/me
+  getCurrentMember: async (): Promise<MemberModel> => {
+    const response = await serverAAxios.get<MemberModel>('/members/me');
+    return response.data;
+  },
+
   // GET - /api/members/ - Not Used
   getAllMembers: async (): Promise<MemberModel[]> => {
     const response = await serverAAxios.get<MemberModel[]>('/members');
     return response.data;
   },
 
-  // getMemberCount /api/members/count - Not Used
+  // GET - /api/members/count - Not Used
   getMemberCount: async (): Promise<number> => {
     const response = await serverAAxios.get<number>('/members/count');
     return response.data;

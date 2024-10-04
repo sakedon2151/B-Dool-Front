@@ -60,7 +60,8 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
           ) : (
             <ul>
               {channels.map((channel) => (
-                <li key={channel.channelId} onClick={() => setSelectedChannel(channel)}>
+                <li 
+                  key={channel.channelId} onClick={() => setSelectedChannel(channel)}>
                   <a>
                     <HiHashtag className="w-4 h-4" />
                     <p className="overflow-hidden truncate whitespace-nowrap">{channel.name}</p>

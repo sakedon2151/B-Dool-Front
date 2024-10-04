@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { getToken } from '../utils/tokenController';
+import { includes } from 'lodash';
 
 // 기본 axios 인스턴스 생성 함수
 const createAxiosInstance = (baseURL: string): AxiosInstance => {
@@ -15,12 +16,13 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      const token = getToken(); // request에 access_token 같이 보내기
+      const token = getToken();
+      
       if (token) {
-        console.log("i have token")
+        console.log("TOKEN FOUND: ", token);
         config.headers['Authorization'] = `Bearer ${token}`;
       } else {
-        console.log("i dont have token")
+        console.log("NO TOKEN FOUND!!")
       }
       return config;
     },

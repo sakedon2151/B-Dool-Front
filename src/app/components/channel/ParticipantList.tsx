@@ -9,7 +9,6 @@ interface ParticipantListProps {
 }
 
 export default function ParticipantList({ workspaceId }: ParticipantListProps) {
-  
   const [profiles, setProfiles] = useState<ProfileModel[]>([])
   const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
@@ -79,11 +78,11 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   };
 
   // SSE Custom Hook
-  const sseUrl = process.env.NEXT_PUBLIC_SERVER_A_SSE_URL as string
-  useSSE(sseUrl, {
-    'nickname-change': handleNicknameChange,
-    'online-status-change': handleOnlineStatusChange
-  });
+  // const sseUrl = process.env.NEXT_PUBLIC_SERVER_A_SSE_URL as string
+  // useSSE(sseUrl, {
+  //   'nickname-change': handleNicknameChange,
+  //   'online-status-change': handleOnlineStatusChange
+  // });
 
   return (
     <>

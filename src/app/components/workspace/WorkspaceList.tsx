@@ -1,3 +1,4 @@
+"use client"
 import { ProfileModel } from '@/app/models/profile.model';
 import { WorkspaceModel } from '@/app/models/workspace.model';
 import { profileService } from '@/app/services/member/profile.api';
@@ -26,14 +27,14 @@ export default function WorkspaceList() {
   const fetchProfilesAndWorkspaces = async () => {
     setIsLoading(true);
     setError(null);
-    
-    try {
-      const fetchedProfiles = await profileService.getProfilesByMemberId(memberId);
-      setProfiles(fetchedProfiles);
 
-      const workspaceIds = fetchedProfiles
-        .map(profile => profile.workspaceId)
-        .filter((value, index, self) => self.indexOf(value) === index);
+    try {
+      // const fetchedProfiles = await profileService.getProfilesByMemberId(memberId);
+      // setProfiles(fetchedProfiles);
+
+      // const workspaceIds = fetchedProfiles
+      //   .map(profile => profile.workspaceId)
+      //   .filter((value, index, self) => self.indexOf(value) === index);
 
       // const fetchedWorkspaces = await workspaceService.getFilteredWorkspaceList(workspaceIds);
       const fetchedWorkspaces = await workspaceService.getWorkspaceList();

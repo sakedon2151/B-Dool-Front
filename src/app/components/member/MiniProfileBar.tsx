@@ -12,8 +12,8 @@ export default function MiniProfileBar() {
             </div>
           </div>
           <div>
-            <p>username</p>
-            <p>status</p>
+            <p>sakedon2151</p>
+            <p>프론트엔드 개발자</p>
           </div>
         </div>
         
@@ -24,7 +24,7 @@ export default function MiniProfileBar() {
 
       {/* modal dialog */}
       <dialog id="profile-modal" className="modal modal-bottom lg:modal-middle">
-        <div className="modal-box lg:fixed lg:bottom-4 lg:left-4">
+        <div className="modal-box lg:fixed lg:bottom-4 lg:left-4 p-4">
           <form method="dialog">
             <button className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">✕</button>
           </form>

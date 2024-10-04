@@ -1,11 +1,13 @@
 "use client";
 import { MemberModel } from "@/app/models/member.model";
 import { authService } from "@/app/services/auth/auth.api";
+import { mailService } from "@/app/services/auth/mailSender.api";
+import { memberService } from "@/app/services/member/member.api";
 import { useEffect, useRef, useState } from "react";
 
 interface VerificationCodeFormProps {
   email: string;
-  onSuccess: (member: MemberModel) => void;
+  onSuccess: (verificationCode: string) => void;
 }
 
 export default function VerificationCodeForm({ email, onSuccess }: VerificationCodeFormProps) {
@@ -28,7 +30,7 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
       inputRefs.current[index + 1]?.focus();
     }
     if (newCode.every(digit => digit !== '')) {
-      verifyCode(newCode.join(''));
+      handleSubmit(newCode.join(''));
     }
   };
 
@@ -38,34 +40,44 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
     }
   };
 
-  const verifyCode = async (fullCode: string) => {
-    console.log('Verifying code:', fullCode);
+  // const verifyCode = async (fullCode: string) => {
+  //   console.log('Verifying code:', fullCode);
+  //   setLoading(true);
+  //   setError('');
+  //   try {
+  //     const isVerified = await mailService.verifyCode(email, parseInt(fullCode, 10));
+  //     if (isVerified) {
+  //       await authService.generateToken(email);
+  //       const member = await memberService.getCurrentMember();
+  //       onSuccess(member);
+  //     } else {
+  //       setError('인증 코드가 잘못되었습니다. 다시 시도해 주세요.');
+  //       resetCode();
+  //     }
+  //   } catch (err) {
+  //     setError('오류가 발생했습니다. 다시 시도해 주세요.');
+  //     console.error('Verification error:', err);
+  //     resetCode();
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const resetCode = () => {
+  //   setCode(Array(CODE_LENGTH).fill(''));
+  //   inputRefs.current[0]?.focus();
+  // };
+
+  const handleSubmit = (fullCode: string) => {
     setLoading(true);
     setError('');
-    try {
-      const response = await authService.verifyCode({email, code: fullCode});
-      if (response.member) {
-        onSuccess(response.member);
-      } else {
-        setError('인증 코드가 잘못되었습니다. 다시 시도해 주세요.');
-        resetCode();
-      }
-    } catch (err) {
-      setError('오류가 발생했습니다. 다시 시도해 주세요.');
-      console.error('Verification error:', err);
-      resetCode();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const resetCode = () => {
-    setCode(Array(CODE_LENGTH).fill(''));
-    inputRefs.current[0]?.focus();
+    onSuccess(fullCode);
+    setLoading(false);
   };
 
   return (
     <div>
+      <p className="mb-2">인증 코드를 {email}로 전송했습니다.</p>
       <div className="flex gap-2 mb-4">
         {code.map((digit, index) => (
           <input 
@@ -85,6 +97,29 @@ export default function VerificationCodeForm({ email, onSuccess }: VerificationC
       {error && <p className="mb-2 text-red-500">{error}</p>}
       {loading && <p className="mb-2 text-blue-500">진행중...</p>}
     </div>
-    
   );
+
+  // return (
+  //   <div>
+  //     <div className="flex gap-2 mb-4">
+  //       {code.map((digit, index) => (
+  //         <input 
+  //           key={index}
+  //           ref={(el) => {inputRefs.current[index] = el}}
+  //           type="text" 
+  //           className="w-full p-0 text-lg font-bold text-center input input-bordered" 
+  //           placeholder="-"
+  //           value={digit}
+  //           onChange={e => handleChange(index, e.target.value)}
+  //           onKeyDown={e => handleKeyDown(index, e)}
+  //           maxLength={1}
+  //           disabled={loading}
+  //         />  
+  //       ))}
+  //     </div>
+  //     {error && <p className="mb-2 text-red-500">{error}</p>}
+  //     {loading && <p className="mb-2 text-blue-500">진행중...</p>}
+  //   </div>
+    
+  // );
 }

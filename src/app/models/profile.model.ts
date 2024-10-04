@@ -30,11 +30,4 @@ export const InitialProfile: ProfileModel = {
   memberId: 0
 };
 
-
 // Strict Type Model
-// export type FullProfileModel = ProfileModel;
-// export type ProfileModalModel = Omit<ProfileModel, 'workspaceId'>
-// export type ParticipantListModel = Pick<ProfileModel, 'id' | 'nickname' | 'isOnline' | 'profileImgUrl'>
-// export type ParticipantModalModel = Omit<ProfileModel, 'updatedAt' | 'workspaceId'>
-
-

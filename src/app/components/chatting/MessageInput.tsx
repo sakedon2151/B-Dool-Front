@@ -5,6 +5,7 @@ import { FaFileArrowUp } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 
 export default function MessageInput() {
+  
   const selectedChannel = useChannelStore((state) => state.selectedChannel)
   const { sendMessage } = useWebsocket(selectedChannel.channelId);
   const textarea = useRef<HTMLTextAreaElement>(null);

@@ -15,7 +15,6 @@ export default function gateway() {
         <div className="flex flex-col items-center justify-center h-full p-4 bg-base-200 rounded-btn">
           
           <WorkspaceList/>
-          {/* 워크스페이스 리스트 */}
           <button onClick={() => router.push(`/workspace/${1}`)} className="mt-4 btn btn-warning">bypass</button>
           
         </div>

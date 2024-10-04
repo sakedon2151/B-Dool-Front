@@ -1,30 +1,31 @@
-import { useState } from "react";
-import { MemberModel } from "@/app/models/member.model";
-import { authService } from "@/app/services/auth/auth.api";
 import VerificationCodeForm from "./VerificationCodeForm";
+import { useState } from "react";
 import { BiMailSend } from "react-icons/bi";
 import { useRouter } from "next/navigation";
+import { useMemberStore } from "@/app/stores/memberStores";
+import { mailService } from "@/app/services/auth/mailSender.api";
+import { authService } from "@/app/services/auth/auth.api";
+import { memberService } from "@/app/services/member/member.api";
 
 export default function EmailLoginForm() {
   const [email, setEmail] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-
-  const setUser = useUserStore((state) => state.setUser);
   const router = useRouter();
 
+  const setFetchedMember = useMemberStore((state) => state.setFetchedMember); // member store
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      const response = await authService.({email});
-      if (response.member) {
-        setUser(response.member);
-        router.push("/workspace");
-      } else {
+      const isCodeSent = await mailService.sendVerificationCode(email);
+      if (isCodeSent) {
         setShowVerification(true);
+      } else {
+        setError('인증 코드 전송에 실패했습니다. 다시 시도해 주세요.');
       }
     } catch (err) {
       setError('오류가 발생했습니다. 다시 시도해 주세요.');
@@ -34,45 +35,51 @@ export default function EmailLoginForm() {
     }
   };
 
-  const handleVerificationSuccess = (member: MemberModel) => {
-    console.log('Verification successful:', member);
-    const handleVerificationSuccess = (member: MemberModel) => {
-      setUser(member);
-      router.push("/workspace");
-    };
+  const handleVerificationSuccess = async (verificationCode: string) => {
+    try {
+      const isVerified = await mailService.verifyCode(email, parseInt(verificationCode, 10));
+      console.log("isVerified : ", isVerified)
+      if (isVerified) {
+        await authService.generateToken(email);
+        const member = await memberService.getCurrentMember();
+        setFetchedMember(member);
+        router.push("/workspace");
+      } else {
+        setError('인증에 실패했습니다. 다시 시도해 주세요.');
+        // 6자리 키 재호출
+      }
+    } catch (err) {
+      setError('인증 과정에서 오류가 발생했습니다.');
+      console.error('Verification error:', err);
+    }
   };
 
   return (
     <div className="bg-base-300 rounded-btn p-4 lg:w-[768px] container">      
       <h2 className="text-lg font-bold text-center">이메일로 시작하기</h2>
       <div className="mt-2 divider"></div>
-      
       {error && <div className="mb-4 alert alert-error">{error}</div>}
-      <form className="text-center" onSubmit={handleSubmit}>
-        <label className="flex items-center gap-2 mb-4 input input-bordered">
-          <BiMailSend className="w-6 h-6 opacity-70"/>
-          <input
-            type="email"
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            placeholder="이메일" 
-            required
-          />
-        </label>
-
-        {showVerification ? (
-            <VerificationCodeForm email={email} onSuccess={handleVerificationSuccess} />
-        ) : (
+      
+      {!showVerification ? (
+        <form className="text-center" onSubmit={handleSubmit}>
+          <label className="flex items-center gap-2 mb-4 input input-bordered">
+            <BiMailSend className="w-6 h-6 opacity-70"/>
+            <input
+              type="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              placeholder="이메일" 
+              required
+            />
+          </label>
           <button className="btn" type="submit" disabled={loading}>
-            {loading ? '처리 중...' : '로그인'}
+            {loading ? '처리 중...' : '인증 코드 전송'}
           </button>
-        )}
-
-      </form>
+        </form>
+      ) : (
+        <VerificationCodeForm email={email} onSuccess={handleVerificationSuccess} />
+      )}
     </div>
   );
-}
-function useUserStore(arg0: (state: any) => any) {
-  throw new Error("Function not implemented.");
 }
 
