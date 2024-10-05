@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { sseService } from "../services/sseService";
+import { sseService } from "../services/sse.service";
 
 type SSEEventHandler = (data: any) => void;
 

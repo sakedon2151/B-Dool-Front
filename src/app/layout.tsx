@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import React from "react";
+import ReactQueryProvider from "./components/common/ReactQueryProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,12 +15,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
-// const pretendard = localFont({
-//   src: "./fonts/PretendardVariable.woff2",
-//   variable: "--font-pretendard",
-//   weight: "100 900"
-// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -39,10 +34,10 @@ export default function RootLayout({
         {/* favicon */}
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ReactQueryProvider>
+          {children}
+        </ReactQueryProvider>
       </body>
     </html>
   );

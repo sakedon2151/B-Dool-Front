@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import SockJS from "sockjs-client";
 import { Client, Message } from "@stomp/stompjs";
-import { messageService } from "../services/message/message.api";
+import SockJS from "sockjs-client";
+
 import { MessageModel } from "../models/message.model";
+import { messageService } from "../services/message/message.service";
 
 interface WebSocketHook {
   messages: MessageModel[];

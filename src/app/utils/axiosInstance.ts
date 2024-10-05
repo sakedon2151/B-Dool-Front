@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { getToken } from '../utils/tokenController';
-import { includes } from 'lodash';
+import { getToken } from './tokenController';
 
 // 기본 axios 인스턴스 생성 함수
 const createAxiosInstance = (baseURL: string): AxiosInstance => {
@@ -17,7 +16,6 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
   instance.interceptors.request.use(
     (config) => {
       const token = getToken();
-      
       if (token) {
         console.log("TOKEN FOUND: ", token);
         config.headers['Authorization'] = `Bearer ${token}`;
@@ -44,11 +42,10 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
       return Promise.reject(error);
     }
   );
-
   return instance;
 };
 
-// 각 MSA 서버에 대한 axios 인스턴스 생성. env 설정은 나중에 알아보기
+// 각 MSA 서버에 대한 axios 인스턴스 생성. env 설정 확인
 export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_API_URL as string);
 export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_B_API_URL as string);
 export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_API_URL as string);
