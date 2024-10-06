@@ -1,22 +1,21 @@
 "use client"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import EmailLoginForm from "@/app/components/auth/EmailLoginForm";
 import CommonFooter from "@/app/components/common/CommonFooter";
 import CommonHeader from "@/app/components/common/CommonHeader";
-import { authService } from "@/app/services/auth/auth.api";
-import { memberService } from "@/app/services/member/member.api";
-import { useMemberStore } from "@/app/stores/memberStores";
+// import { useMemberStore } from "@/app/stores/memberStores";
 import { getToken, removeToken } from "@/app/utils/tokenController";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { memberService } from "@/app/services/member/member.service";
 
 export default function auth() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true);
-  const setFetchedMember = useMemberStore((state) => state.setFetchedMember)
+  // const setFetchedMember = useMemberStore((state) => state.setFetchedMember) // zustand store
 
   useEffect(() => {    
     checkHasToken();
-  }, [router, setFetchedMember]);
+  }, [router]);
 
   const checkHasToken = async () => {
     const token = getToken();
@@ -24,10 +23,11 @@ export default function auth() {
       try {
         await authService.refreshToken();
         const currentMember = await memberService.getCurrentMember();
-        setFetchedMember(currentMember);
+        console.log(currentMember)
+        // setFetchedMember(currentMember);
         router.push("/workspace");
       } catch (error) {
-        console.error("Auth check failed:", error);
+        console.error("유효성 검증 실패:", error);
         removeToken(); // 토큰이 유효하지 않은 경우 제거
       } finally {
         setIsLoading(false);

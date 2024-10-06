@@ -1,20 +1,20 @@
 import VerificationCodeForm from "./VerificationCodeForm";
 import { useState } from "react";
 import { BiMailSend } from "react-icons/bi";
-import { useRouter } from "next/navigation";
-import { useMemberStore } from "@/app/stores/memberStores";
-import { mailService } from "@/app/services/auth/mailSender.api";
-import { authService } from "@/app/services/auth/auth.api";
-import { memberService } from "@/app/services/member/member.api";
+// import { useRouter } from "next/navigation";
+import { mailService } from "@/app/services/auth/mailSender.service";
+import { authService } from "@/app/services/auth/auth.service";
+import { memberService } from "@/app/services/member/member.service";
+// import { useMemberStore } from "@/app/stores/memberStores";
+
 
 export default function EmailLoginForm() {
   const [email, setEmail] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-  const router = useRouter();
-
-  const setFetchedMember = useMemberStore((state) => state.setFetchedMember); // member store
+  // const router = useRouter();
+  // const setFetchedMember = useMemberStore((state) => state.setFetchedMember); // member store
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,18 +38,21 @@ export default function EmailLoginForm() {
   const handleVerificationSuccess = async (verificationCode: string) => {
     try {
       const isVerified = await mailService.verifyCode(email, parseInt(verificationCode, 10));
+      console.log(email, verificationCode)
       console.log("isVerified : ", isVerified)
       if (isVerified) {
         await authService.generateToken(email);
+        // console.log(token)
         const member = await memberService.getCurrentMember();
-        setFetchedMember(member);
-        router.push("/workspace");
+        console.log(member)
+        // setFetchedMember(member);
+        // router.push("/workspace");
       } else {
         setError('인증에 실패했습니다. 다시 시도해 주세요.');
         // 6자리 키 재호출
       }
     } catch (err) {
-      setError('인증 과정에서 오류가 발생했습니다.');
+      setError('오류가 발생했습니다. 다시 시도해 주세요.');
       console.error('Verification error:', err);
     }
   };

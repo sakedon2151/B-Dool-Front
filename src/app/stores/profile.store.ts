@@ -1,27 +1,18 @@
 import { create } from 'zustand';
-import { ProfileModel } from '@/app/models/profile.model';
+import { ProfileModel } from '../models/profile.model';
 
-interface ProfileStore {
+interface ProfileState {
   currentProfile: ProfileModel | null;
-  profiles: ProfileModel[];
   setCurrentProfile: (profile: ProfileModel) => void;
-  setProfiles: (profiles: ProfileModel[]) => void;
 
-  updateProfile: (updatedProfile: ProfileModel) => void;
+  fetchedProfiles: ProfileModel[];
+  setFetchedProfiles: (profiles: ProfileModel[]) => void;
 }
 
-export const useProfileStore = create<ProfileStore>((set) => ({
+export const useProfileStore = create<ProfileState>((set) => ({
   currentProfile: null,
-  profiles: [],
   setCurrentProfile: (profile) => set({ currentProfile: profile }),
-  setProfiles: (profiles) => set({ profiles }),
   
-  updateProfile: (updatedProfile) => set((state) => ({
-    profiles: state.profiles.map(profile => 
-      profile.id === updatedProfile.id ? updatedProfile : profile
-    ),
-    currentProfile: state.currentProfile?.id === updatedProfile.id 
-      ? updatedProfile 
-      : state.currentProfile
-  })),
+  fetchedProfiles: [],
+  setFetchedProfiles: (profiles) => set({ fetchedProfiles: profiles }),
 }));
