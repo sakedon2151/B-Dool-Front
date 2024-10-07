@@ -1,5 +1,6 @@
 import { ProfileModel } from "@/app/models/profile.model";
-import { profileService } from "@/app/services/member/profile.api";
+import { profileService } from "@/app/services/member/profile.service";
+
 import { useEffect, useState } from "react";
 
 interface ParticipantModalProps {

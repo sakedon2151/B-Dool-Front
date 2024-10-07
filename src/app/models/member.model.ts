@@ -11,4 +11,3 @@ export const InitialMember: MemberModel = {
 }
 
 // Strict Type Model
-// export type FullMemberModel = MemberModel;

@@ -4,30 +4,33 @@ import { serverAAxios } from '../../utils/axiosInstance';
 const BASE_URL = '/members';
 
 export const memberService = {
+  
+  // ----- queries -----
+
+  // memberId 로 member 요청
   getMemberById: (memberId: number) => 
     serverAAxios.get<MemberModel>(`${BASE_URL}/${memberId}`)
       .then(response => response.data),
 
-  createMember: (email: string) => 
-    serverAAxios.post<MemberModel>(BASE_URL, email)
+  // email 로 member 요청
+  getMemberByEmail: (email: string) => 
+    serverAAxios.get<MemberModel>(`${BASE_URL}/email/${email}`)
       .then(response => response.data),
 
-  deleteMember: (memberId: number) => 
-    serverAAxios.delete(`${BASE_URL}/${memberId}`),
-
-  checkMemberExists: (memberId: number) => 
-    serverAAxios.get<boolean>(`${BASE_URL}/exists/${memberId}`)
-      .then(response => response.data),
-
+  // jwt 토큰으로 member 요청
   getCurrentMember: () => 
     serverAAxios.get<MemberModel>(`${BASE_URL}/me`)
       .then(response => response.data),
 
-  getAllMembers: () => 
-    serverAAxios.get<MemberModel[]>(BASE_URL)
+  // ----- mutations -----
+
+  // member 추가 요청
+  createMember: (email: string) => 
+    serverAAxios.post<MemberModel>(BASE_URL, email)
       .then(response => response.data),
 
-  getMemberCount: () => 
-    serverAAxios.get<number>(`${BASE_URL}/count`)
-      .then(response => response.data)
+  // member 삭제 요청
+  deleteMember: (memberId: number) => 
+    serverAAxios.delete(`${BASE_URL}/${memberId}`),
+
 };

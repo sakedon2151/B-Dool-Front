@@ -1,6 +1,5 @@
 import { ProfileModel } from "@/app/models/profile.model";
-import { profileService } from "@/app/services/member/profile.api";
-import { useProfileStore } from "@/app/stores/profileStores";
+
 import React, { useState } from "react";
 
 interface UpdateProfileProps {

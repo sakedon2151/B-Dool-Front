@@ -4,7 +4,7 @@ const BASE_URL = '/auth';
 
 export const authService = {
   generateToken: (email: string) => 
-    serverTokenAxios.post<boolean>(`${BASE_URL}/token`, null, { params: { email } })
+    serverTokenAxios.post<string>(`${BASE_URL}/token`, null, { params: { email } })
       .then(response => response.data),
 
   refreshToken: () => 

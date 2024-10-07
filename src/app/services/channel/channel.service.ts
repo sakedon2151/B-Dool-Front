@@ -4,33 +4,44 @@ import { serverBAxios } from "../../utils/axiosInstance";
 const BASE_URL = '/channel';
 
 export const channelService = {
-  getAllChannels: () => 
-    serverBAxios.get<ChannelModel[]>(BASE_URL)
-      .then(response => response.data),
 
+  // ----- queries -----
+
+  // workspaceId 로 channels 요청
   getChannelsByWorkspaceId: (workspaceId: number) => 
     serverBAxios.get<ChannelModel[]>(`${BASE_URL}/workspaces/${workspaceId}/channel`)
       .then(response => response.data),
 
-  getChannelById: (channelId: number) => 
+  // channelId 로 channel 요청
+  getChannelById: (channelId: string) => 
     serverBAxios.get<ChannelModel>(`${BASE_URL}/${channelId}`)
       .then(response => response.data),
 
+  // ----- mutations -----
+
+  // channel 추가 요청
   createChannel: (channelData: ChannelModel) => 
     serverBAxios.post<ChannelModel>(BASE_URL, channelData)
       .then(response => response.data),
 
-  addProfileToChannel: (channelId: string, profileId: string) => 
+  // channel 수정 요청
+  updateChannel: (channelId: string, profileId: number) => 
     serverBAxios.put(`${BASE_URL}/${channelId}/profile/${profileId}`),
 
-  deleteChannel: (channelId: number) => 
+  // channel 삭제 요청
+  deleteChannel: (channelId: string) => 
     serverBAxios.delete(`${BASE_URL}/${channelId}`),
 
-  checkChannelExists: (channelId: number) => 
-    serverBAxios.get<boolean>(`${BASE_URL}/exists/${channelId}`)
-      .then(response => response.data),
+  // getAllChannels: () => 
+  //   serverBAxios.get<ChannelModel[]>(BASE_URL)
+  //     .then(response => response.data),
 
-  getChannelCount: () => 
-    serverBAxios.get<number>(`${BASE_URL}/count`)
-      .then(response => response.data)
+  // checkChannelExists: (channelId: number) => 
+  //   serverBAxios.get<boolean>(`${BASE_URL}/exists/${channelId}`)
+  //     .then(response => response.data),
+
+  // getChannelCount: () => 
+  //   serverBAxios.get<number>(`${BASE_URL}/count`)
+  //     .then(response => response.data)
+
 };

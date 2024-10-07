@@ -1,93 +1,98 @@
-// hooks/useProfileQuery.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ProfileModel } from '../models/profile.model';
+import { ProfileModel } from "@/app/models/profile.model";
 import { profileService } from '../services/member/profile.service';
 
-export const profileKeys = {
+// Query keys
+const PROFILE_KEYS = {
   all: ['profiles'] as const,
-  lists: () => [...profileKeys.all, 'list'] as const,
-  list: (workspaceId: number) => [...profileKeys.lists(), workspaceId] as const,
-  details: () => [...profileKeys.all, 'detail'] as const,
-  detail: (id: number) => [...profileKeys.details(), id] as const,
+  byId: (id: number) => [...PROFILE_KEYS.all, 'byId', id] as const,
+  byMemberId: (memberId: number) => [...PROFILE_KEYS.all, 'byMemberId', memberId] as const,
+  byWorkspaceId: (workspaceId: number) => [...PROFILE_KEYS.all, 'byWorkspaceId', workspaceId] as const,
 };
 
-export const useProfileQueries = (workspaceId: number) => {
-  const queryClient = useQueryClient();
-
-  const getProfilesByWorkspace = useQuery({
-    queryKey: profileKeys.list(workspaceId),
-    queryFn: () => profileService.getProfilesByWorkspaceId(workspaceId),
-    enabled: !!workspaceId,
-  });
-
-  const getProfileById = (profileId: number) => useQuery({
-    queryKey: profileKeys.detail(profileId),
+// Queries
+export const useProfileById = (profileId: number) => 
+  useQuery({
+    queryKey: PROFILE_KEYS.byId(profileId),
     queryFn: () => profileService.getProfileById(profileId),
-    enabled: !!profileId,
   });
 
-  const updateProfile = useMutation({
+export const useProfilesByMemberId = (memberId: number) => 
+  useQuery({
+    queryKey: PROFILE_KEYS.byMemberId(memberId),
+    queryFn: () => profileService.getProfilesByMemberId(memberId),
+  });
+
+export const useProfilesByWorkspaceId = (workspaceId: number) => 
+  useQuery({
+    queryKey: PROFILE_KEYS.byWorkspaceId(workspaceId),
+    queryFn: () => profileService.getProfilesByWorkspaceId(workspaceId),
+  });
+
+// Mutations
+export const useCreateProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ memberId, data }: { memberId: number; data: ProfileModel }) => 
+      profileService.createProfile(memberId, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byMemberId(variables.memberId) });
+    },
+  });
+};
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ profileId, data }: { profileId: number; data: ProfileModel }) => 
       profileService.updateProfile(profileId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: profileKeys.detail(data.id) });
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byId(data.id) });
     },
   });
+};
 
-  const deleteProfile = useMutation({
-    mutationFn: (profileId: number) => profileService.deleteProfile(profileId),
+export const useDeleteProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: profileService.deleteProfile,
     onSuccess: (_, profileId) => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: profileKeys.detail(profileId) });
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.all });
+      queryClient.removeQueries({ queryKey: PROFILE_KEYS.byId(profileId) });
     },
   });
+};
 
-  const createProfile = useMutation({
-    mutationFn: ({ memberId, data }: { memberId: number; data: ProfileModel }) => 
-      profileService.createProfile(memberId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.lists() });
-    },
-  });
-
-  const createInvitedProfile = useMutation({
+export const useCreateProfileByInvitation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ memberId, workspaceId, data }: { memberId: number; workspaceId: number; data: ProfileModel }) => 
-      profileService.createInvitedProfile(memberId, workspaceId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.lists() });
+      profileService.createProfileByInvitation(memberId, workspaceId, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byMemberId(variables.memberId) });
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byWorkspaceId(variables.workspaceId) });
     },
   });
+};
 
-  const updateProfileStatus = useMutation({
+export const useUpdateProfileStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ profileId, status }: { profileId: number; status: string }) => 
       profileService.updateProfileStatus(profileId, status),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.detail(data.id) });
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byId(data.id) });
     },
   });
+};
 
-  const updateProfileOnlineStatus = useMutation({
+export const useUpdateProfileOnlineStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ profileId, isOnline }: { profileId: number; isOnline: boolean }) => 
       profileService.updateProfileOnlineStatus(profileId, isOnline),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.detail(data.id) });
+      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byId(data.id) });
     },
   });
-
-  const checkProfileExists = useMutation({
-    mutationFn: (profileId: number) => profileService.checkProfileExists(profileId),
-  });
-
-  return {
-    getProfilesByWorkspace,
-    getProfileById,
-    updateProfile,
-    deleteProfile,
-    createProfile,
-    createInvitedProfile,
-    updateProfileStatus,
-    updateProfileOnlineStatus,
-    checkProfileExists,
-  };
 };

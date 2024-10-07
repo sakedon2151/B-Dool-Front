@@ -1,18 +1,16 @@
 import { create } from "zustand";
-import { WorkspaceModel } from "../models/workspace.model";
+import {  InitialWorkspace, WorkspaceModel } from "../models/workspace.model";
 
 interface WorkspaceStore {
-  currentWorkspace: WorkspaceModel | null;
+  currentWorkspace: WorkspaceModel;
   setCurrentWorkspace: (workspace: WorkspaceModel) => void;
-  
   fetchedWorkspaces: WorkspaceModel[];
   setFetchedWorkspaces: (workspaces: WorkspaceModel[]) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
-  currentWorkspace: null,
+  currentWorkspace: InitialWorkspace,
   setCurrentWorkspace: (workspace) => set({ currentWorkspace: workspace }),
-  
   fetchedWorkspaces: [],
   setFetchedWorkspaces: (workspaces) => set({ fetchedWorkspaces: workspaces }),
 }));

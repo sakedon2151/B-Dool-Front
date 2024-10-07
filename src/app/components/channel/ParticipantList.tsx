@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import ParticipantModal from "./ParticipantModal";
-import useSSE from "@/app/hooks/useSSE";
 import { ProfileModel } from "@/app/models/profile.model";
-import { profileService } from "@/app/services/member/profile.api";
+import { profileService } from "@/app/services/member/profile.service";
+
 
 interface ParticipantListProps {
   workspaceId: number;

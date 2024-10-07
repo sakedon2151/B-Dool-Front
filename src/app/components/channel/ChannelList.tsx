@@ -1,6 +1,6 @@
 import { ChannelModel } from "@/app/models/channel.model";
-import { channelService } from "@/app/services/channel/channel.api";
-import { useChannelStore } from "@/app/stores/channelStores";
+import { channelService } from "@/app/services/channel/channel.service";
+
 import { useEffect, useState } from "react";
 import { HiHashtag, HiOutlineStar, HiOutlineUser } from "react-icons/hi2";
 
@@ -9,7 +9,6 @@ interface ChannelListProps {
 }
 
 export default function ChannelList({ workspaceId }: ChannelListProps) {
-  const setSelectedChannel = useChannelStore((state) => state.setSelectedChannel)
   const [channels, setChannels] = useState<ChannelModel[]>([]);
   
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +60,7 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
             <ul>
               {channels.map((channel) => (
                 <li 
-                  key={channel.channelId} onClick={() => setSelectedChannel(channel)}>
+                  key={channel.channelId}>
                   <a>
                     <HiHashtag className="w-4 h-4" />
                     <p className="overflow-hidden truncate whitespace-nowrap">{channel.name}</p>

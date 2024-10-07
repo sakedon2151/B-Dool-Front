@@ -8,9 +8,18 @@ export interface MessageModel {
   parentMessageId: string; // 이 자리에 uuid 값이 존재할 경우 그 메시지에 대한 답장이 됨
   profileId: number; // uuid 작성자 프로필 uuid
   fileUrl: string;
-  
-  // nickName: string; // 작성자 닉네임
-  // fileId: string; // uuid
+}
+
+export const InitialMessage: MessageModel = {
+  messageId: "",
+  channelId: "",
+  content: "",
+  sendDate: "",
+  isEdited: false,
+  isDeleted: false,
+  parentMessageId: "",
+  profileId: 0,
+  fileUrl: ""
 }
 
 // Strict Type Model

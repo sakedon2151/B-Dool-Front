@@ -1,25 +1,30 @@
 import CommonHeader from "./components/common/CommonHeader";
 import CommonFooter from "./components/common/CommonFooter";
-import { ThemeProvider } from "next-themes";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-
 
 export default function Home() {
   return (
     <div className="p-4">
-      <ThemeProvider attribute="data-theme" defaultTheme="nord" enableSystem={true}>
-        <CommonHeader />
-      </ThemeProvider>
+      <CommonHeader/>
       <main>
-        <div className="p-4 bg-base-200 rounded-btn">
-          <h2>랜딩 페이지</h2>
+
+        <div className="p-4 bg-base-200 rounded-lg">
+          
+          <div className="hero min-h-screen"> 
+            <div className="hero-content text-center">
+              <div className="max-w-md">
+
+                <h2 className="text-5xl font-bold">B-DOOL</h2>
+                <p className="py-8">안녕</p>
+                <button className="btn">이미지</button>
+              
+              </div>
+            </div>            
+          </div>
+            
         </div>
-      </main>
-      <CommonFooter />
-    </div>
       
-      // <ReactQueryDevtools/>{/* DevTool */}
+      </main> 
+      <CommonFooter/>
+    </div>
   );
 }

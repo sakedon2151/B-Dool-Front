@@ -1,55 +1,63 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ChannelModel } from '../models/channel.model';
+import { ChannelModel } from "@/app/models/channel.model";
 import { channelService } from '../services/channel/channel.service';
 
-export const channelKeys = {
+// Query keys
+const CHANNEL_KEYS = {
   all: ['channels'] as const,
-  lists: () => [...channelKeys.all, 'list'] as const,
-  list: (workspaceId: number) => [...channelKeys.lists(), workspaceId] as const,
-  details: () => [...channelKeys.all, 'detail'] as const,
-  detail: (id: number) => [...channelKeys.details(), id] as const,
+  byId: (id: string) => [...CHANNEL_KEYS.all, 'byId', id] as const,
+  byWorkspaceId: (workspaceId: number) => [...CHANNEL_KEYS.all, 'byWorkspaceId', workspaceId] as const,
 };
 
-export const useChannelQueries = (workspaceId: number) => {
-  const queryClient = useQueryClient();
-
-  const getChannels = useQuery({
-    queryKey: channelKeys.list(workspaceId),
+// Queries
+export const useChannelsByWorkspaceId = (workspaceId: number) => 
+  useQuery({
+    queryKey: CHANNEL_KEYS.byWorkspaceId(workspaceId),
     queryFn: () => channelService.getChannelsByWorkspaceId(workspaceId),
-    enabled: !!workspaceId,
   });
 
-  const createChannel = useMutation({
+export const useChannelById = (channelId: string) => 
+  useQuery({
+    queryKey: CHANNEL_KEYS.byId(channelId),
+    queryFn: () => channelService.getChannelById(channelId),
+  });
+
+// Mutations
+export const useCreateChannel = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: (channelData: ChannelModel) => channelService.createChannel(channelData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: channelKeys.lists() });
+    onSuccess: (newChannel) => {
+      queryClient.invalidateQueries({ queryKey: CHANNEL_KEYS.all });
+      queryClient.setQueryData(CHANNEL_KEYS.byId(newChannel.channelId), newChannel);
+      if (newChannel.workspacesId) {
+        queryClient.invalidateQueries({ 
+          queryKey: CHANNEL_KEYS.byWorkspaceId(newChannel.workspacesId) 
+        });
+      }
     },
   });
+};
 
-  const deleteChannel = useMutation({
-    mutationFn: (channelId: number) => channelService.deleteChannel(channelId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: channelKeys.lists() });
+export const useUpdateChannel = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ channelId, profileId }: { channelId: string; profileId: number }) => 
+      channelService.updateChannel(channelId, profileId),
+    onSuccess: (_, { channelId }) => {
+      queryClient.invalidateQueries({ queryKey: CHANNEL_KEYS.byId(channelId) });
+      queryClient.invalidateQueries({ queryKey: CHANNEL_KEYS.all });
     },
   });
+};
 
-  const addProfileToChannel = useMutation({
-    mutationFn: ({ channelId, profileId }: { channelId: string, profileId: string }) => 
-      channelService.addProfileToChannel(channelId, profileId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: channelKeys.lists() });
+export const useDeleteChannel = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: channelService.deleteChannel,
+    onSuccess: (_, deletedChannelId) => {
+      queryClient.invalidateQueries({ queryKey: CHANNEL_KEYS.all });
+      queryClient.removeQueries({ queryKey: CHANNEL_KEYS.byId(deletedChannelId) });
     },
   });
-
-  const checkChannelExists = useMutation({
-    mutationFn: (channelId: number) => channelService.checkChannelExists(channelId),
-  });
-
-  return {
-    getChannels,
-    createChannel,
-    deleteChannel,
-    addProfileToChannel,
-    checkChannelExists,
-  };
 };

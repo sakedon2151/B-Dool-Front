@@ -9,7 +9,7 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
-    withCredentials: true, // 쿠키를 포함한 크로스 도메인 요청을 허용
+    withCredentials: true,
   });
 
   // 요청 인터셉터
@@ -17,10 +17,7 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
     (config) => {
       const token = getToken();
       if (token) {
-        console.log("TOKEN FOUND: ", token);
         config.headers['Authorization'] = `Bearer ${token}`;
-      } else {
-        console.log("NO TOKEN FOUND!!")
       }
       return config;
     },

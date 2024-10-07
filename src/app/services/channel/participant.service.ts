@@ -4,6 +4,7 @@ import { serverBAxios } from "../../utils/axiosInstance";
 const BASE_URL = '/participant';
 
 export const participantService = {
+  
   getParticipantById: (participantId: string) => 
     serverBAxios.get<ParticipantModel>(`${BASE_URL}/${participantId}`)
       .then(response => response.data),

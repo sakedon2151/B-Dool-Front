@@ -3,7 +3,6 @@ import CommonFooter from '@/app/components/common/CommonFooter'
 import CommonHeader from '@/app/components/common/CommonHeader'
 import WorkspaceList from '@/app/components/workspace/WorkspaceList'
 import { useRouter } from 'next/navigation'
-import React from 'react'
 
 export default function gateway() {
   const router = useRouter()

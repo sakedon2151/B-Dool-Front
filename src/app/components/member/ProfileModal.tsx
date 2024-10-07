@@ -1,4 +1,4 @@
-import { profileService } from "@/app/services/member/profile.api";
+
 import { ChangeEvent, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import UpdateProfile from "./UpdateProfile";

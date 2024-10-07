@@ -2,7 +2,7 @@ import { HiHashtag } from "react-icons/hi2";
 import { LuCalendarCheck2 } from "react-icons/lu";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineVideoCamera, HiOutlineBell } from "react-icons/hi";
-import { useChannelStore } from "@/app/stores/channelStores";
+// import { useChannelStore } from "@/app/stores/channelStores";
 import CalendarModal from "../calendar/CalendarModal";
 
 export default function WorkspaceHeader() {

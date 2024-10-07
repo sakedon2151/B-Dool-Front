@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChannelMessage from "./MessageBubble";
 import { useWebsocket } from "@/app/hooks/useWebsocket";
-import { useChannelStore } from "@/app/stores/channelStores";
-import { debounce } from 'lodash';
 import { toDayDividerTime } from "@/app/utils/formatDateTime";
+import { debounce } from 'lodash';
 
 export default function MessageList() {
   const selectedChannel = useChannelStore((state) => state.selectedChannel);

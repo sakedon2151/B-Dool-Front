@@ -1,69 +1,58 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { WorkspaceModel } from '../models/workspace.model';
+import { WorkspaceModel } from "@/app/models/workspace.model";
 import { workspaceService } from '../services/workspace/workspace.service';
 
-export const workspaceKeys = {
+// Query keys
+const WORKSPACE_KEYS = {
   all: ['workspaces'] as const,
-  lists: () => [...workspaceKeys.all, 'list'] as const,
-  list: (filters: any) => [...workspaceKeys.lists(), filters] as const,
-  details: () => [...workspaceKeys.all, 'detail'] as const,
-  detail: (id: number) => [...workspaceKeys.details(), id] as const,
+  byId: (id: number) => [...WORKSPACE_KEYS.all, 'byId', id] as const,
+  list: (ids: number[]) => [...WORKSPACE_KEYS.all, 'list', ids] as const,
 };
 
-export const useWorkspaceQueries = () => {
-  const queryClient = useQueryClient();
-
-  const getWorkspaceList = useQuery({
-    queryKey: workspaceKeys.lists(),
-    queryFn: () => workspaceService.getWorkspaceList(),
-  });
-
-  const getFilteredWorkspaceList = (filters: any) => useQuery({
-    queryKey: workspaceKeys.list(filters),
-    queryFn: () => workspaceService.getFilteredWorkspaceList(filters),
-  });
-
-  const getWorkspaceById = (workspaceId: number) => useQuery({
-    queryKey: workspaceKeys.detail(workspaceId),
+// Queries
+export const useWorkspaceById = (workspaceId: number) => 
+  useQuery({
+    queryKey: WORKSPACE_KEYS.byId(workspaceId),
     queryFn: () => workspaceService.getWorkspaceById(workspaceId),
-    enabled: !!workspaceId,
   });
 
-  const createWorkspace = useMutation({
+export const useWorkspacesByIds = (workspaceIds: number[]) => 
+  useQuery({
+    queryKey: WORKSPACE_KEYS.list(workspaceIds),
+    queryFn: () => workspaceService.getWorkspacesByIds(workspaceIds),
+  });
+
+// Mutations
+export const useCreateWorkspace = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: (data: WorkspaceModel) => workspaceService.createWorkspace(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: workspaceKeys.lists() });
+    onSuccess: (newWorkspace) => {
+      queryClient.invalidateQueries({ queryKey: WORKSPACE_KEYS.all });
+      queryClient.setQueryData(WORKSPACE_KEYS.byId(newWorkspace.id), newWorkspace);
     },
   });
+};
 
-  const updateWorkspace = useMutation({
+export const useUpdateWorkspace = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ workspaceId, data }: { workspaceId: number; data: WorkspaceModel }) => 
       workspaceService.updateWorkspace(workspaceId, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: workspaceKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: workspaceKeys.detail(data.id) });
+    onSuccess: (updatedWorkspace) => {
+      queryClient.invalidateQueries({ queryKey: WORKSPACE_KEYS.all });
+      queryClient.setQueryData(WORKSPACE_KEYS.byId(updatedWorkspace.id), updatedWorkspace);
     },
   });
+};
 
-  const deleteWorkspace = useMutation({
-    mutationFn: (workspaceId: number) => workspaceService.deleteWorkspace(workspaceId),
-    onSuccess: (_, workspaceId) => {
-      queryClient.invalidateQueries({ queryKey: workspaceKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: workspaceKeys.detail(workspaceId) });
+export const useDeleteWorkspace = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: workspaceService.deleteWorkspace,
+    onSuccess: (_, deletedWorkspaceId) => {
+      queryClient.invalidateQueries({ queryKey: WORKSPACE_KEYS.all });
+      queryClient.removeQueries({ queryKey: WORKSPACE_KEYS.byId(deletedWorkspaceId) });
     },
   });
-
-  const checkWorkspaceUrl = useMutation({
-    mutationFn: (url: string) => workspaceService.checkWorkspaceUrl(url),
-  });
-
-  return {
-    getWorkspaceList,
-    getFilteredWorkspaceList,
-    getWorkspaceById,
-    createWorkspace,
-    updateWorkspace,
-    deleteWorkspace,
-    checkWorkspaceUrl,
-  };
 };

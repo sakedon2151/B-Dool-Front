@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import React from "react";
 import ReactQueryProvider from "./components/common/ReactQueryProvider";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,14 +31,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>B-DOOL</title>
-        {/* meta */}
-        {/* favicon */}
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ReactQueryProvider>
-          {children}
-        </ReactQueryProvider>
+        <ThemeProvider enableSystem={true} attribute="data-theme" defaultTheme="nord">
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
