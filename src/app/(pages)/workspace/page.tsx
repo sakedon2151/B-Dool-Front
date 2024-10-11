@@ -8,15 +8,14 @@ export default function gateway() {
   const router = useRouter()
   
   return (
-    <div className="flex flex-col p-4 ">
+    <div className="flex flex-col p-4 h-dvh ">
       <CommonHeader />
       <main className="flex-grow">
-        <div className="flex flex-col items-center justify-center h-full p-4 bg-base-200 rounded-btn">
-          
+
+        <div className="flex flex-col items-center justify-center h-full p-4 bg-base-200 rounded-lg">  
           <WorkspaceList/>
-          <button onClick={() => router.push(`/workspace/${1}`)} className="mt-4 btn btn-warning">bypass</button>
-          
         </div>
+      
       </main>
       <CommonFooter />
     </div>

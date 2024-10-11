@@ -8,6 +8,21 @@ export interface ParticipantModel {
   profileId: number;
 }
 
+export interface ParticipantInsertModel {
+  channelId: string;
+  nickname: string;
+  favorited: boolean;
+  joinedAt: string;
+}
+
+export interface ParticipantUpdateModel {
+  participantId: string; 
+  channelId: string;
+  nickname: string;
+  favorited: boolean;
+  joinedAt: string;
+}
+
 export const InitialParticipant: ParticipantModel = {
   participantId: "",
   channelId: "",
@@ -17,5 +32,3 @@ export const InitialParticipant: ParticipantModel = {
   isOnline: false,
   profileId: 0
 }
-
-// Strict Type Model

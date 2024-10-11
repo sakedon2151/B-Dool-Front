@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { WorkspaceModel } from "@/app/models/workspace.model";
+import { WorkspaceInsertModel, WorkspaceModel, WorkspaceUpdateModel } from "@/app/models/workspace.model";
 import { workspaceService } from '../services/workspace/workspace.service';
 
 // Query keys
@@ -26,7 +26,7 @@ export const useWorkspacesByIds = (workspaceIds: number[]) =>
 export const useCreateWorkspace = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: WorkspaceModel) => workspaceService.createWorkspace(data),
+    mutationFn: (data: WorkspaceInsertModel) => workspaceService.createWorkspace(data),
     onSuccess: (newWorkspace) => {
       queryClient.invalidateQueries({ queryKey: WORKSPACE_KEYS.all });
       queryClient.setQueryData(WORKSPACE_KEYS.byId(newWorkspace.id), newWorkspace);
@@ -37,7 +37,7 @@ export const useCreateWorkspace = () => {
 export const useUpdateWorkspace = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ workspaceId, data }: { workspaceId: number; data: WorkspaceModel }) => 
+    mutationFn: ({ workspaceId, data }: { workspaceId: number; data: WorkspaceUpdateModel }) => 
       workspaceService.updateWorkspace(workspaceId, data),
     onSuccess: (updatedWorkspace) => {
       queryClient.invalidateQueries({ queryKey: WORKSPACE_KEYS.all });

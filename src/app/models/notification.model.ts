@@ -20,5 +20,3 @@ export const InitialNotification: NotificationModel = {
   metadata: "",
   expiresAt: ""
 }
-
-// Strict Type Model

@@ -1,4 +1,4 @@
-import { WorkspaceModel } from "@/app/models/workspace.model";
+import { WorkspaceInsertModel, WorkspaceModel, WorkspaceUpdateModel } from "@/app/models/workspace.model";
 import { serverCAxios } from "../../utils/axiosInstance";
 
 const BASE_URL = '/workspaces';
@@ -20,12 +20,12 @@ export const workspaceService = {
   // ----- mutations -----
 
   // workspace 생성 요청
-  createWorkspace: (data: WorkspaceModel) => 
+  createWorkspace: (data: WorkspaceInsertModel) => 
     serverCAxios.post<WorkspaceModel>(`${BASE_URL}/new-workspace`, data)
       .then(response => response.data),
 
   // workspace 수정 요청
-  updateWorkspace: (workspaceId: number, data: WorkspaceModel) => 
+  updateWorkspace: (workspaceId: number, data: WorkspaceUpdateModel) => 
     serverCAxios.put<WorkspaceModel>(`${BASE_URL}/${workspaceId}`, data)
       .then(response => response.data),
 

@@ -13,7 +13,6 @@ export default function ProfileModal() {
   
   const profileId = 1
 
-  // 프로필 이미지 변경 함수
   const handleImgChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

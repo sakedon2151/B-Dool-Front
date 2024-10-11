@@ -10,6 +10,10 @@ export interface MessageModel {
   fileUrl: string;
 }
 
+export interface MessageInsertModel {}
+
+export interface MessageUpdateModel {}
+
 export const InitialMessage: MessageModel = {
   messageId: "",
   channelId: "",
@@ -21,5 +25,3 @@ export const InitialMessage: MessageModel = {
   profileId: 0,
   fileUrl: ""
 }
-
-// Strict Type Model

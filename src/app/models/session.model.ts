@@ -8,4 +8,3 @@ export interface SessionModel {
   channelMemberId: string; // 세션 생성자 pk
 }
 
-// Strict Type Model

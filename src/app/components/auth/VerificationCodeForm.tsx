@@ -19,12 +19,6 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
     inputRefs.current = inputRefs.current.slice(0, CODE_LENGTH);
   }, []);
 
-  useEffect(() => {
-    if (code.every(digit => digit === '')) {
-      inputRefs.current[0]?.focus();
-    }
-  }, [code]);
-
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
     if (value.length > 1) return;
@@ -52,14 +46,9 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
       await onSuccess(fullCode);
     } catch (err) {
       setError('인증에 실패했습니다. 다시 시도해 주세요.')
-      resetCode();
     } finally {
       setLoading(false);
     }
-  };
-
-  const resetCode = () => {
-    setCode(Array(CODE_LENGTH).fill(''));
   };
 
   const handleResendCode = async () => {
@@ -67,7 +56,6 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
     setError('');
     try {
       await onResendCode();
-      resetCode();
       setError('새로운 인증 코드가 전송되었습니다.');
     } catch (err) {
       setError('인증 코드 재전송에 실패했습니다. 다시 시도해 주세요.');
