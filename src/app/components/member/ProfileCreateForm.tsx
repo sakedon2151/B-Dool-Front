@@ -57,17 +57,17 @@ export default function ProfileCreateForm({ onSubmit }: ProfileCreateFormProps) 
       <input
         type="text" 
         className="input input-bordered w-full mb-4" 
-        placeholder="성명"
-        value={profileName}
-        onChange={(e) => setProfileName(e.target.value)}
+        placeholder="프로필 닉네임"
+        value={profileNickname}
+        onChange={(e) => setProfileNickname(e.target.value)}
         required
       />
       <input
         type="text" 
         className="input input-bordered w-full mb-4" 
-        placeholder="프로필 닉네임"
-        value={profileNickname}
-        onChange={(e) => setProfileNickname(e.target.value)}
+        placeholder="이름"
+        value={profileName}
+        onChange={(e) => setProfileName(e.target.value)}
         required
       />
       <div className="text-center">

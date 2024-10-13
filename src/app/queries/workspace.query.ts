@@ -7,6 +7,7 @@ const WORKSPACE_KEYS = {
   all: ['workspaces'] as const,
   byId: (id: number) => [...WORKSPACE_KEYS.all, 'byId', id] as const,
   list: (ids: number[]) => [...WORKSPACE_KEYS.all, 'list', ids] as const,
+  checkUrl: (url: string) => [...WORKSPACE_KEYS.all, 'checkUrl', url] as const,
 };
 
 // Queries
@@ -20,6 +21,14 @@ export const useWorkspacesByIds = (workspaceIds: number[]) =>
   useQuery({
     queryKey: WORKSPACE_KEYS.list(workspaceIds),
     queryFn: () => workspaceService.getWorkspacesByIds(workspaceIds),
+  });
+
+export const useCheckWorkspaceUrl = (url: string) => 
+  useQuery({
+    queryKey: WORKSPACE_KEYS.checkUrl(url),
+    queryFn: () => workspaceService.checkWorkspaceUrl(url),
+    enabled: url.length > 0,
+    staleTime: 300,
   });
 
 // Mutations

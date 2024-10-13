@@ -18,15 +18,15 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
   const createWorkspaceMutation = useCreateWorkspace(); // API Query
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
-          setWorkspaceImage(e.target.result as string);
+          setWorkspaceImage(e.target.result as string)
         }
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file)
     }
   };
 

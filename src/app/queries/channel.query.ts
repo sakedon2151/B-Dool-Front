@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ChannelModel } from "@/app/models/channel.model";
+import { ChannelInsertModel, ChannelModel } from "@/app/models/channel.model";
 import { channelService } from '../services/channel/channel.service';
 
 // Query keys
@@ -26,7 +26,7 @@ export const useChannelById = (channelId: string) =>
 export const useCreateChannel = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (channelData: ChannelModel) => channelService.createChannel(channelData),
+    mutationFn: (channelData: ChannelInsertModel) => channelService.createChannel(channelData),
     onSuccess: (newChannel) => {
       queryClient.invalidateQueries({ queryKey: CHANNEL_KEYS.all });
       queryClient.setQueryData(CHANNEL_KEYS.byId(newChannel.channelId), newChannel);

@@ -1,4 +1,4 @@
-import { ChannelModel } from "@/app/models/channel.model";
+import { ChannelInsertModel, ChannelModel } from "@/app/models/channel.model";
 import { serverBAxios } from "../../utils/axiosInstance";
 
 const BASE_URL = '/channel';
@@ -20,7 +20,7 @@ export const channelService = {
   // ----- mutations -----
 
   // channel 추가 요청
-  createChannel: (channelData: ChannelModel) => 
+  createChannel: (channelData: ChannelInsertModel) => 
     serverBAxios.post<ChannelModel>(BASE_URL, channelData)
       .then(response => response.data),
 

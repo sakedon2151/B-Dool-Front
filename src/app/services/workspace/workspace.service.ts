@@ -34,10 +34,13 @@ export const workspaceService = {
     serverCAxios.delete(`${BASE_URL}/${workspaceId}`)
       .then(response => response.data),
 
-  // checkWorkspaceUrl: (url: string) => 
-  //   serverCAxios.get<boolean>(`${BASE_URL}/check-url`, {
-  //     params: { url }
-  //   }).then(response => response.data),
+  // ----- util -----
+
+  // workspace url 중복 검증
+  checkWorkspaceUrl: (url: string) => 
+    serverCAxios.get<boolean>(`${BASE_URL}/check-url`, {
+      params: { url }
+    }).then(response => response.data),
   
   // getAllWorkspaces: () => 
   //   serverCAxios.get<WorkspaceModel[]>(`${BASE_URL}/list`)

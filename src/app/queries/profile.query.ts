@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ProfileModel } from "@/app/models/profile.model";
+import { ProfileInsertModel, ProfileModel, ProfileUpdateModel } from "@/app/models/profile.model";
 import { profileService } from '../services/member/profile.service';
 
 // Query keys
@@ -33,7 +33,7 @@ export const useProfilesByWorkspaceId = (workspaceId: number) =>
 export const useCreateProfile = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ memberId, data }: { memberId: number; data: ProfileModel }) => 
+    mutationFn: ({ memberId, data }: { memberId: number; data: ProfileInsertModel }) => 
       profileService.createProfile(memberId, data),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byMemberId(variables.memberId) });
@@ -44,7 +44,7 @@ export const useCreateProfile = () => {
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ profileId, data }: { profileId: number; data: ProfileModel }) => 
+    mutationFn: ({ profileId, data }: { profileId: number; data: ProfileUpdateModel }) => 
       profileService.updateProfile(profileId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byId(data.id) });

@@ -1,4 +1,4 @@
-import { ProfileModel } from "@/app/models/profile.model";
+import { ProfileInsertModel, ProfileModel, ProfileUpdateModel } from "@/app/models/profile.model";
 import { serverAAxios } from "../../utils/axiosInstance";
 
 const BASE_URL = '/profiles';
@@ -25,12 +25,12 @@ export const profileService = {
   // ----- mutations -----
   
   // profile 추가 요청
-  createProfile: (memberId: number, data: ProfileModel) => 
+  createProfile: (memberId: number, data: ProfileInsertModel) => 
     serverAAxios.post<ProfileModel>(`${BASE_URL}/${memberId}`, data)
   .then(response => response.data),
 
   // profile 수정 요청
-  updateProfile: (profileId: number, data: ProfileModel) => 
+  updateProfile: (profileId: number, data: ProfileUpdateModel) => 
     serverAAxios.put<ProfileModel>(`${BASE_URL}/${profileId}`, data)
   .then(response => response.data),
   

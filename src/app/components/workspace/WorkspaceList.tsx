@@ -43,7 +43,7 @@ export default function WorkspaceList() {
 
                 <div className="avatar">
                   <div className="w-16 rounded-btn">
-                    <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    <img src={workspace.workspaceImageUrl} />
                   </div>
                 </div>
 
@@ -104,9 +104,7 @@ export default function WorkspaceList() {
 
       <dialog id="workspace-modal" className="modal modal-bottom lg:modal-middle">
         <div className="modal-box p-4">
-          
-          <WorkspaceCreateModal />
-
+          <WorkspaceCreateModal onComplete={() => document.getElementById('workspace-modal')?.close()} />
           <div className="modal-action">
             <form method="dialog">
               <button className="btn">취소</button>
