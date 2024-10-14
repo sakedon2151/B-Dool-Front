@@ -2,26 +2,28 @@ import { HiHashtag } from "react-icons/hi2";
 import { LuCalendarCheck2 } from "react-icons/lu";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineVideoCamera, HiOutlineBell } from "react-icons/hi";
-// import { useChannelStore } from "@/app/stores/channelStores";
 import CalendarModal from "../calendar/CalendarModal";
+import { useChannelStore } from "@/app/stores/channel.store";
+import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 export default function WorkspaceHeader() {
-  const selectedChannel = useChannelStore((state) => state.selectedChannel)
-  
+  const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
+  const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace);  // Zustand Store
+
   return (
     <>
       <div className="justify-between navbar">
         <div className="flex gap-2 ml-14 lg:m-0">
           <div className="avatar">
             <div className="w-12 rounded-btn">
-              <img src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/eed560189998237.65b50b647abf4.png" />
+              <img src={currentWorkspace.workspaceImageUrl}/>
             </div>
           </div>
           <div className="flex flex-col">
-            <h2 className="font-bold">WORKSPACE NAME</h2>
+            <h2 className="font-bold">{currentWorkspace.name}</h2>
             <div className="flex items-center">
               <HiHashtag className="w-4 h-4"/>
-              <p>{selectedChannel?.name}</p>
+              <p>{currentChannel?.name}</p>
             </div>
           </div>
         </div>

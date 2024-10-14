@@ -74,6 +74,10 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
           )}
         </details>
       </li>
+
+
+
+      
     </ul>
   );
 }

@@ -3,10 +3,11 @@ import ChannelMessage from "./MessageBubble";
 import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { toDayDividerTime } from "@/app/utils/formatDateTime";
 import { debounce } from 'lodash';
+import { useChannelStore } from "@/app/stores/channel.store";
 
 export default function MessageList() {
-  const selectedChannel = useChannelStore((state) => state.selectedChannel);
-  const { messages, loadMoreMessages, hasMore } = useWebsocket(selectedChannel.channelId);
+  const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
+  const { messages, loadMoreMessages, hasMore } = useWebsocket(currentChannel.channelId);
   const messageAreaRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   

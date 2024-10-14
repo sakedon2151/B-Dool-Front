@@ -7,10 +7,14 @@ import { useWorkspacesByIds } from "@/app/queries/workspace.query";
 import { useMemberStore } from "@/app/stores/member.store"
 import { useMemo, useState } from "react";
 import WorkspaceCreateModal from "./WorkspaceCreateModal";
+import { useRouter } from "next/navigation";
+import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 export default function WorkspaceList() {
-  const [modalKey, setModalKey] = useState<string>("modal-");
+  const router = useRouter()
+  const [modalKey, setModalKey] = useState<number>(0);
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
+  const setCurrentWorkspace = useWorkspaceStore(state => state.setCurrentWorkspace);  // Zustand Store
   const { data: profiles, isLoading: isLoadingProfiles, error: profilesError } = useProfilesByMemberId(currentMember.id) // API Query
 
   const workspaceIds = useMemo(() => {
@@ -30,6 +34,11 @@ export default function WorkspaceList() {
     document.getElementById('workspace-modal')?.showModal();
   };
 
+  const handleWorkspaceSelect = (workspace: WorkspaceModel) => {
+    setCurrentWorkspace(workspace);
+    router.push(`/workspace/${workspace.id}`);
+  };
+
   if (isLoadingProfiles || isLoadingWorkspaces) {
     return <div className="loading loading-spinner loading-lg">Loading...</div>;
   }
@@ -37,7 +46,7 @@ export default function WorkspaceList() {
     return <div className="text-center">에러가 발생했습니다. 잠시 후 다시 시도해주세요.<br/>{profilesError?.message || workspacesError?.message}</div>;
   }
   if (!profiles || !workspaces) {
-    return <div>참여중인 워크스페이스가 존재하지 않습니다.</div>;
+    return <div>참여중인 워크스페이스를 찾을 수 없습니다.</div>;
   }
 
   return (
@@ -49,7 +58,7 @@ export default function WorkspaceList() {
           
           {workspaces.map((workspace: WorkspaceModel) => (
             <li key={workspace.id} className='border mb-2 rounded-md'>
-              <a className="p-2">
+              <a className="p-2" onClick={() => handleWorkspaceSelect(workspace)}>
 
                 <div className="avatar">
                   <div className="w-16 rounded-btn">
@@ -66,8 +75,8 @@ export default function WorkspaceList() {
                   {profiles
                     .filter(profile => profile.workspaceId === workspace.id)
                     .slice(0, 3)
-                    .map((profile: ProfileModel) => (
-                      <div key={`${workspace.id}-${profile.id}`} className="avatar border">
+                    .map((profile: ProfileModel, index) => (
+                      <div key={`${workspace.id}-${profile.id || index}`} className="avatar border">
                         <div className="w-8">
                           <img src={profile.profileImgUrl || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"} alt="profile image"/>
                         </div>

@@ -1,11 +1,13 @@
 import { useWebsocket } from "@/app/hooks/useWebsocket";
+import { useChannelStore } from "@/app/stores/channel.store";
 import { useCallback, useRef, useState, useEffect } from "react";
 import { FaFileArrowUp } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 
 export default function MessageInput() {
-  const selectedChannel = useChannelStore((state) => state.selectedChannel)
-  const { sendMessage } = useWebsocket(selectedChannel.channelId);
+  const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
+
+  const { sendMessage } = useWebsocket(currentChannel.channelId);
   
   const [message, setMessage] = useState('')
   const textarea = useRef<HTMLTextAreaElement>(null);

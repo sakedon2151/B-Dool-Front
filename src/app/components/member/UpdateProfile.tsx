@@ -1,5 +1,5 @@
 import { ProfileModel } from "@/app/models/profile.model";
-
+import { useProfileStore } from "@/app/stores/profile.store";
 import React, { useState } from "react";
 
 interface UpdateProfileProps {
@@ -7,9 +7,9 @@ interface UpdateProfileProps {
 }
 
 export default function UpdateProfile({ onCancel }: UpdateProfileProps) {
-  const fetchedProfile = useProfileStore()
-  const [formData, setFormData] = useState<ProfileModel>();
+  const currentProfile = useProfileStore(state => state.currentProfile);  // Zustand Store
 
+  const [formData, setFormData] = useState<ProfileModel>();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault;
     await profileService.updateProfile(profileId, formData);
@@ -17,7 +17,7 @@ export default function UpdateProfile({ onCancel }: UpdateProfileProps) {
   }
 
   return (
-    <div className="">
+    <div>
       <form onSubmit={handleSubmit}>
         <input 
           type="text" 
