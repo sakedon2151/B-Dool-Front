@@ -18,6 +18,7 @@ export interface ProfileInsertModel {
   name: string; // 이름
   nickname: string; // 닉네임
   profileImgUrl: string; // 프로필 이미지 URL
+  workspaceId: number; // 워크스페이스 ID // 현우씨랑 상담
   isOnline: boolean; // 접속 여부
 }
 

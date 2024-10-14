@@ -10,10 +10,10 @@ import { setToken } from "@/app/utils/tokenController";
 
 export default function EmailLoginForm() {
   const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
   
   const setCurrentMember = useMemberStore(state => state.setCurrentMember); // 로그인 객체
   

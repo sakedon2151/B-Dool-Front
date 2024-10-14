@@ -2,11 +2,8 @@
 import CommonFooter from '@/app/components/common/CommonFooter'
 import CommonHeader from '@/app/components/common/CommonHeader'
 import WorkspaceList from '@/app/components/workspace/WorkspaceList'
-import { useRouter } from 'next/navigation'
 
 export default function gateway() {
-  const router = useRouter()
-  
   return (
     <div className="flex flex-col p-4 h-dvh ">
       <CommonHeader />

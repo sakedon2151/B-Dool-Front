@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { WorkspaceInsertModel } from "@/app/models/workspace.model"
 import { useCreateWorkspace } from "@/app/queries/workspace.query";
 import { DEFAULT_WORKSPACE_IMAGE } from "@/app/utils/config";
@@ -9,14 +9,27 @@ interface WorkspaceCreateFormProps {
 }
 
 export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormProps) {
-  const [workspaceName, setWorkspaceName] = useState('');
-  const [workspaceInfo, setWorkspaceInfo] = useState('');
-  const [workspaceUrl, setWorkspaceUrl] = useState('');
-  const [workspaceImage, setWorkspaceImage] = useState(DEFAULT_WORKSPACE_IMAGE);
+  const [workspaceName, setWorkspaceName] = useState<string>('');
+  const [workspaceInfo, setWorkspaceInfo] = useState<string>('');
+  const [workspaceUrl, setWorkspaceUrl] = useState<string>('');
+  const [workspaceImage, setWorkspaceImage] = useState<string>(DEFAULT_WORKSPACE_IMAGE);
   const fileInput = useRef<HTMLInputElement>(null);
   
   const createWorkspaceMutation = useCreateWorkspace(); // API Query
 
+  const resetForm = () => {
+    setWorkspaceName('')
+    setWorkspaceInfo('')
+    setWorkspaceUrl('')
+    setWorkspaceImage(DEFAULT_WORKSPACE_IMAGE)
+  }
+
+  useEffect(() => {
+    return () => {
+      resetForm()
+    }
+  }, [])
+  
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {

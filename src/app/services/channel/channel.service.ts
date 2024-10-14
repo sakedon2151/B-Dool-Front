@@ -1,7 +1,7 @@
 import { ChannelInsertModel, ChannelModel } from "@/app/models/channel.model";
 import { serverBAxios } from "../../utils/axiosInstance";
 
-const BASE_URL = '/channel';
+const BASE_URL = '/channels';
 
 export const channelService = {
 

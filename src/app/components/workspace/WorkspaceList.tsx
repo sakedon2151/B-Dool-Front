@@ -5,10 +5,11 @@ import { WorkspaceModel } from "@/app/models/workspace.model";
 import { useProfilesByMemberId } from "@/app/queries/profile.query";
 import { useWorkspacesByIds } from "@/app/queries/workspace.query";
 import { useMemberStore } from "@/app/stores/member.store"
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import WorkspaceCreateModal from "./WorkspaceCreateModal";
 
 export default function WorkspaceList() {
+  const [modalKey, setModalKey] = useState<string>("modal-");
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const { data: profiles, isLoading: isLoadingProfiles, error: profilesError } = useProfilesByMemberId(currentMember.id) // API Query
 
@@ -19,16 +20,24 @@ export default function WorkspaceList() {
   
   const { data: workspaces, isLoading: isLoadingWorkspaces, error: workspacesError } = useWorkspacesByIds(workspaceIds);
 
+  const handleModalClose = () => {
+    document.getElementById('workspace-modal')?.close()
+    setModalKey(prev => prev + 1);
+  };
+
+  const handleModalOpen = () => {
+    setModalKey(prev => prev + 1);
+    document.getElementById('workspace-modal')?.showModal();
+  };
+
   if (isLoadingProfiles || isLoadingWorkspaces) {
-    return <div>Loading...</div>;
+    return <div className="loading loading-spinner loading-lg">Loading...</div>;
   }
-
   if (profilesError || workspacesError) {
-    return <div>An error occurred: {profilesError?.message || workspacesError?.message}</div>;
+    return <div className="text-center">에러가 발생했습니다. 잠시 후 다시 시도해주세요.<br/>{profilesError?.message || workspacesError?.message}</div>;
   }
-
   if (!profiles || !workspaces) {
-    return <div>No data available</div>;
+    return <div>참여중인 워크스페이스가 존재하지 않습니다.</div>;
   }
 
   return (
@@ -36,7 +45,8 @@ export default function WorkspaceList() {
       <div className="bg-base-300 rounded-md p-4 lg:w-[768px] w-full h-full">
         <h2 className="text-lg font-bold text-center">워크스페이스</h2>
         <div className="divider mt-2"></div>
-        <ul className="menu rounded-box p-0 overflow-scroll">
+        <ul className="menu p-0 overflow-scroll">
+          
           {workspaces.map((workspace: WorkspaceModel) => (
             <li key={workspace.id} className='border mb-2 rounded-md'>
               <a className="p-2">
@@ -76,6 +86,7 @@ export default function WorkspaceList() {
               </a>
             </li>
           ))}
+          
           {workspaces.length === 0 && (
             <div role="alert" className="alert alert-info mb-2">
               <svg
@@ -93,10 +104,10 @@ export default function WorkspaceList() {
             </div>
           )}
 
-          <li className="border rounded-md w-full">
-            <a className="p-2 place-content-center" onClick={()=>document.getElementById('workspace-modal')?.showModal()}>
-              <p className="">워크스페이스 생성하기</p>
-            </a>
+          <li className="">
+            <button className="btn btn-primary" onClick={handleModalOpen}>
+              워크스페이스 생성하기
+            </button>
           </li>
 
         </ul>
@@ -104,10 +115,10 @@ export default function WorkspaceList() {
 
       <dialog id="workspace-modal" className="modal modal-bottom lg:modal-middle">
         <div className="modal-box p-4">
-          <WorkspaceCreateModal onComplete={() => document.getElementById('workspace-modal')?.close()} />
-          <div className="modal-action">
+          <WorkspaceCreateModal key={modalKey} onComplete={handleModalClose} />
+          <div className="modal-action absolute bottom-4 right-4">
             <form method="dialog">
-              <button className="btn">취소</button>
+              <button className="btn" onClick={handleModalClose} >취소</button>
             </form>
           </div>
         </div>

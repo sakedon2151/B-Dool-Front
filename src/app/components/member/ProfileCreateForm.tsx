@@ -1,17 +1,31 @@
 import { ProfileInsertModel } from "@/app/models/profile.model"
 import { DEFAULT_PROFILE_IMAGE } from "@/app/utils/config";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaPlus } from 'react-icons/fa';
 
 interface ProfileCreateFormProps {
   onSubmit: (data: ProfileInsertModel) => void;
+  onPrevious: () => void;
+  workspaceId: number;
 }
 
-export default function ProfileCreateForm({ onSubmit }: ProfileCreateFormProps) {
+export default function ProfileCreateForm({ onSubmit, onPrevious, workspaceId }: ProfileCreateFormProps) {
   const [profileName, setProfileName] = useState<string>('')
-  const [profileNickname, setProfileNickname] = useState('')
-  const [profileImage, setProfileImage] = useState(DEFAULT_PROFILE_IMAGE)
+  const [profileNickname, setProfileNickname] = useState<string>('')
+  const [profileImage, setProfileImage] = useState<string>(DEFAULT_PROFILE_IMAGE)
   const fileInput = useRef<HTMLInputElement>(null);
+
+  const resetForm = () => {
+    setProfileName('')
+    setProfileNickname('')
+    setProfileImage(DEFAULT_PROFILE_IMAGE)
+  }
+
+  useEffect(() => {
+    return () => {
+      resetForm()
+    }
+  }, [])
 
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,7 +46,8 @@ export default function ProfileCreateForm({ onSubmit }: ProfileCreateFormProps) 
       name: profileName,
       nickname: profileNickname,
       profileImgUrl: profileImage,
-      isOnline: false
+      isOnline: false,
+      workspaceId: workspaceId
     }
     onSubmit(profileData)
   };
@@ -71,7 +86,8 @@ export default function ProfileCreateForm({ onSubmit }: ProfileCreateFormProps) 
         required
       />
       <div className="text-center">
-        <button type="submit" className="btn">다음</button>
+        <button type="button" onClick={onPrevious} className="btn mr-2">이전</button>
+        <button type="submit" className="btn">생성</button>
       </div>
     </form>
   )
