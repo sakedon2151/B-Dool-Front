@@ -15,6 +15,10 @@ interface WorkspacePageProps {
 
 export default function workspace({ params }: WorkspacePageProps) {
   const workspaceId = parseInt(params.id, 10)
+  // 워크스페이스 입장하면
+  // 1. 프로필 온라인으로 바꾸기
+  // 2. 특정 store 저장 값들 초기화 하기
+  // 3. currentChannel 값 default type channel 로 변경하기
 
   return (
     <div className="drawer lg:drawer-open">
