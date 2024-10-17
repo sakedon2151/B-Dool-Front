@@ -25,7 +25,7 @@ function DataLoader() {
   const updateProfileOnlineStatus = useUpdateProfileOnlineStatus(); // API Query
 
   useEffect(() => {
-    if (!profile || !channel) return; // 데이터가 없으면 실행하지 않음
+    if (!profile || !channel) return; // 데이터가 없으면 실행하지 않음 -> 추후 데이터 없으면 로그아웃 시키기
 
     const prepareMount = async () => {
       if (profile) {

@@ -14,7 +14,7 @@ export default function ThemeSwitcher() {
   }
 
   return (
-    <label className="grid cursor-pointer place-items-center">
+    <label className="grid cursor-pointer place-items-center mx-4">
       <input
         type="checkbox"
         checked={theme === 'dim'}

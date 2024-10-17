@@ -6,10 +6,9 @@ import { IoMdSend } from "react-icons/io";
 
 export default function MessageInput() {
   const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
-
-  const { sendMessage } = useWebsocket(currentChannel.channelId);
+  const { sendMessage } = useWebsocket(currentChannel.channelId); // Stomp Websocket Hook
   
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<string>("")
   const textarea = useRef<HTMLTextAreaElement>(null);
   const MAX_MESSAGE_LENGTH = 100;
   
@@ -43,7 +42,6 @@ export default function MessageInput() {
     const processedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();
     sendMessage(processedMessage); // 추후에 프로필 아이디도 매개로 보내줘야 함
     setMessage('');
-    console.log("submit string:", processedMessage);
     if (textarea.current) {
       textarea.current.style.height = '3rem'
     }

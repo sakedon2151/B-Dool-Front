@@ -18,7 +18,6 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
-  // 메세지 및 페이지네이션 초기화 함수
   const resetState = useCallback(() => {
     setMessages([]);
     setCurrentPage(0);
@@ -47,7 +46,7 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log("WebSocket에 연결되었습니다.");
+        console.log("websocket 에 연결되었습니다.");
         client.subscribe(`/topic/channel/${channelId}`, (message: Message) => {
           const newMessage: MessageModel = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -55,7 +54,7 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
         loadInitialMessages(channelId);
       },
       onStompError: (frame) => {
-        console.error('STOMP 에러:', frame.headers['message']);
+        console.error('stomp websocket 연결 오류: ', frame.headers['message']);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -71,11 +70,10 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
   }, [channelId, resetState, loadInitialMessages]);
   
   // 메시지 전송 함수
-  const sendMessage = useCallback(
-    (content: string) => {
+  const sendMessage = useCallback((content: string) => {
       if (!channelId || !stompClient || !stompClient.active) {
         console.error("메시지를 보낼 수 없습니다. 연결 상태를 확인해주세요.")
-        return ;
+        return;
       }
       try {
         stompClient.publish({
@@ -87,7 +85,7 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
           }),
         });
       } catch (error) {
-        console.error("메시지 전송 실패:", error);
+        console.error("메시지 전송 실패: ", error);
       }
     },
     [stompClient, channelId]

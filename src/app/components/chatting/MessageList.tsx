@@ -7,7 +7,7 @@ import { useChannelStore } from "@/app/stores/channel.store";
 
 export default function MessageList() {
   const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
-  const { messages, loadMoreMessages, hasMore } = useWebsocket(currentChannel.channelId);
+  const { messages, loadMoreMessages, hasMore } = useWebsocket(currentChannel.channelId); // Stomp Websocket Hook
   const messageAreaRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   
@@ -15,7 +15,7 @@ export default function MessageList() {
   const isInitialLoadRef = useRef(true);
   const isNearBottomRef = useRef(true);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const scrollToBottom = useCallback(() => {
