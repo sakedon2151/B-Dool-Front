@@ -1,7 +1,10 @@
 import { FaGear } from "react-icons/fa6";
 import ProfileModal from "./ProfileModal";
+import { useProfileStore } from "@/app/stores/profile.store";
 
-export default function MiniProfileBar() {
+export default function ProfileMiniBar() {
+  const currentProfile = useProfileStore(state => state.currentProfile)
+  
   return (
     <>
       <div className="flex items-center justify-between p-2">
@@ -12,8 +15,8 @@ export default function MiniProfileBar() {
             </div>
           </div>
           <div>
-            <p>sakedon2151</p>
-            <p>프론트엔드 개발자</p>
+            <p>{currentProfile.nickname}</p>
+            <p>{currentProfile.position}</p>
           </div>
         </div>
         

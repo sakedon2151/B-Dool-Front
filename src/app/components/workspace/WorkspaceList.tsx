@@ -15,14 +15,13 @@ export default function WorkspaceList() {
   const [modalKey, setModalKey] = useState<number>(0);
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const setCurrentWorkspace = useWorkspaceStore(state => state.setCurrentWorkspace);  // Zustand Store
-  const { data: profiles, isLoading: isLoadingProfiles, error: profilesError } = useProfilesByMemberId(currentMember.id) // API Query
 
+  const { data: profiles, isLoading: isLoadingProfiles, error: profilesError } = useProfilesByMemberId(currentMember.id) // API Query
   const workspaceIds = useMemo(() => {
     if (!profiles) return [];
     return Array.from(new Set(profiles.map((profile: ProfileModel) => profile.workspaceId)));
   }, [profiles]);
-  
-  const { data: workspaces, isLoading: isLoadingWorkspaces, error: workspacesError } = useWorkspacesByIds(workspaceIds);
+  const { data: workspaces, isLoading: isLoadingWorkspaces, error: workspacesError } = useWorkspacesByIds(workspaceIds); // API Query
 
   const handleModalClose = () => {
     document.getElementById('workspace-modal')?.close()

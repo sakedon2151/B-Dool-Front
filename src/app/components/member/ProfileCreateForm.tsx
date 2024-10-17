@@ -6,10 +6,9 @@ import { FaPlus } from 'react-icons/fa';
 interface ProfileCreateFormProps {
   onSubmit: (data: ProfileInsertModel) => void;
   onPrevious: () => void;
-  workspaceId: number;
 }
 
-export default function ProfileCreateForm({ onSubmit, onPrevious, workspaceId }: ProfileCreateFormProps) {
+export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreateFormProps) {
   const [profileName, setProfileName] = useState<string>('')
   const [profileNickname, setProfileNickname] = useState<string>('')
   const [profileImage, setProfileImage] = useState<string>(DEFAULT_PROFILE_IMAGE)
@@ -46,8 +45,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious, workspaceId }:
       name: profileName,
       nickname: profileNickname,
       profileImgUrl: profileImage,
-      isOnline: false,
-      workspaceId: workspaceId
+      workspaceId: 0
     }
     onSubmit(profileData)
   };

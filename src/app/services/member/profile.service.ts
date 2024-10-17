@@ -22,6 +22,11 @@ export const profileService = {
     serverAAxios.get<ProfileModel[]>(`${BASE_URL}/workspace/${workspaceId}`)
       .then(response => response.data),
 
+  // workspaceId 와 memberId 로 profile 요청
+  getProfileByMemberIdAndWorkspaceId: (memberId: number, workspaceId: number) =>
+    serverAAxios.get<ProfileModel>(`${BASE_URL}/member/${memberId}/workspace/${workspaceId}`)
+      .then(response => response.data),
+
   // ----- mutations -----
   
   // profile 추가 요청
@@ -50,7 +55,6 @@ export const profileService = {
   
   // profile online 변경 요청
   updateProfileOnlineStatus: (profileId: number, isOnline: boolean) => 
-    serverAAxios.patch<ProfileModel>(`${BASE_URL}/${profileId}/online`, { isOnline })
+    serverAAxios.patch<ProfileModel>(`${BASE_URL}/${profileId}/online?isOnline=${isOnline}`)
   .then(response => response.data),
-
 };

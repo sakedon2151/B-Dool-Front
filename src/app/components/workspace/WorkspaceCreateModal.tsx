@@ -15,7 +15,6 @@ interface WorkspaceCreateModalProps {
 export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModalProps) {
   const [workspaceData, setWorkspaceData] = useState<WorkspaceInsertModel | null>(null)
   const [profileData, setProfileData] = useState<ProfileInsertModel | null>(null)
-  const [createdWorkspaceId, setCreatedWorkspaceId] = useState<number>(0)
   const [step, setStep] = useState<number>(1)
 
   const createProfileMutation = useCreateProfile() // API Query
@@ -25,17 +24,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
   
   const handleWorkspaceSubmit = async (data: WorkspaceInsertModel) => {
     setWorkspaceData(data)
-    try {
-      // 워크스페이스 생성
-      const createdWorkspace = await createWorkspaceMutation.mutateAsync({
-        ...workspaceData as WorkspaceInsertModel,
-        ownerId: currentMember.id
-      }) 
-      setCreatedWorkspaceId(createdWorkspace.id)
-      setStep(2)
-    } catch (error) {
-      console.error("워크스페이스 생성 실패: ", error)
-    }
+    setStep(2)
   }
 
   const handleProfileSubmit = async (data: ProfileInsertModel) => {
@@ -44,14 +33,22 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
       if (!currentMember || !workspaceData) {
         throw new Error("필요한 데이터가 없습니다.");
       }
+      // 워크스페이스 생성
+      const createdWorkspace = await createWorkspaceMutation.mutateAsync({
+        ...workspaceData,
+        ownerId: currentMember.id
+      })
       // 프로필 생성
       const createdProfile = await createProfileMutation.mutateAsync({
         memberId: currentMember.id,
-        data: data as ProfileInsertModel
+        data: {
+          ...data,
+          workspaceId: createdWorkspace.id
+        }
       })
       // default 채널 자동 생성
       await createChannelMutation.mutateAsync({
-        workspacesId: createdWorkspaceId,
+        workspacesId: createdWorkspace.id,
         name: "전체 채널",
         isPrivate: false,
         description: "전체 채널입니다.",
@@ -61,7 +58,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
       })
       // DM 채널 자동 생성
       await createChannelMutation.mutateAsync({
-        workspacesId: createdWorkspaceId,
+        workspacesId: createdWorkspace.id,
         name: createdProfile.nickname,
         isPrivate: false,
         description: "다이렉트 메시지",
@@ -83,7 +80,6 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
     setStep(1)
     setWorkspaceData(null)
     setProfileData(null)
-    setCreatedWorkspaceId(0)
   }
 
   useEffect(() => {
@@ -104,7 +100,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
       {step === 1 ? (
         <WorkspaceCreateForm onSubmit={handleWorkspaceSubmit} />
       ) : (
-        <ProfileCreateForm onSubmit={handleProfileSubmit} onPrevious={handlePrevious} workspaceId ={createdWorkspaceId} />
+        <ProfileCreateForm onSubmit={handleProfileSubmit} onPrevious={handlePrevious} />
       )}
     </div>
   );

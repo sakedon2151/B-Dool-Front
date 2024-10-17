@@ -10,8 +10,7 @@ interface ChannelListProps {
 export default function ChannelList({ workspaceId }: ChannelListProps) {
   const { data: channels, isLoading: isLoadingChannels, error: channelsError } = useChannelsByWorkspaceId(workspaceId) // API Query
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel) // Zustand Store
-  
-  
+
   const renderChannelList = (channels: ChannelModel[], isDM: boolean) => (
     <ul>
       {channels
@@ -36,7 +35,6 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
         <summary className="font-bold ">{title}</summary>
         {isLoadingChannels ? (
           <ul>
-            <li className="skeleton h-9 rounded-btn">채널 로드중</li>
             <li className="skeleton h-9 rounded-btn">채널 로드중</li>
             <li className="skeleton h-9 rounded-btn">채널 로드중</li>
             <li className="skeleton h-9 rounded-btn">채널 로드중</li>

@@ -1,10 +1,10 @@
 import { ChannelModel, InitialChannel } from '../models/channel.model';
 import { createPersistStore } from './session.middleware';
 
-export interface ChannelState {
-  currentChannel: ChannelModel
+interface ChannelState {
+  currentChannel: ChannelModel;
   setCurrentChannel: (channel: ChannelModel) => void
-  fetchedChannels: ChannelModel[]
+  fetchedChannels: ChannelModel[];
   setFetchedChannels: (channels: ChannelModel[]) => void
 }
 

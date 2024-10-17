@@ -23,7 +23,7 @@ export default function WorkspaceHeader() {
             <h2 className="font-bold">{currentWorkspace.name}</h2>
             <div className="flex items-center">
               <HiHashtag className="w-4 h-4"/>
-              <p>{currentChannel?.name}</p>
+              <p>{currentChannel.name}</p>
             </div>
           </div>
         </div>

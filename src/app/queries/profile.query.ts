@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { ProfileInsertModel, ProfileModel, ProfileUpdateModel } from "@/app/models/profile.model";
 import { profileService } from '../services/member/profile.service';
 
@@ -8,6 +8,7 @@ const PROFILE_KEYS = {
   byId: (id: number) => [...PROFILE_KEYS.all, 'byId', id] as const,
   byMemberId: (memberId: number) => [...PROFILE_KEYS.all, 'byMemberId', memberId] as const,
   byWorkspaceId: (workspaceId: number) => [...PROFILE_KEYS.all, 'byWorkspaceId', workspaceId] as const,
+  byMemberAndWorkspace: (memberId: number, workspaceId: number) => [...PROFILE_KEYS.all, 'byMemberAndWorkspace', memberId, workspaceId] as const,
 };
 
 // Queries
@@ -27,6 +28,13 @@ export const useProfilesByWorkspaceId = (workspaceId: number) =>
   useQuery({
     queryKey: PROFILE_KEYS.byWorkspaceId(workspaceId),
     queryFn: () => profileService.getProfilesByWorkspaceId(workspaceId),
+  });
+
+// Suspense
+export const useProfileByMemberIdAndWorkspaceId = (memberId: number, workspaceId: number) => 
+  useSuspenseQuery({
+    queryKey: PROFILE_KEYS.byMemberAndWorkspace(memberId, workspaceId),
+    queryFn: () => profileService.getProfileByMemberIdAndWorkspaceId(memberId, workspaceId),
   });
 
 // Mutations

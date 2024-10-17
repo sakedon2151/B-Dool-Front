@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { ChannelInsertModel, ChannelModel } from "@/app/models/channel.model";
 import { channelService } from '../services/channel/channel.service';
 
@@ -7,6 +7,7 @@ const CHANNEL_KEYS = {
   all: ['channels'] as const,
   byId: (id: string) => [...CHANNEL_KEYS.all, 'byId', id] as const,
   byWorkspaceId: (workspaceId: number) => [...CHANNEL_KEYS.all, 'byWorkspaceId', workspaceId] as const,
+  defaultByWorkspaceId: (workspaceId: number) => [...CHANNEL_KEYS.all, 'defaultByWorkspaceId', workspaceId] as const,
 };
 
 // Queries
@@ -14,12 +15,20 @@ export const useChannelsByWorkspaceId = (workspaceId: number) =>
   useQuery({
     queryKey: CHANNEL_KEYS.byWorkspaceId(workspaceId),
     queryFn: () => channelService.getChannelsByWorkspaceId(workspaceId),
+    refetchOnMount: 'always', // SSE 연결시 고려할 것
   });
 
 export const useChannelById = (channelId: string) => 
   useQuery({
     queryKey: CHANNEL_KEYS.byId(channelId),
     queryFn: () => channelService.getChannelById(channelId),
+  });
+
+// Suspense
+export const useDefaultChannelByWorkspaceId = (workspaceId: number) =>
+  useSuspenseQuery({
+    queryKey: CHANNEL_KEYS.defaultByWorkspaceId(workspaceId),
+    queryFn: () => channelService.getDefaultChannelByWorkspaceId(workspaceId),
   });
 
 // Mutations
@@ -30,6 +39,7 @@ export const useCreateChannel = () => {
     onSuccess: (newChannel) => {
       queryClient.invalidateQueries({ queryKey: CHANNEL_KEYS.all });
       queryClient.setQueryData(CHANNEL_KEYS.byId(newChannel.channelId), newChannel);
+      
       if (newChannel.workspacesId) {
         queryClient.invalidateQueries({ 
           queryKey: CHANNEL_KEYS.byWorkspaceId(newChannel.workspacesId) 

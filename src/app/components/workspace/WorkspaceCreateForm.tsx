@@ -3,6 +3,7 @@ import { WorkspaceInsertModel } from "@/app/models/workspace.model"
 import { useCreateWorkspace } from "@/app/queries/workspace.query";
 import { DEFAULT_WORKSPACE_IMAGE } from "@/app/utils/config";
 import { FaPlus } from 'react-icons/fa';
+import { useMemberStore } from "@/app/stores/member.store";
 
 interface WorkspaceCreateFormProps {
   onSubmit: (data: WorkspaceInsertModel) => void
@@ -16,6 +17,7 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
   const fileInput = useRef<HTMLInputElement>(null);
   
   const createWorkspaceMutation = useCreateWorkspace(); // API Query
+  const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
 
   const resetForm = () => {
     setWorkspaceName('')
@@ -50,8 +52,9 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
       description: workspaceInfo,
       workspaceImageUrl: workspaceImage,
       url: workspaceUrl,
-      ownerId: 0
+      ownerId: currentMember.id
     }
+    console.log("WorkspaceCreateForm Submit Data: ", workspaceData)
     onSubmit(workspaceData)
   }
 

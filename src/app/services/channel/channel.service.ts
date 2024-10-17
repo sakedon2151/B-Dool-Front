@@ -11,6 +11,11 @@ export const channelService = {
   getChannelsByWorkspaceId: (workspaceId: number) => 
     serverBAxios.get<ChannelModel[]>(`${BASE_URL}/workspaces/${workspaceId}/channel`)
       .then(response => response.data),
+  
+  // workspaceId 로 channels 요청
+  getDefaultChannelByWorkspaceId: (workspaceId: number) => 
+    serverBAxios.get<ChannelModel>(`${BASE_URL}/workspaces/${workspaceId}/default-channel`)
+      .then(response => response.data),
 
   // channelId 로 channel 요청
   getChannelById: (channelId: string) => 
