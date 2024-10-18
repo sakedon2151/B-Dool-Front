@@ -1,12 +1,14 @@
 import VerificationCodeForm from "./VerificationCodeForm";
 import { useState } from "react";
-import { BiMailSend } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { mailService } from "@/app/services/auth/mailSender.service";
 import { authService } from "@/app/services/auth/auth.service";
 import { memberService } from "@/app/services/member/member.service";
 import { useMemberStore } from "@/app/stores/member.store";
 import { setToken } from "@/app/utils/tokenController";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCircleXmark, faEnvelope } from "@fortawesome/free-solid-svg-icons"
 
 export default function EmailLoginForm() {
   const router = useRouter();
@@ -15,7 +17,7 @@ export default function EmailLoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   
-  const setCurrentMember = useMemberStore(state => state.setCurrentMember); // 로그인 객체
+  const setCurrentMember = useMemberStore(state => state.setCurrentMember); // Zustand Store
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,14 +71,18 @@ export default function EmailLoginForm() {
   };
 
   return (
-    <div className="bg-base-300 rounded-md p-4 lg:w-[768px] w-full">      
-      <h2 className="text-lg font-bold text-center">이메일로 시작하기</h2>
-      <div className="mt-2 divider"></div>
-      {error && <div className="mb-4 alert alert-error">{error}</div>}
+    <div className="bg-base-200 rounded-lg p-4 lg:w-[768px] w-full shadow-lg">      
+      <h2 className="text-lg font-bold opacity-75 text-center mb-4">이메일로 시작하기</h2>
+
+      {error && <div role="alert" className="mb-4 alert alert-error">
+        <FontAwesomeIcon icon={faCircleXmark} className="w-6 h-6 opacity-75"/>
+        {error}
+      </div>}
+
       {!showVerification ? (
         <form className="text-center" onSubmit={handleSubmit}>
           <label className="flex items-center gap-2 mb-4 input input-bordered">
-            <BiMailSend className="w-6 h-6 opacity-50"/>
+            <FontAwesomeIcon icon={faEnvelope} className="opacity-50 w-4 h-4" />
             <input
               className="w-full"
               type="email"
@@ -86,8 +92,13 @@ export default function EmailLoginForm() {
               required
             />
           </label>
-          <button className="btn" type="submit" disabled={loading}>
-            {loading ? '처리 중...' : '이메일 전송'}
+          <button className="btn bg-base-100" type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="loading loading-spinner"></span>
+                메일을 보내고 있어요.
+              </>
+            ) : '이메일 전송'}
           </button>
         </form>
       ) : (
@@ -98,6 +109,7 @@ export default function EmailLoginForm() {
           onChangeEmail={handleChangeEmail}
         />
       )}
+
     </div>
   );
 }

@@ -8,10 +8,11 @@ import { getToken, removeToken } from "@/app/utils/tokenController";
 import { memberService } from "@/app/services/member/member.service";
 import { authService } from "@/app/services/auth/auth.service";
 import { useMemberStore } from "@/app/stores/member.store";
+import LoadingScreen from "@/app/components/common/LoadingScreen";
 
 export default function auth() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const { setCurrentMember } = useMemberStore();
 
   useEffect(() => {    
@@ -30,26 +31,26 @@ export default function auth() {
         console.error("유효성 검증 실패:", error);
         removeToken(); // 토큰이 유효하지 않은 경우 일단 제거
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     } else {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <LoadingScreen/>;
   }
 
   return (
-    <div className="flex flex-col p-4 h-dvh">
+    <div className="flex flex-col p-4 bg-base-300 h-dvh">
       <CommonHeader />
-      <main className="flex-grow">
-
-        <div className="flex flex-col items-center justify-center h-full p-4 bg-base-200 rounded-lg">  
+      <main className="flex-grow p-4 bg-base-100 rounded-lg h-full">
+        
+        <div className="flex flex-col items-center justify-center h-full">  
           <EmailLoginForm />
         </div>
-        
+      
       </main>
       <CommonFooter />
     </div>

@@ -34,7 +34,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ThemeProvider enableSystem={true} attribute="data-theme" defaultTheme="nord">
+        <ThemeProvider enableSystem={true} attribute="data-theme" defaultTheme="light">
           <ReactQueryProvider>
             {children}
           </ReactQueryProvider>

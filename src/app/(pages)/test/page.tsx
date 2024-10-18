@@ -10,8 +10,7 @@ export default function test() {
       <p>데이터 접근없이 컴포넌트를 테스트 할 수 있습니다.</p>
     </div>
   )
-  
-  
+
   return (
     <div className="">
       <LoadingScreen/>

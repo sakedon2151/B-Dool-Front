@@ -2,7 +2,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 export default function ThemeSwitcher() {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -17,8 +17,8 @@ export default function ThemeSwitcher() {
     <label className="grid cursor-pointer place-items-center mx-4">
       <input
         type="checkbox"
-        checked={theme === 'dim'}
-        onChange={() => setTheme(theme === 'nord' ? 'dim' : 'nord')}
+        checked={theme === 'dark'}
+        onChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         className="toggle theme-controller bg-base-content col-span-2 col-start-1 row-start-1" 
       />
       <svg

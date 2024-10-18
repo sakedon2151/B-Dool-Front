@@ -3,19 +3,13 @@ import CommonFooter from "./components/common/CommonFooter";
 
 export default function Home() {
   return (
-    <div className="p-4">
+    <div className="flex flex-col p-4 bg-base-300 h-dvh">
       <CommonHeader/>
-      <main>
-        <div className="p-4 bg-base-200 rounded-lg">
-          <div className="hero min-h-screen"> 
-            <div className="hero-content text-center">
-              <div className="max-w-md">
-                <h2 className="text-5xl font-bold">B-DOOL</h2>
-                <p className="py-8">안녕</p>
-                <button className="btn">이미지</button>
-              </div>
-            </div>            
-          </div>
+      <main className="flex-grow p-4 bg-base-100 rounded-lg h-full">
+        <div className="mt-32 text-center">
+          <p className="">가볍게 시작하는 협업 메신저</p>
+          <h2 className="mb-4 text-5xl font-bold">B-DOOL</h2>
+          <button className="btn">시작하기</button>
         </div>
       </main> 
       <CommonFooter/>

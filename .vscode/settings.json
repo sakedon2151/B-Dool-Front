@@ -8,6 +8,8 @@
         "DOOL",
         "favorited",
         "Finded",
+        "fontawesome",
+        "fortawesome",
         "nord",
         "pretendard",
         "sockjs",
@@ -15,6 +17,7 @@
         "tailwindcss",
         "tanstack",
         "verifiy",
+        "Xmark",
         "zustand"
     ]
 }

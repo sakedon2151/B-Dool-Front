@@ -5,11 +5,11 @@ import WorkspaceList from '@/app/components/workspace/WorkspaceList'
 
 export default function gateway() {
   return (
-    <div className="flex flex-col p-4 h-dvh ">
+    <div className="flex flex-col p-4 bg-base-300 h-dvh">
       <CommonHeader />
-      <main className="flex-grow">
+      <main className="flex-grow p-4 bg-base-100 rounded-lg overflow-hidden">
 
-        <div className="flex flex-col items-center justify-center h-full p-4 bg-base-200 rounded-lg">  
+        <div className="flex items-center justify-center h-full">
           <WorkspaceList/>
         </div>
       

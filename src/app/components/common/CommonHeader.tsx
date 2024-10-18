@@ -1,4 +1,6 @@
 "use client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDove } from "@fortawesome/free-solid-svg-icons";
 import { usePathname, useRouter } from "next/navigation";
 import ThemeSwitcher from "./ThemeSwitcher";
 
@@ -12,31 +14,24 @@ export default function CommonHeader({ showAuthButton }: CommonHeaderProps) {
   const authButton = showAuthButton ?? (!pathname.startsWith('/auth') && !pathname.startsWith('/workspace'));
 
   return (
-    <header className="mb-4 bg-base-200 rounded-lg">
-      <div className="navbar">
-        <div className="navbar-start">
-          <a className="text-lg btn btn-ghost" href="/">
-            B-DOOL
-          </a>
-        </div>
+    <header className="navbar mb-4 bg-base-100 rounded-lg">
+      <div className="navbar-start">
+        <a className="text-lg btn btn-ghost" href="/">
+          <FontAwesomeIcon icon={faDove} className="w-4 h-4"/>
+          B-DOOL
+        </a>
+      </div>
 
-        <div className="navbar-end">
-          <button 
-            className="btn btn-ghost"
-            onClick={() => router.push("/test")}
-            >
-            테스트
+      <div className="navbar-end">
+        <button className="btn" onClick={() => router.push("/test")}>
+          테스트
+        </button>
+        {authButton && (
+          <button className="btn" onClick={() => router.push("/auth")}>
+            시작하기
           </button>
-          {authButton && 
-            <button
-              className="text-sm btn btn-ghost"
-              onClick={() => router.push("/auth")}
-            >
-              시작하기
-            </button>
-          }
-          <ThemeSwitcher/>
-        </div>
+        )}
+        <ThemeSwitcher />
       </div>
     </header>
   );

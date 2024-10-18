@@ -7,6 +7,7 @@ import { useProfileStore } from "@/app/stores/profile.store";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { useParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react"
+import LoadingScreen from "@/app/components/common/LoadingScreen";
 
 function DataLoader() {
   const params = useParams();
@@ -86,7 +87,7 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
 export default function WorkspaceLayout({children}: {children: React.ReactNode}) {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <Suspense fallback={<div className="flex items-center justify-center h-screen">로딩 중...</div>}>
+      <Suspense fallback={<LoadingScreen/>}>
         <DataLoader/>
         {children}
       </Suspense>

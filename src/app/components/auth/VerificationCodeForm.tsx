@@ -1,4 +1,6 @@
 "use client";
+import { faCheck, faCircleCheck, faCircleInfo, faInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 
 interface VerificationCodeFormProps {
@@ -39,11 +41,11 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
     }
   };
 
-  const handleSubmit = async (fullCode: string) => {
+  const handleSubmit = (fullCode: string) => {
     setLoading(true);
     setError('');
     try {
-      await onSuccess(fullCode);
+      onSuccess(fullCode);
     } catch (err) {
       setError('인증에 실패했습니다. 다시 시도해 주세요.')
     } finally {
@@ -66,19 +68,9 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
 
   return (
     <div>
-      <div role="alert" className="alert alert-info mb-4 text-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          className="h-6 w-6 shrink-0 stroke-current">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <span>{email} 로 인증 코드가 전송되었습니다.</span>
+      <div role="alert" className="alert alert-info mb-4">
+        <FontAwesomeIcon icon={faCircleInfo} className="w-6 h-6 opacity-75"/>
+        <span className="">{email} 로 인증 코드가 전송되었습니다.</span>
       </div>
       <div className="flex gap-2 mb-4">
         {code.map((digit, index) => (
@@ -103,10 +95,10 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
       {loading && <p className="mb-4 text-blue-500">전송중...</p>}
       
       <div className="flex gap-4">
-        <button className="btn btn-sm" onClick={handleResendCode} disabled={loading}>
+        <button className="btn btn-outline btn-sm" onClick={handleResendCode} disabled={loading}>
           인증번호 재요청
         </button>
-        <button className="btn btn-sm" onClick={onChangeEmail} disabled={loading}>
+        <button className="btn btn-outline btn-sm" onClick={onChangeEmail} disabled={loading}>
           이메일 변경
         </button>
       </div>
