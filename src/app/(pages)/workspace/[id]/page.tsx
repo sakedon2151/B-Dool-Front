@@ -7,6 +7,8 @@ import ParticipantList from "@/app/components/channel/ParticipantList";
 import WorkspaceHeader from "@/app/components/workspace/WorkspaceHeader";
 import WorkspaceNav from "@/app/components/workspace/WorkspaceNav";
 import { useParams } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 export default function workspace() {
   const params = useParams();
@@ -20,30 +22,10 @@ export default function workspace() {
           <input id="participant-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
             <label htmlFor="workspace-drawer" aria-label="open sidebar" className="fixed m-2 btn btn-square btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-6 h-6 stroke-current">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
+              <FontAwesomeIcon icon={faBars} className="w-6 h-6 opacity-75"/>
             </label>
             <label htmlFor="participant-drawer" aria-label="open sidebar" className="fixed right-0 m-2 btn btn-square btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block w-6 h-6 stroke-current">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
+              <FontAwesomeIcon icon={faBars} className="w-6 h-6 opacity-75"/>
             </label>
             <div className="flex flex-col overflow-hidden h-dvh">
               <header className="box-border border-b">

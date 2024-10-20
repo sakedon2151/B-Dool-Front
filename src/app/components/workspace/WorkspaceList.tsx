@@ -55,8 +55,8 @@ export default function WorkspaceList() {
         ) : !profiles || !workspaces ? (
           <div className="bg-base-100 rounded-lg w-full h-[calc(100%-44px)] shadow-lg flex items-center justify-center">데이터를 불러 올 수 없습니다.</div>
         ) : (
-          <div className="h-[calc(100%-108px)] overflow-y-scroll">
-            <ul className="menu flex-row p-0 h-full">
+          <div className="h-[calc(100%-108px)] overflow-y-auto">
+            <ul className="menu flex-row p-0">
               {workspaces.map((workspace: WorkspaceModel) => (
                 <li key={workspace.id} className='mb-4 bg-base-100 w-full rounded-lg'>
                   <a className="p-4 gap-4" onClick={() => handleWorkspaceSelect(workspace)}>

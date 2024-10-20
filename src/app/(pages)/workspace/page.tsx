@@ -8,11 +8,9 @@ export default function gateway() {
     <div className="flex flex-col p-4 bg-base-300 h-dvh">
       <CommonHeader />
       <main className="flex-grow p-4 bg-base-100 rounded-lg overflow-hidden">
-
         <div className="flex items-center justify-center h-full">
           <WorkspaceList/>
         </div>
-      
       </main>
       <CommonFooter />
     </div>

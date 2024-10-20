@@ -21,32 +21,6 @@ export default function ProfileModal() {
   const formatCreatedDate = formatKoreanTime(currentProfile.createdAt)
   const formatUpdatedDate = formatKoreanTime(currentProfile.updatedAt)
 
-  // 프로필 이미지 변경 함수
-  // const handleImgChange = async (e: ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files?.[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = async (e: ProgressEvent<FileReader>) => {
-  //       if (e.target?.result) {
-  //         const newProfileImage = e.target.result as string;
-  //         setProfileImage(newProfileImage);
-  //         try {
-  //           await updateProfileMutation.mutateAsync({
-  //             profileId: currentProfile.id,
-  //             data: {
-  //               ...currentProfile,
-  //               profileImgUrl: profileImage
-  //             }
-  //           })
-  //         } catch (error) {
-  //           console.log("프로필 이미지 변경 실패: ", error)
-  //         }
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
   const handleImgChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -73,20 +47,6 @@ export default function ProfileModal() {
     }
   }, [currentProfile, updateProfileMutation]);
 
-  // 프로필 온라인 상태 변경 함수
-  // const handleOnlineToggle = async (e: ChangeEvent<HTMLInputElement>) => {
-  //   const newOnlineStatus = e.target.checked;
-  //   setIsOnline(newOnlineStatus);
-  //   try {
-  //     await updateProfileOnlineStatusMutation.mutateAsync({
-  //       profileId: currentProfile.id,
-  //       isOnline: isOnline
-  //     });
-  //   } catch (error) {
-  //     console.error("온라인 상태 변경 실패: ", error);
-  //   }
-  // };
-
   const handleOnlineToggle = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const newOnlineStatus = e.target.checked;
     try {
@@ -101,15 +61,6 @@ export default function ProfileModal() {
     }
   }, [currentProfile.id, isOnline, updateProfileOnlineStatusMutation]);
 
-  // 업데이트 폼 수정 함수
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setFormData(prevData => ({
-  //     ...prevData,
-  //     [name]: value
-  //   }));
-  // };
-
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
@@ -117,16 +68,6 @@ export default function ProfileModal() {
       [name]: value
     }));
   }, []);
-
-  // 업데이트 폼 요청 함수
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   await updateProfileMutation.mutateAsync({
-  //     profileId: currentProfile.id,
-  //     data: formData,
-  //   });
-  //   setIsEditing(false);
-  // };
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,12 +82,6 @@ export default function ProfileModal() {
       // 에러 처리 로직 (예: 사용자에게 알림)
     }
   }, [currentProfile.id, formData, updateProfileMutation]);
-
-  // 업데이트 폼 초기화 함수
-  // const handleCancel = () => {
-  //   setFormData(currentProfile);
-  //   setIsEditing(false);
-  // };
 
   const handleCancel = useCallback(() => {
     setFormData(currentProfile);

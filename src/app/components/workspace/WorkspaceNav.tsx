@@ -30,7 +30,6 @@ export default function WorkspaceNav() {
         isOnline: false
       });
       setCurrentWorkspace(workspace);
-      await new Promise(resolve => setTimeout(resolve, 0));
       router.push(`/workspace/${workspace.id}`);
     } catch (error) {
       console.error("워크스페이스 변경 에러:", error);

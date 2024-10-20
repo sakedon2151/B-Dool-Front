@@ -17,6 +17,8 @@ function DataLoader() {
     throw new Error("Invalid workspace ID");
   }
 
+  console.log("현재 워크스페이스 id:",workspaceId)
+
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const setCurrentProfile = useProfileStore(state => state.setCurrentProfile); // Zustand Store
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel); // Zustand Store
@@ -25,28 +27,26 @@ function DataLoader() {
   const { data: channel } = useDefaultChannelByWorkspaceId(workspaceId) // API Suspense Query
   const updateProfileOnlineStatus = useUpdateProfileOnlineStatus(); // API Query
 
+  console.log("쿼리가 가져온 프로필", profile)
+  console.log("쿼리가 가져온 채널", channel)
+
   useEffect(() => {
     if (!profile || !channel) return; // 데이터가 없으면 실행하지 않음 -> 추후 데이터 없으면 로그아웃 시키기
 
     const prepareMount = async () => {
-      if (profile) {
-        const initializeThisSession = sessionStorage.getItem('initialize');
-        if (!initializeThisSession) {
-          try {
-            await updateProfileOnlineStatus.mutateAsync({
-              profileId: profile.id,
-              isOnline: true
-            });
-            setCurrentProfile({
-              ...profile,
-              isOnline: true
-            });
-            if (channel) setCurrentChannel(channel);
-            sessionStorage.setItem('initialize', 'true');
-          } catch (error) {
-            console.error("워크스페이스 초기화 마운트 오류: ", error);
-          }
-        }
+      try {
+        await updateProfileOnlineStatus.mutateAsync({
+          profileId: profile.id,
+          isOnline: true
+        });
+        const updateProfile = {
+          ...profile,
+          isOnline: true
+        };
+        setCurrentProfile(updateProfile)
+        setCurrentChannel(channel)
+      } catch (error) {
+        console.error("워크스페이스 초기화 마운트 오류: ", error);
       }
     };
     prepareMount();
@@ -64,7 +64,6 @@ function DataLoader() {
       }
     };
     window.addEventListener('beforeunload', prepareUnmount);
-    
     return () => {
       window.removeEventListener('beforeunload', prepareUnmount);
     };

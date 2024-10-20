@@ -40,13 +40,4 @@ export const channelService = {
   // getAllChannels: () => 
   //   serverBAxios.get<ChannelModel[]>(BASE_URL)
   //     .then(response => response.data),
-
-  // checkChannelExists: (channelId: number) => 
-  //   serverBAxios.get<boolean>(`${BASE_URL}/exists/${channelId}`)
-  //     .then(response => response.data),
-
-  // getChannelCount: () => 
-  //   serverBAxios.get<number>(`${BASE_URL}/count`)
-  //     .then(response => response.data)
-
 };

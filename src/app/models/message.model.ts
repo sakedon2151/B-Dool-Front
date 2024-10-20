@@ -10,9 +10,20 @@ export interface MessageModel {
   fileUrl: string;
 }
 
-export interface MessageInsertModel {}
+export interface MessageInsertModel {
+  channelId: string;
+  content: string;
+  parentMessageId?: string;
+  profileId: number;
+  fileUrl?: string;
+}
 
-export interface MessageUpdateModel {}
+export interface MessageUpdateModel {
+  content: string; // 메시지 내용
+  profileId: number; // uuid 작성자 프로필 uuid
+  isEdited: boolean; // 수정 여부
+  isDeleted: boolean; // 삭제 여부
+}
 
 export const InitialMessage: MessageModel = {
   messageId: "",

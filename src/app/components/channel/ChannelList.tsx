@@ -1,6 +1,8 @@
 import { ChannelModel } from "@/app/models/channel.model";
 import { useChannelsByWorkspaceId } from "@/app/queries/channel.query";
 import { useChannelStore } from "@/app/stores/channel.store";
+import { faHashtag, faStar, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { HiHashtag, HiOutlineStar, HiOutlineUser } from "react-icons/hi2";
 
 interface ChannelListProps {
@@ -18,10 +20,10 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
         .map((channel) => (
           <li key={channel.channelId} onClick={() => setCurrentChannel(channel)}>
             <a>
-              {isDM ? <HiOutlineUser className="w-4 h-4"/> : <HiHashtag className="w-4 h-4"/>}
+              {isDM ? <FontAwesomeIcon icon={faUser} className="w-4 h-4"/> : <FontAwesomeIcon icon={faHashtag} className="w-4 h-4"/>}
               <p className="overflow-hidden truncate whitespace-nowrap">{channel.name}</p>
               <button>
-                <HiOutlineStar className="w-4 h-4"/>
+                <FontAwesomeIcon icon={faStar} className="w-4 h-4"/>
               </button>
             </a>
           </li>

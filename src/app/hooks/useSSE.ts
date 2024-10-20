@@ -7,7 +7,7 @@ interface SSEEvents {
   [key: string]: SSEEventHandler;
 }
 
-function useSSE(url: string, events: SSEEvents) {
+export default function useSSE(url: string, events: SSEEvents) {
   useEffect(() => {
     sseService.connect(url);
 
@@ -23,5 +23,3 @@ function useSSE(url: string, events: SSEEvents) {
     };
   }, [url, events]);
 }
-
-export default useSSE;

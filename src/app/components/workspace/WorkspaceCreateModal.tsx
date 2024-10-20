@@ -53,7 +53,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         isPrivate: false,
         description: "전체 채널입니다.",
         profileId: createdProfile.id,
-        nickname: createdProfile.nickname,
+        // nickname: createdProfile.nickname,
         channelType: "DEFAULT"
       })
       // DM 채널 자동 생성
@@ -63,7 +63,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         isPrivate: false,
         description: "다이렉트 메시지",
         profileId: createdProfile.id,
-        nickname: createdProfile.nickname,
+        // nickname: createdProfile.nickname,
         channelType: "DM"
       })
       onComplete();

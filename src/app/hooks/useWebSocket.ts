@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { Client, Message } from "@stomp/stompjs";
+import { MessageInsertModel, MessageModel } from "../models/message.model";
+import { messagePublishService, messageService } from "../services/message/message.service";
 import SockJS from "sockjs-client";
-
-import { MessageModel } from "../models/message.model";
-import { messageService } from "../services/message/message.service";
 
 interface WebSocketHook {
   messages: MessageModel[];
-  sendMessage: (content: string) => void;
+  sendMessage: (data: MessageInsertModel) => void;
   loadMoreMessages: () => Promise<void>;
   hasMore: boolean;
 }
@@ -27,16 +26,25 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
   // 초기 메시지 요청 함수
   const loadInitialMessages = useCallback((channelId: string) => {
     messageService.getMessageList(channelId, 0, 10)
-    .then((response) => {
-      const newMessages: MessageModel[] = response.data;
-      setMessages(newMessages.reverse());
-      setCurrentPage(1);
-      setHasMore(newMessages.length === 10);
+    .then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setMessages(data.reverse());
+        setCurrentPage(1);
+        setHasMore(data.length === 10);
+      } else {
+        console.log("메시지를 찾을 수 없습니다.");
+        setMessages([]);
+        setCurrentPage(0);
+        setHasMore(false);
+      }
     })
     .catch((error) => {
-      console.error("Error loading initial messages:", error);
+      console.error("초기 메시지 로드 오류:", error);
+      setMessages([]);
+      setCurrentPage(0);
+      setHasMore(false);
     });
-  }, []);
+  }, [resetState]);
 
   // 컴포넌트 마운트시 초기 실행 - websocket 연결
   useEffect(() => {
@@ -70,50 +78,40 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
   }, [channelId, resetState, loadInitialMessages]);
   
   // 메시지 전송 함수
-  const sendMessage = useCallback((content: string) => {
-      if (!channelId || !stompClient || !stompClient.active) {
-        console.error("메시지를 보낼 수 없습니다. 연결 상태를 확인해주세요.")
-        return;
-      }
-      try {
-        stompClient.publish({
-          destination: `/app/message/${channelId}`,
-          body: JSON.stringify({
-            content,
-            channelId,
-            profileId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b", // 실제 사용시 현재 로그인한 사용자 ID로 대체
-          }),
-        });
-      } catch (error) {
-        console.error("메시지 전송 실패: ", error);
-      }
-    },
-    [stompClient, channelId]
-  );
+  const sendMessage = useCallback(async (data: MessageInsertModel): Promise<void> => {
+    if (!channelId || !stompClient) {
+      console.error("채널 ID가 없거나 WebSocket이 연결되지 않았습니다.");
+      return;
+    }
+    try {
+      await messagePublishService(stompClient).sendMessage(channelId, data);
+      // 서버에서 새 메시지를 브로드캐스트할 것이므로, 여기서는 로컬 상태를 업데이트하지 않습니다.
+    } catch (error) {
+      console.error("메시지 전송 실패:", error);
+      throw error; // 에러를 상위로 전파하여 UI에서 처리할 수 있게 합니다.
+    }
+  }, [channelId, stompClient]);
 
   // 메시지 추가 요청 함수
-  const loadMoreMessages = useCallback((): Promise<void> => {
-    if (!channelId || !hasMore) return Promise.resolve();
-    return messageService.getMessageList(channelId, currentPage, 10)
-      .then((response) => {
-        const newMessages: MessageModel[] = response.data;
-        if (newMessages.length > 0) {
-          setMessages((prevMessages) => {
-            const uniqueNewMessages = newMessages.filter(
-              (newMsg) => !prevMessages.some((prevMsg) => prevMsg.messageId === newMsg.messageId)
-            );
-            return [...uniqueNewMessages.reverse(), ...prevMessages];
-          });
-          setCurrentPage((prevPage) => prevPage + 1);
-          setHasMore(newMessages.length === 10);
-        } else {
-          setHasMore(false);
-        }
-      })
-      .catch((error) => {
-        console.error("Error loading messages:", error);
-        return Promise.reject(error);
-      });
+  const loadMoreMessages = useCallback(async (): Promise<void> => {
+    if (!channelId || !hasMore) return;
+    try {
+      const newMessages: MessageModel[] = await messageService.getMessageList(channelId, currentPage, 10);
+      if (newMessages.length > 0) {
+        setMessages(prevMessages => {
+          const uniqueNewMessages = newMessages.filter(
+            (newMsg) => !prevMessages.some((prevMsg) => prevMsg.messageId === newMsg.messageId)
+          );
+          return [...uniqueNewMessages.reverse(), ...prevMessages];
+        });
+        setCurrentPage(prevPage => prevPage + 1);
+        setHasMore(newMessages.length === 10);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("메시지 로드 오류:", error);
+    }
   }, [channelId, currentPage, hasMore]);
 
   return { messages, sendMessage, loadMoreMessages, hasMore };

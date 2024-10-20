@@ -1,14 +1,18 @@
-import { format, parseISO, isToday, isYesterday, isThisYear } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { format, parseISO, isToday, isYesterday, isThisYear, addMinutes } from "date-fns";
+import { getTimezoneOffset } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 
-// 한국 시간대로 변환하는 함수
+const KOREAN_TIMEZONE = 'Asia/Seoul';
+
+// UTC 시간을 한국 시간으로 변환하는 함수
 const toKoreanTime = (dateTimeString: string): Date | null => {
   if (!dateTimeString) return null;
   try {
     const date = parseISO(dateTimeString);
     if (isNaN(date.getTime())) return null; // 유효하지 않은 날짜 체크
-    return toZonedTime(date, "Asia/Seoul");
+    
+    const koreanOffset = getTimezoneOffset(KOREAN_TIMEZONE, date) / 60; // 분 단위로 변환
+    return addMinutes(date, koreanOffset);
   } catch (error) {
     console.error("Invalid date string:", dateTimeString);
     return null;

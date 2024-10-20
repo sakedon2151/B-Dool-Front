@@ -15,7 +15,7 @@ export default function MessageList() {
   const isInitialLoadRef = useRef(true);
   const isNearBottomRef = useRef(true);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -53,8 +53,8 @@ export default function MessageList() {
   }, [messages, scrollToBottom]);
 
   const handleLoadMore = useCallback(() => {
-    if (!isLoading && hasMore) {
-      setIsLoading(true);
+    if (!loading && hasMore) {
+      setLoading(true);
       const oldScrollHeight = messageAreaRef.current?.scrollHeight ?? 0;
       loadMoreMessages()
         .then(() => {
@@ -70,20 +70,20 @@ export default function MessageList() {
           setError(error);
         })
         .finally(() => {
-          setIsLoading(false);
+          setLoading(false);
         });
     }
-  }, [isLoading, hasMore, loadMoreMessages]);
+  }, [loading, hasMore, loadMoreMessages]);
 
   const handleScroll = useCallback(() => {
     const messageArea = messageAreaRef.current;
-    if (messageArea && !isLoading) {
+    if (messageArea && !loading) {
       if (messageArea.scrollTop === 0) {
         handleLoadMore();
       }
       debouncedCheckIfNearBottom();
     }
-  }, [handleLoadMore, isLoading, debouncedCheckIfNearBottom]);
+  }, [handleLoadMore, loading, debouncedCheckIfNearBottom]);
 
   useEffect(() => {
     const messageArea = messageAreaRef.current;
@@ -99,9 +99,13 @@ export default function MessageList() {
 
   let currentDate = "";
 
+  // return (
+  //   <div className="text-center text-red-500">에러 발생</div>
+  // )
+
   return (
     <div className="h-full p-4 overflow-y-auto" ref={messageAreaRef}>
-      {isLoading && (
+      {loading && (
         <div className="text-center">메시지 불러오는 중...</div>
       )}
       {error && (

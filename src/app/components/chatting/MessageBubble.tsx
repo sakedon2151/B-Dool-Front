@@ -1,24 +1,18 @@
 import { MessageModel } from "@/app/models/message.model";
+import { useProfileById } from "@/app/queries/profile.query";
+import { useProfileStore } from "@/app/stores/profile.store";
 import { toMessageTime } from "@/app/utils/formatDateTime";
 
 import React from "react";
-import { useEffect, useState } from "react";
 
 interface MessageBubbleProps {
   selectedMessage: MessageModel
 }
 
 export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
-  // const [findedProfile, setFindedProfile] = useState<ProfileModel>()
-  // const currentProfileId = 1 // 추후 store 를 통해 현재 로그인 대상 프로필 id 대입
-  // const isCurrentProfileMessage: boolean = assignedMessage.profileId === currentProfileId;
-
-  const isCurrentProfileMessage = false
-
-  // useEffect(() => { // profile 더미데이터 id find,
-  //   const matchingProfile = dummyProfiles.find(profile => profile.id === assignedMessage.profileId);
-  //   setFindedProfile(matchingProfile || null);
-  // }, [assignedMessage.profileId])
+  const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
+  const isCurrentProfileMessage: boolean = selectedMessage.profileId === currentProfile.id;
+  const { data: profile, isLoading: isLoadingProfile, error: profileError } = useProfileById(selectedMessage.profileId) // API Query
 
   const renderMessageContent = (content: string) => {
     return content.split('\n').map((line, index) => (
@@ -30,27 +24,30 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   };
 
   return (
-    <div className={`chat ${isCurrentProfileMessage ? 'chat-end' : 'chat-start'} py-2`}>
-      <div className="chat-image avatar">
-        <div className="w-10 rounded-full">
-          <img
-            alt="profile_img"
-            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-          />
-        </div>
-      </div>
-      
-      <div className="chat-header">
-        {/* {findedProfile.nickname} */}
-        name
-        <time className="pl-1 text-xs opacity-50">{toMessageTime(selectedMessage.sendDate)}</time>
-      </div>
-      
-      <div className="chat-bubble">
-        {renderMessageContent(selectedMessage.content)}
-      </div>
-      
-      <div className="chat-footer">3</div>
+    <div className={`chat ${isCurrentProfileMessage ? 'chat-end' : 'chat-start'} my-2`}>
+      {isLoadingProfile ? (
+        <div className="skeleton w-28 h-10"></div>
+      ) : profileError ? (
+        <div className="">에러가 발생했습니다.</div>
+      ) : !profile ? (
+        <div className="">프로필을 불러 올 수 없습니다.</div>
+      ) : (
+        <>
+          <div className="chat-image avatar">
+            <div className="w-10 rounded-full">
+              <img src={profile.profileImgUrl} alt="profile_image"/>
+            </div>
+          </div>
+          <div className="chat-header">
+            {profile.nickname}
+            <time className="pl-1 text-xs opacity-50">{toMessageTime(selectedMessage.sendDate)}</time>
+          </div>
+          <div className="chat-bubble">
+            {renderMessageContent(selectedMessage.content)}
+          </div>
+          <div className="chat-footer">3</div>
+        </>
+      )}
     </div>
   );
 }

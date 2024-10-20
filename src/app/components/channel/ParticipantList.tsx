@@ -3,7 +3,6 @@ import ParticipantModal from "./ParticipantModal";
 import { ProfileModel } from "@/app/models/profile.model";
 import { profileService } from "@/app/services/member/profile.service";
 
-
 interface ParticipantListProps {
   workspaceId: number;
 }
@@ -13,7 +12,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
   
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   const onlineProfiles = profiles.filter(profiles => profiles.isOnline);
@@ -43,7 +42,7 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
 
   useEffect(() => {
     fetchProfiles(workspaceId)
-  }, [workspaceId])  
+  }, [workspaceId])
 
   const fetchProfiles = async (workspaceId: number) => {
     try {
@@ -53,29 +52,29 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
       console.error('error', error);
       setError('프로필 목록을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.')
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   };
 
-  const handleNicknameChange = (updatedProfile: ProfileModel) => {
-    setProfiles(prevProfiles => 
-      prevProfiles.map(profile =>
-        profile.id === updatedProfile.id
-          ? { ...profile, nickname: updatedProfile.nickname }
-          : profile
-      )
-    );
-  };
+  // const handleNicknameChange = (updatedProfile: ProfileModel) => {
+  //   setProfiles(prevProfiles => 
+  //     prevProfiles.map(profile =>
+  //       profile.id === updatedProfile.id
+  //         ? { ...profile, nickname: updatedProfile.nickname }
+  //         : profile
+  //     )
+  //   );
+  // };
 
-  const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
-    setProfiles(prevProfiles => 
-      prevProfiles.map(profile =>
-        profile.id === updatedProfile.id
-          ? { ...profile, isOnline: updatedProfile.isOnline }
-          : profile
-      )
-    );
-  };
+  // const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
+  //   setProfiles(prevProfiles => 
+  //     prevProfiles.map(profile =>
+  //       profile.id === updatedProfile.id
+  //         ? { ...profile, isOnline: updatedProfile.isOnline }
+  //         : profile
+  //     )
+  //   );
+  // };
 
   // SSE Custom Hook
   // const sseUrl = process.env.NEXT_PUBLIC_SERVER_A_SSE_URL as string
