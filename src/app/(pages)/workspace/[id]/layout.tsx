@@ -67,7 +67,7 @@ function DataLoader() {
     return () => {
       window.removeEventListener('beforeunload', prepareUnmount);
     };
-  }, [workspaceId, profile, channel, updateProfileOnlineStatus, setCurrentProfile, setCurrentChannel]);
+  }, [workspaceId, profile]);
   return null;
 }
 

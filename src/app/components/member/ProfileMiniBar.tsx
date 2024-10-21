@@ -3,7 +3,7 @@ import ProfileModal from "./ProfileModal";
 import { useProfileStore } from "@/app/stores/profile.store";
 
 export default function ProfileMiniBar() {
-  const currentProfile = useProfileStore(state => state.currentProfile)
+  const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   
   return (
     <>
@@ -11,7 +11,7 @@ export default function ProfileMiniBar() {
         <div className="flex gap-4">
           <div className="avatar online placeholder">
             <div className="w-12 rounded-full bg-neutral text-neutral-content">
-              <span>U</span>
+              <img src={currentProfile.profileImgUrl} alt="profile_image" />
             </div>
           </div>
           <div>

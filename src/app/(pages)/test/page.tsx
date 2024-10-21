@@ -18,19 +18,17 @@ export default function test() {
       <div className="">
         {/* <LoadingScreen/> */}
         <button className="btn" onClick={() => document.getElementById('my_modal')?.showModal()}>모달창 열기</button>
-
         {renderCard}
         {renderCard}
         {renderCard}
-
       </div>
 
-      <dialog id="my_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
+      <dialog id="my_modal" className="modal modal-bottom md:modal-middle">
+        <div className="modal-box p-4">
           <ChannelCreateModal/>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Close</button>
+              <button className="btn">취소</button>
             </form>
           </div>
         </div>

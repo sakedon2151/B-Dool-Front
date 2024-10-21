@@ -1,0 +1,32 @@
+@layer components {
+  .bdool-lg-text {
+    @apply font-bold text-lg opacity-75
+  }
+  .bdool-md-text {
+    @apply font-normal text-base
+  }
+  .bdool-sm-text {
+    @apply font-thin text-sm
+  }
+
+  .bdool-outer-component {
+    @apply bg-base-100 rounded-lg
+  }
+  .bdool-inner-component {
+    @apply bg-base-200 rounded-lg shadow-lg
+  }
+
+  .bdool-lg-icon {
+    @apply w-8 h-8 opacity-75
+  }
+  .bdool-md-icon {
+    @apply w-6 h-6 opacity-75
+  }
+  .bdool-sm-icon {
+    @apply w-4 h-4 opacity-75
+  }
+
+  .bdool-responsive-point {
+    @apply lg:w-[768px]
+  }
+}

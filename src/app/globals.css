@@ -14,19 +14,12 @@
   }
 }
 
-/* @layer base {
-  html {
-    font-family: 'Pretendard';
-  }
-} */
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
 
-/* no overscroll. like a native app */
 html, body {
   overscroll-behavior: none;
 }

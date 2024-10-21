@@ -5,9 +5,13 @@ import { toDayDividerTime } from "@/app/utils/formatDateTime";
 import { debounce } from 'lodash';
 import { useChannelStore } from "@/app/stores/channel.store";
 
-export default function MessageList() {
+interface MessageListProps {
+  workspaceId: number
+}
+
+export default function MessageList({ workspaceId }: MessageListProps) {
   const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
-  const { messages, loadMoreMessages, hasMore } = useWebsocket(currentChannel.channelId); // Stomp Websocket Hook
+  const { messages, loadMoreMessages, hasMore } = useWebsocket(currentChannel.channelId, workspaceId); // Stomp Websocket Hook
   const messageAreaRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   

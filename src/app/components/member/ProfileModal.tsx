@@ -8,7 +8,8 @@ import { ProfileModel } from "@/app/models/profile.model";
 
 export default function ProfileModal() {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
-  
+  const setCurrentProfile = useProfileStore(state => state.setCurrentProfile)  // Zustand Store
+
   const updateProfileMutation = useUpdateProfile(); // API Query
   const updateProfileOnlineStatusMutation = useUpdateProfileOnlineStatus(); // API Query
   
@@ -30,7 +31,7 @@ export default function ProfileModal() {
           const newProfileImage = e.target.result as string;
           setProfileImage(newProfileImage);
           try {
-            await updateProfileMutation.mutateAsync({
+            const updatedProfile = await updateProfileMutation.mutateAsync({
               profileId: currentProfile.id,
               data: {
                 ...currentProfile,
@@ -55,6 +56,11 @@ export default function ProfileModal() {
         isOnline: newOnlineStatus
       });
       setIsOnline(newOnlineStatus);
+      setCurrentProfile({
+        ...currentProfile,
+        isOnline: newOnlineStatus
+      })
+      console.log("로그인 상태가 변경되었습니다.")
     } catch (error) {
       console.error("온라인 상태 변경 실패: ", error);
       e.target.checked = isOnline;
@@ -77,6 +83,13 @@ export default function ProfileModal() {
         data: formData,
       });
       setIsEditing(false);
+      setCurrentProfile({ // Zustand Update
+        ...currentProfile,
+        nickname: formData.nickname,
+        name: formData.name,
+        position: formData.position
+      })
+      console.log("프로필이 업데이트 되었습니다.")
     } catch (error) {
       console.error("프로필 업데이트 실패: ", error);
       // 에러 처리 로직 (예: 사용자에게 알림)
@@ -116,7 +129,7 @@ export default function ProfileModal() {
                   type="checkbox"
                   className="toggle"
                   onChange={handleOnlineToggle}
-                  checked={isOnline}
+                  defaultChecked={isOnline}
                 />
               </div>
             </div>

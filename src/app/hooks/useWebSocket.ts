@@ -11,7 +11,7 @@ interface WebSocketHook {
   hasMore: boolean;
 }
 
-export const useWebsocket = (channelId: string): WebSocketHook => {
+export const useWebsocket = (channelId: string, workspaceId: number): WebSocketHook => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -49,11 +49,13 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
   // 컴포넌트 마운트시 초기 실행 - websocket 연결
   useEffect(() => {
     if (!channelId) return;
+    let isCurrentConnection = true;
     resetState();
     const socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_B_WEBSOCKET_URL as string);
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
+        if (!isCurrentConnection) return;
         console.log("websocket 에 연결되었습니다.");
         client.subscribe(`/topic/channel/${channelId}`, (message: Message) => {
           const newMessage: MessageModel = JSON.parse(message.body);
@@ -70,12 +72,14 @@ export const useWebsocket = (channelId: string): WebSocketHook => {
     });
     client.activate();
     setStompClient(client);
+
     return () => {
+      isCurrentConnection = false;
       if (client.active) {
         client.deactivate();
       }
     };
-  }, [channelId, resetState, loadInitialMessages]);
+  }, [workspaceId, channelId, resetState, loadInitialMessages]);
   
   // 메시지 전송 함수
   const sendMessage = useCallback(async (data: MessageInsertModel): Promise<void> => {

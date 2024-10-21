@@ -6,10 +6,14 @@ import { useCallback, useRef, useState, useEffect } from "react";
 import { FaFileArrowUp } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 
-export default function MessageInput() {
+interface MessageInputProps {
+  workspaceId: number
+}
+
+export default function MessageInput({ workspaceId }: MessageInputProps) {
   const currentChannel = useChannelStore(state => state.currentChannel)  // Zustand Store
   const currentProfile = useProfileStore(state => state.currentProfile)
-  const { sendMessage } = useWebsocket(currentChannel.channelId) // Stomp Websocket Hook
+  const { sendMessage } = useWebsocket(currentChannel.channelId, workspaceId) // Stomp Websocket Hook
   
   const [message, setMessage] = useState<string>("")
   const textarea = useRef<HTMLTextAreaElement>(null);

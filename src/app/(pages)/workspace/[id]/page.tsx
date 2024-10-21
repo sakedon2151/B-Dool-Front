@@ -34,11 +34,11 @@ export default function workspace() {
               <main className="flex flex-col flex-grow">
                 <div className="flex flex-row flex-grow h-[100px]">
                   <section className="flex-grow overflow-y-auto">
-                    <MessageList/>
+                    <MessageList workspaceId={workspaceId} />
                   </section>
                 </div>
                 <div className="box-border border-t">
-                  <MessageInput/>
+                  <MessageInput workspaceId={workspaceId} />
                 </div>
               </main>
             </div>
