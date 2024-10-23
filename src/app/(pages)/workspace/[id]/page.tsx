@@ -8,7 +8,7 @@ import WorkspaceHeader from "@/app/components/workspace/WorkspaceHeader";
 import WorkspaceNav from "@/app/components/workspace/WorkspaceNav";
 import { useParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faList } from "@fortawesome/free-solid-svg-icons";
 
 export default function workspace() {
   const params = useParams();
@@ -25,10 +25,10 @@ export default function workspace() {
               <FontAwesomeIcon icon={faBars} className="w-6 h-6 opacity-75"/>
             </label>
             <label htmlFor="participant-drawer" aria-label="open sidebar" className="fixed right-0 m-2 btn btn-square btn-ghost lg:hidden">
-              <FontAwesomeIcon icon={faBars} className="w-6 h-6 opacity-75"/>
+              <FontAwesomeIcon icon={faList} className="w-6 h-6 opacity-75"/>
             </label>
             <div className="flex flex-col overflow-hidden h-dvh">
-              <header className="box-border border-b">
+              <header className="box-border border-b border-base-300">
                 <WorkspaceHeader/>
               </header>
               <main className="flex flex-col flex-grow">
@@ -37,7 +37,7 @@ export default function workspace() {
                     <MessageList workspaceId={workspaceId} />
                   </section>
                 </div>
-                <div className="box-border border-t">
+                <div className="box-border border-t border-base-300">
                   <MessageInput workspaceId={workspaceId} />
                 </div>
               </main>
@@ -47,7 +47,7 @@ export default function workspace() {
             <label htmlFor="participant-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <div className="flex flex-col overflow-hidden h-dvh bg-base-100">
               <div className="flex flex-grow h-[100px]">
-                <aside className="w-[255px] border-l box-border overflow-y-auto">
+                <aside className="w-[255px] border-l box-border overflow-y-auto border-base-300">
                   <ParticipantList workspaceId={workspaceId} />
                 </aside>
               </div>
@@ -59,14 +59,14 @@ export default function workspace() {
         <label htmlFor="workspace-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
         <div className="flex flex-col overflow-hidden h-dvh bg-base-100">
           <div className="flex flex-row flex-grow h-[100px]">
-            <nav className="flex-shrink-0 overflow-y-auto ">
+            <nav className="flex-shrink-0 overflow-y-auto">
               <WorkspaceNav/>
             </nav>
-            <aside className="box-border flex-shrink-0 w-48 overflow-y-auto border-r">
+            <aside className="box-border flex-shrink-0 w-48 overflow-y-auto border-r border-base-300">
               <ChannelList workspaceId={workspaceId}/>
             </aside>
           </div>
-          <div className="w-64 border-t border-r">
+          <div className="w-64 border-t border-r border-base-300">
             <ProfileMiniBar/>
           </div>
         </div>

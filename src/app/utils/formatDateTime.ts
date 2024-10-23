@@ -1,59 +1,113 @@
-import { format, parseISO, isToday, isYesterday, isThisYear, addMinutes } from "date-fns";
-import { getTimezoneOffset } from "date-fns-tz";
+import { format, formatDistanceToNow, parseISO, differenceInHours, differenceInDays, isYesterday, isThisYear, isToday } from "date-fns";
 import { ko } from "date-fns/locale";
 
-const KOREAN_TIMEZONE = 'Asia/Seoul';
+const parseDate = (dateString: string): Date => {
+  if (!dateString) throw new Error("Invalid Date");
+  return parseISO(dateString);
+};
 
-// UTC 시간을 한국 시간으로 변환하는 함수
-const toKoreanTime = (dateTimeString: string): Date | null => {
-  if (!dateTimeString) return null;
+// 메시지 전송 시간 함수
+export const toMessageTime = (dateString: string): string => {
   try {
-    const date = parseISO(dateTimeString);
-    if (isNaN(date.getTime())) return null; // 유효하지 않은 날짜 체크
+    const date = parseDate(dateString);
     
-    const koreanOffset = getTimezoneOffset(KOREAN_TIMEZONE, date) / 60; // 분 단위로 변환
-    return addMinutes(date, koreanOffset);
-  } catch (error) {
-    console.error("Invalid date string:", dateTimeString);
-    return null;
-  }
-};
-
-export const toMessageTime = (dateTimeString: string): string => {
-  const date = toKoreanTime(dateTimeString);
-  if (!date) return "Invalid Date";
-  if (isToday(date)) {
-    return format(date, "a h:mm", { locale: ko });
-  } else {
+    if (isToday(date)) {
+      return format(date, "a h:mm", { locale: ko });
+    }
     return format(date, "M월 d일 a h:mm", { locale: ko });
-  }
-};
-
-export const toDayDividerTime = (dateTimeString: string): string => {
-  const date = toKoreanTime(dateTimeString);
-  if (!date) return "Invalid Date";
-  if (isToday(date)) {
-    return "오늘";
-  } else if (isYesterday(date)) {
-    return "어제";
-  } else if (isThisYear(date)) {
-    return format(date, "M월 d일", { locale: ko });
-  } else {
-    return format(date, "yyyy년 M월 d일", { locale: ko });
-  }
-};
-
-// 범용적인 한국 시간 포맷팅 함수
-export const formatKoreanTime = (
-  dateTimeString: string,
-  formatString: string = "yyyy년 MM월 dd일 HH:mm:ss"
-): string => {
-  const date = toKoreanTime(dateTimeString);
-  if (!date) return "Invalid Date";
-  try {
-    return format(date, formatString, { locale: ko });
   } catch (error) {
-    console.error("Error formatting date:", error);
+    console.error("Date parsing error:", error);
+    return "Invalid Date";
+  }
+};
+
+// 메시지 리스트의 분기별 정리
+export const toDayDividerTime = (dateString: string): string => {
+  try {
+    const date = parseDate(dateString);
+
+    if (isToday(date)) {
+      return "오늘";
+    } else if (isYesterday(date)) {
+      return "어제";
+    } else if (isThisYear(date)) {
+      return format(date, "M월 d일", { locale: ko });
+    }
+    return format(date, "yyyy년 M월 d일", { locale: ko });
+  } catch (error) {
+    console.error("Date parsing error:", error);
+    return "Invalid Date";
+  }
+};
+
+// 상대적 시간을 반환 (예: "3시간 전", "2일 전", "1개월 전")
+export const toRelativeTime = (dateString: string): string => {
+  try {
+    const date = parseDate(dateString);
+    return formatDistanceToNow(date, { 
+      addSuffix: true, 
+      locale: ko 
+    });
+  } catch (error) {
+    console.error("Date parsing error:", error);
+    return "Invalid Date";
+  }
+};
+
+// 생성일자를 상황에 맞게 포맷팅
+// - 24시간 이내: n시간 전
+// - 7일 이내: n일 전
+// - 이번 년도: M월 d일
+// - 이전 년도: yyyy년 M월 d일
+export const toCreatedAt = (dateString: string): string => {
+  try {
+    const date = parseDate(dateString);
+    const now = new Date();
+    const hoursDiff = differenceInHours(now, date);
+    const daysDiff = differenceInDays(now, date);
+
+    if (hoursDiff < 24) {
+      return formatDistanceToNow(date, { 
+        addSuffix: true, 
+        locale: ko 
+      });
+    } else if (daysDiff < 7) {
+      return `${daysDiff}일 전`;
+    } else if (isThisYear(date)) {
+      return format(date, "M월 d일", { locale: ko });
+    }
+    return format(date, "yyyy년 M월 d일", { locale: ko });
+  } catch (error) {
+    console.error("Date parsing error:", error);
+    return "Invalid Date";
+  }
+};
+
+// 수정일자를 상황에 맞게 포맷팅 (생성일자와 비교하여 표시)
+export const toUpdatedAt = (updatedAt: string, createdAt?: string): string => {
+  try {
+    const updateDate = parseDate(updatedAt);
+    
+    // 생성일자가 없거나 수정일자와 같으면 수정일자만 반환
+    if (!createdAt || updatedAt === createdAt) {
+      return toCreatedAt(updatedAt);
+    }
+
+    // 생성일자와 다르면 "수정됨" 표시 추가
+    return `${toCreatedAt(updatedAt)} (수정됨)`;
+  } catch (error) {
+    console.error("Date parsing error:", error);
+    return "Invalid Date";
+  }
+};
+
+// 상세 날짜 시간 포맷 (예: 2024년 3월 15일 오후 2:30)
+export const toDetailDateTime = (dateString: string): string => {
+  try {
+    const date = parseDate(dateString);
+    return format(date, "yyyy년 M월 d일 a h:mm", { locale: ko });
+  } catch (error) {
+    console.error("Date parsing error:", error);
     return "Invalid Date";
   }
 };

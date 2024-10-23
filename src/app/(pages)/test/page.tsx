@@ -1,6 +1,5 @@
 'use client'
 import ChannelCreateModal from "@/app/components/channel/ChannelCreateModal";
-import LoadingScreen from "@/app/components/common/LoadingScreen";
 import React from "react";
 
 export default function test() {
@@ -16,8 +15,7 @@ export default function test() {
   return (
     <>
       <div className="">
-        {/* <LoadingScreen/> */}
-        <button className="btn" onClick={() => document.getElementById('my_modal')?.showModal()}>모달창 열기</button>
+        <button className="btn" onClick={() => (document.getElementById('my_modal') as HTMLDialogElement).showModal()}>모달창 열기</button>
         {renderCard}
         {renderCard}
         {renderCard}

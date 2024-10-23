@@ -1,31 +1,54 @@
 import { ChannelModel } from "@/app/models/channel.model";
 import { useChannelsByWorkspaceId } from "@/app/queries/channel.query";
 import { useChannelStore } from "@/app/stores/channel.store";
-import { faHashtag, faStar, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faHashtag, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { HiHashtag, HiOutlineStar, HiOutlineUser } from "react-icons/hi2";
+import ChannelCreateModal from "./ChannelCreateModal";
+import { useEffect, useState } from "react";
 
 interface ChannelListProps {
   workspaceId: number;
 }
 
 export default function ChannelList({ workspaceId }: ChannelListProps) {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
   const { data: channels, isLoading: isLoadingChannels, error: channelsError } = useChannelsByWorkspaceId(workspaceId) // API Query
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel) // Zustand Store
 
+  useEffect(() => {
+    const dialog = document.getElementById('channel-modal') as HTMLDialogElement;
+    const handleClose = () => {
+      if (!dialog.open) {
+        setIsModalOpen(false);
+      }
+    };
+    dialog.addEventListener('close', handleClose);
+    return () => dialog.removeEventListener('close', handleClose);
+  }, []);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+    (document.getElementById('channel-modal') as HTMLDialogElement).showModal();
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);  // 모달 상태 변경
+    (document.getElementById('channel-modal') as HTMLDialogElement).close(); // 모달 닫기
+    // TODO: toast 메시지 출력 - 채널이 추가되었습니다.
+  }
+
   const renderChannelList = (channels: ChannelModel[], isDM: boolean) => (
-    <ul>
+    <ul className="ms-2">
       {channels
         .filter(channel => isDM ? channel.channelType === "DM" : channel.channelType !== "DM")
         .map((channel) => (
           <li key={channel.channelId} onClick={() => setCurrentChannel(channel)}>
-            <a>
-              {isDM ? <FontAwesomeIcon icon={faUser} className="w-4 h-4"/> : <FontAwesomeIcon icon={faHashtag} className="w-4 h-4"/>}
+            <button className="p-2">
+              {isDM ? <FontAwesomeIcon icon={faUser} className="w-4 h-4 opacity-75"/> : <FontAwesomeIcon icon={faHashtag} className="w-4 h-4 opacity-75"/>}
               <p className="overflow-hidden truncate whitespace-nowrap">{channel.name}</p>
-              <button>
-                <FontAwesomeIcon icon={faStar} className="w-4 h-4"/>
-              </button>
-            </a>
+              {channel.isPrivate ? <FontAwesomeIcon icon={faLock} className="w-4 h-4 opacity-75"/> : '' }
+            </button>
           </li>
         ))}
     </ul>
@@ -34,20 +57,28 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
   const renderContent = (title: string, isDM: boolean) => (
     <li>
       <details open>
-        <summary className="font-bold ">{title}</summary>
+        <summary className="font-bold opacity-75 p-2 after:absolute after:right-[14px]">{title}</summary>
         {isLoadingChannels ? (
-          <ul>
-            <li className="skeleton h-9 rounded-btn">채널 로드중</li>
-            <li className="skeleton h-9 rounded-btn">채널 로드중</li>
-            <li className="skeleton h-9 rounded-btn">채널 로드중</li>
+          <ul className="ms-2">
+            <li>
+              <div className="skeleton h-9 rounded-btn"></div>
+            </li>
           </ul>
         ) : channelsError ? (
-          <ul>
-            <li className="h-9 bg-error rounded-btn">에러가 발생했습니다.</li>
+          <ul className="ms-2">
+            <li>
+              <div className="p-2 bg-error rounded-btn">
+                알 수 없는 오류가 발생했습니다.
+              </div>
+            </li>
           </ul>
         ) : !channels ? (
-          <ul>
-            <li className="h-9">채널을 찾을 수 없습니다.</li>
+          <ul className="ms-2">
+            <li>
+              <div className="p-2 bg-warning rounded-btn">
+                데이터를 불러오지 못했습니다.
+              </div>
+            </li>
           </ul>
         ) : (
           renderChannelList(channels, isDM)
@@ -57,9 +88,28 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
   );
 
   return (
-    <ul className="menu">
-      {renderContent("워크스페이스 채널", false)}
-      {renderContent("다이렉트 메시지", true)}
-    </ul>
+    <>
+      <ul className="menu">
+        {renderContent("워크스페이스 채널", false)}
+        {renderContent("다이렉트 메시지", true)}
+      </ul>
+
+      <button className="btn w-[176px] absolute bottom-[72px] right-[8px]" onClick={handleModalOpen}>
+        <FontAwesomeIcon icon={faPlus} className="w-4 h-4 opacity-75"/>
+        <p>채널 생성</p>
+      </button>
+
+      {/* modal dialog */}
+      <dialog id="channel-modal" className="modal modal-bottom md:modal-middle">
+        <div className="modal-box p-4">
+          <ChannelCreateModal isOpen={isModalOpen} onClose={handleModalClose} />
+          <div className="modal-action absolute bottom-4 right-4">
+            <form method="dialog">
+              <button className="btn" onClick={handleModalClose}>취소</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+    </>
   );
 }

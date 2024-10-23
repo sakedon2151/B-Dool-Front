@@ -5,13 +5,20 @@ import { useWorkspacesByIds } from "@/app/queries/workspace.query";
 import { useMemberStore } from "@/app/stores/member.store";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
+import { faExclamation, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import WorkspaceCreateModal from "./WorkspaceCreateModal";
+import CustomTooltip from "../common/CustomTooltip";
+import Image from "next/image";
 
 export default function WorkspaceNav() {
   const router = useRouter()
+  const [modalKey, setModalKey] = useState<number>(0);
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const currentProfile = useProfileStore(state => state.currentProfile); // Zustand Store
+  const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace) // Zustand Store
   const setCurrentWorkspace = useWorkspaceStore(state => state.setCurrentWorkspace);  // Zustand Store
   
   const updateProfileOnlineStatusMutation = useUpdateProfileOnlineStatus(); // API Query
@@ -36,42 +43,84 @@ export default function WorkspaceNav() {
     }
   };
 
+  const handleModalClose = () => {
+    (document.getElementById('workspace-modal') as HTMLDialogElement).close()
+    setModalKey(prev => prev + 1);
+  };
+
+  const handleModalOpen = () => {
+    setModalKey(prev => prev + 1);
+    (document.getElementById('workspace-modal') as HTMLDialogElement).showModal()
+  };
+
   const renderWorkspaceList = (workspaces: WorkspaceModel[]) => (
     <ul className="p-1 menu">
       {workspaces.map((workspace: WorkspaceModel) => (
           <li key={workspace.id} className="m-1">
-            <a className="block w-12 p-0 overflow-hidden transition-all aspect-square rounded-btn hover:rounded-3xl" onClick={() => handleWorkspaceSelect(workspace)}>
-              <img className="object-cover w-full h-full" src={workspace.workspaceImageUrl} alt="workspace_thumbnail_img"/>
-            </a>
+            <CustomTooltip content={
+              <div>{workspace.name}</div>
+            } className="p-0">
+              <button 
+                className={`btn w-12 p-0 overflow-hidden transition-all hover:ring-4 hover:ring-base-200 ${
+                  currentWorkspace.id === workspace.id ? 'ring-4' : ''
+                }`}
+                onClick={() => handleWorkspaceSelect(workspace)}
+              >
+                <img src={workspace.workspaceImageUrl} alt="workspace_thumbnail_image" className="object-cover w-full h-full"/>
+              </button>
+            </CustomTooltip>
           </li>
         ))}
         <li className="m-1">
-          <a className="block w-12 p-0 overflow-hidden transition-all aspect-square rounded-btn hover:rounded-3xl">
-            <img className="object-cover w-full h-full" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/eed560189998237.65b50b647abf4.png" alt="workspace_thumbnail_img"/>
-          </a>
+          <button className="btn w-12 p-0 transition-all hover:rounded-3xl" onClick={handleModalOpen}>
+            <FontAwesomeIcon icon={faPlus} className="w-4 h-4 opacity-75"/>
+          </button>
         </li>
     </ul>
   )
 
   return (
-    <div className="h-full shadow-inner">
-      {isLoadingProfiles || isLoadingWorkspaces ? (
-        <ul className="p-1 menu">
-          <li className="skeleton">Loading</li>
-          <li className="skeleton">Loading</li>
-          <li className="skeleton">Loading</li>
-        </ul>
-      ) : profilesError || workspacesError ? (
-        <ul className="p-1 menu">
-          <li>Error</li>
-        </ul>
-      ) : !profiles || !workspaces ? (
-        <ul className="p-1 menu">
-          <li>NotFound</li>
-        </ul>
-      ) : (
-        renderWorkspaceList(workspaces)
-      )}
-    </div>
+    <>
+      <div className="h-full shadow-inner shadow-base-300">
+        {isLoadingProfiles || isLoadingWorkspaces ? (
+          <ul className="p-1 menu">
+            <li className="m-1">
+              <div className="skeleton w-12 h-12 rounded-btn"></div>
+            </li>
+            <li className="m-1">
+              <div className="skeleton w-12 h-12 rounded-btn"></div>
+            </li>
+            <li className="m-1">
+              <div className="skeleton w-12 h-12 rounded-btn"></div>
+            </li>
+          </ul>
+        ) : profilesError || workspacesError ? (
+          <ul className="p-1 menu">
+            <li className="m-1">
+              <button className="btn btn-error w-12 p-0 transition-all hover:rounded-3xl">
+                <FontAwesomeIcon icon={faExclamation} className="w-4 h-4 opacity-75"/>
+              </button>
+            </li>
+          </ul>
+        ) : !profiles || !workspaces ? (
+          <ul className="p-1 menu">
+            <li>NotFound</li>
+          </ul>
+        ) : (
+          renderWorkspaceList(workspaces)
+        )}
+      </div>
+
+      <dialog id="workspace-modal" className="modal modal-bottom md:modal-middle">
+        <div className="modal-box p-4">
+          <WorkspaceCreateModal key={modalKey} onComplete={handleModalClose} />
+          <div className="modal-action absolute bottom-4 right-4">
+            <form method="dialog">
+              <button className="btn" onClick={handleModalClose} >취소</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+    </>
   );
 }

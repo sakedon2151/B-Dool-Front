@@ -2,23 +2,29 @@ import { useEffect, useState } from "react";
 import ParticipantModal from "./ParticipantModal";
 import { ProfileModel } from "@/app/models/profile.model";
 import { profileService } from "@/app/services/member/profile.service";
+import { useChannelStore } from "@/app/stores/channel.store";
+import { useParticipantsByChannelId } from "@/app/queries/participant.query";
+import { ParticipantModel } from "@/app/models/participant.model";
 
 interface ParticipantListProps {
   workspaceId: number;
 }
 
 export default function ParticipantList({ workspaceId }: ParticipantListProps) {
-  const [profiles, setProfiles] = useState<ProfileModel[]>([])
-  const [selectedProfile, setSelectedProfile] = useState<ProfileModel | null>(null);
+  // const [profiles, setProfiles] = useState<ParticipantModel[]>([])
+  const [selectedParticipant, setSelectedParticipant] = useState<ParticipantModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const onlineProfiles = profiles.filter(profiles => profiles.isOnline);
-  const offlineProfiles = profiles.filter(profiles => !profiles.isOnline);
 
-  const handleProfileClick = (profile: ProfileModel, event: React.MouseEvent) => {
+  const currentChannel = useChannelStore(state => state.currentChannel) // Zustand Store
+  const { data: participants, isLoading: isLoadingParticipants, error: participantsError } = useParticipantsByChannelId(currentChannel.channelId) // API Query
+
+  console.log(currentChannel)
+  console.log(participants)
+
+  const onlineParticipants = participants?.filter(participant => participant.isOnline);
+  const offlineParticipants = participants?.filter(participant => !participant.isOnline);
+
+  const handleParticipantClick = (participant: ParticipantModel, event: React.MouseEvent) => {
     const liElement = (event.target as HTMLElement).closest('li');
     if (liElement) {
       const rect = liElement.getBoundingClientRect();
@@ -36,25 +42,25 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
         });
       }
     }
-    setSelectedProfile(profile);
-    document.getElementById('participant-modal')?.showModal();
+    setSelectedParticipant(participant);
+    (document.getElementById('participant-modal') as HTMLDialogElement).showModal()
   };
 
-  useEffect(() => {
-    fetchProfiles(workspaceId)
-  }, [workspaceId])
+  // useEffect(() => {
+  //   fetchProfiles(workspaceId)
+  // }, [workspaceId])
 
-  const fetchProfiles = async (workspaceId: number) => {
-    try {
-      const response = await profileService.getProfilesByWorkspaceId(workspaceId)
-      setProfiles(response)
-    } catch (error) {
-      console.error('error', error);
-      setError('프로필 목록을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.')
-    } finally {
-      setLoading(false)
-    }
-  };
+  // const fetchProfiles = async (workspaceId: number) => {
+  //   try {
+  //     const response = await profileService.getProfilesByWorkspaceId(workspaceId)
+  //     setProfiles(response)
+  //   } catch (error) {
+  //     console.error('error', error);
+  //     setError('프로필 목록을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.')
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // };
 
   // const handleNicknameChange = (updatedProfile: ProfileModel) => {
   //   setProfiles(prevProfiles => 
@@ -86,33 +92,33 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   return (
     <>
       <ul className="menu">
-        <li className="menu-title">온라인 - {onlineProfiles.length}</li>
-        {onlineProfiles.map((profile) => (
-          <li key={profile.id} onClick={(e) => handleProfileClick(profile, e)}>
-            <a>
+        <li className="menu-title">온라인 - {onlineParticipants?.length}</li>
+        {onlineParticipants?.map((participant) => (
+          <li key={participant.participantId}>
+            <button onClick={(e) => handleParticipantClick(participant, e)}>
               <div className="avatar online placeholder">
                 <div className="w-8 rounded-full bg-neutral text-neutral-content">
                   <span className="text-xs">U</span>
                 </div>
               </div>
-              <p className="overflow-hidden truncate whitespace-nowrap">{profile.nickname}</p>
-            </a>
+              <p className="overflow-hidden truncate whitespace-nowrap">{participant.nickname}</p>
+            </button>
           </li>
         ))}
       </ul>
 
       <ul className="menu">
-        <li className="menu-title">오프라인 - {offlineProfiles.length}</li>
-        {offlineProfiles.map((profile) => (
-          <li key={profile.id} onClick={(e) => handleProfileClick(profile, e)}>
-            <a>
+        <li className="menu-title">오프라인 - {offlineParticipants?.length}</li>
+        {offlineParticipants?.map((participant) => (
+          <li key={participant.participantId}>
+            <button onClick={(e) => handleParticipantClick(participant, e)}>
               <div className="avatar offline placeholder">
                 <div className="w-8 rounded-full bg-neutral text-neutral-content">
                   <span className="text-xs">U</span>
                 </div>
               </div>
-              <p className="overflow-hidden truncate whitespace-nowrap">{profile.nickname}</p>
-            </a>
+              <p className="overflow-hidden truncate whitespace-nowrap">{participant.nickname}</p>
+            </button>
           </li>
         ))}
       </ul>
@@ -123,12 +129,12 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
           top: modalPosition.top,
           bottom: modalPosition.bottom
         }}>
-          {selectedProfile && (
-            <ParticipantModal profileId={selectedProfile.id}/>
+          {selectedParticipant && (
+            <ParticipantModal profileId={selectedParticipant.profileId}/>
           )}
         </div>
         <form method="dialog" className="modal-backdrop">
-          <button>close</button>
+          <button>닫기</button>
         </form>
       </dialog>
     </>

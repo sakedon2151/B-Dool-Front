@@ -2,8 +2,9 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { WorkspaceInsertModel } from "@/app/models/workspace.model"
 import { useCreateWorkspace } from "@/app/queries/workspace.query";
 import { DEFAULT_WORKSPACE_IMAGE } from "@/app/utils/config";
-import { FaPlus } from 'react-icons/fa';
 import { useMemberStore } from "@/app/stores/member.store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 interface WorkspaceCreateFormProps {
   onSubmit: (data: WorkspaceInsertModel) => void
@@ -54,7 +55,6 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
       url: workspaceUrl,
       ownerId: currentMember.id
     }
-    console.log("WorkspaceCreateForm Submit Data: ", workspaceData)
     onSubmit(workspaceData)
   }
 
@@ -65,7 +65,7 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
           <div className="w-24 h-24 rounded-full">
             <img src={workspaceImage} alt="workspace_image" className="group-hover:brightness-50"/>
           </div>
-          <FaPlus className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
+          <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
         </div>
         <input 
           ref={fileInput}
@@ -99,7 +99,9 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
       />
       <div className="text-center">
         <button type="submit" className="btn" disabled={createWorkspaceMutation.isPending}>
-          {createWorkspaceMutation.isPending ? '생성 중...' : '다음'}
+          {createWorkspaceMutation.isPending ? (
+            <span className="loading loading-spinner loading-md"></span>
+          ) : '다음'}
         </button>
       </div>
     </form>

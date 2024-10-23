@@ -21,8 +21,10 @@ export default function EmailLoginForm() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     setLoading(true);
     setError('');
+    
     try {
       const isCodeSent = await mailService.sendVerificationCode(email);
       if (isCodeSent) {
@@ -49,7 +51,6 @@ export default function EmailLoginForm() {
         router.push("/workspace");
       } else {
         setError('인증에 실패했습니다. 다시 시도해 주세요.');
-        // 6자리 키 재호출
       }
     } catch (err) {
       setError('오류가 발생했습니다. 다시 시도해 주세요.');
@@ -95,7 +96,7 @@ export default function EmailLoginForm() {
           <button className="btn bg-base-100" type="submit" disabled={loading}>
             {loading ? (
               <>
-                <span className="loading loading-spinner"></span>
+                <span className="loading loading-spinner loading-md"></span>
                 메일을 보내고 있어요.
               </>
             ) : '이메일 전송'}

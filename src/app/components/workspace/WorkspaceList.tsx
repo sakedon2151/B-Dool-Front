@@ -26,13 +26,13 @@ export default function WorkspaceList() {
   const { data: workspaces, isLoading: isLoadingWorkspaces, error: workspacesError } = useWorkspacesByIds(workspaceIds); // API Query
 
   const handleModalClose = () => {
-    document.getElementById('workspace-modal')?.close()
+    (document.getElementById('workspace-modal') as HTMLDialogElement).close()
     setModalKey(prev => prev + 1);
   };
 
   const handleModalOpen = () => {
     setModalKey(prev => prev + 1);
-    document.getElementById('workspace-modal')?.showModal();
+    (document.getElementById('workspace-modal') as HTMLDialogElement).showModal()
   };
 
   const handleWorkspaceSelect = (workspace: WorkspaceModel) => {

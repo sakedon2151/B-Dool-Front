@@ -14,7 +14,7 @@ interface WorkspaceCreateModalProps {
 
 export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModalProps) {
   const [workspaceData, setWorkspaceData] = useState<WorkspaceInsertModel | null>(null)
-  const [profileData, setProfileData] = useState<ProfileInsertModel | null>(null)
+  // const [profileData, setProfileData] = useState<ProfileInsertModel | null>(null)
   const [step, setStep] = useState<number>(1)
 
   const createProfileMutation = useCreateProfile() // API Query
@@ -28,7 +28,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
   }
 
   const handleProfileSubmit = async (data: ProfileInsertModel) => {
-    setProfileData(data)
+    // setProfileData(data)
     try {
       if (!currentMember || !workspaceData) {
         throw new Error("필요한 데이터가 없습니다.");
@@ -53,7 +53,6 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         isPrivate: false,
         description: "전체 채널입니다.",
         profileId: createdProfile.id,
-        // nickname: createdProfile.nickname,
         channelType: "DEFAULT"
       })
       // DM 채널 자동 생성
@@ -63,7 +62,6 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         isPrivate: false,
         description: "다이렉트 메시지",
         profileId: createdProfile.id,
-        // nickname: createdProfile.nickname,
         channelType: "DM"
       })
       onComplete();
@@ -79,7 +77,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
   const resetForm = () => {
     setStep(1)
     setWorkspaceData(null)
-    setProfileData(null)
+    // setProfileData(null)
   }
 
   useEffect(() => {
@@ -90,7 +88,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
 
   return (
     <div>
-      <h2 className="text-lg font-bold mb-4 text-center">
+      <h2 className="font-bold text-lg opacity-75 mb-4 text-center">
         {step === 1 ? (
           <p>1/2<br/>워크스페이스 생성</p>
         ) : (

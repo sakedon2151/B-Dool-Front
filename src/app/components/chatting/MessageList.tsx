@@ -103,10 +103,6 @@ export default function MessageList({ workspaceId }: MessageListProps) {
 
   let currentDate = "";
 
-  // return (
-  //   <div className="text-center text-red-500">에러 발생</div>
-  // )
-
   return (
     <div className="h-full p-4 overflow-y-auto" ref={messageAreaRef}>
       {loading && (

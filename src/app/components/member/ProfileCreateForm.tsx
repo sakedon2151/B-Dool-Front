@@ -1,5 +1,7 @@
 import { ProfileInsertModel } from "@/app/models/profile.model"
 import { DEFAULT_PROFILE_IMAGE } from "@/app/utils/config";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { FaPlus } from 'react-icons/fa';
 
@@ -57,13 +59,13 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
           <div className="w-24 h-24 rounded-full">
             <img src={profileImage} alt="workspace_image" className="group-hover:brightness-50"/>
           </div>
-          <FaPlus className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
+          <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
         </div>
         <input 
           ref={fileInput}
           className="hidden"
           accept="image/png, image/jpg, image/jpeg"
-          type="file" 
+          type="file"
           onChange={handleImgChange}
         />
       </div>  
@@ -83,9 +85,9 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
         onChange={(e) => setProfileName(e.target.value)}
         required
       />
-      <div className="text-center">
-        <button type="button" onClick={onPrevious} className="btn mr-2">이전</button>
-        <button type="submit" className="btn">생성</button>
+      <div className="w-full join justify-center">
+        <button type="button" onClick={onPrevious} className="btn join-item">이전</button>
+        <button type="submit" className="btn join-item">완료</button>
       </div>
     </form>
   )

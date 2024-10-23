@@ -3,8 +3,10 @@ import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { useUpdateProfile, useUpdateProfileOnlineStatus } from "@/app/queries/profile.query";
-import { formatKoreanTime } from "@/app/utils/formatDateTime";
 import { ProfileModel } from "@/app/models/profile.model";
+import { toCreatedAt, toUpdatedAt } from "@/app/utils/formatDateTime";
+import Image from 'next/image'
+
 
 export default function ProfileModal() {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
@@ -19,8 +21,8 @@ export default function ProfileModal() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const fileInput = useRef<HTMLInputElement>(null)
   
-  const formatCreatedDate = formatKoreanTime(currentProfile.createdAt)
-  const formatUpdatedDate = formatKoreanTime(currentProfile.updatedAt)
+  const formatCreatedDate = toCreatedAt(currentProfile.createdAt)
+  const formatUpdatedDate = toUpdatedAt(currentProfile.updatedAt, currentProfile.createdAt)
 
   const handleImgChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -104,7 +106,7 @@ export default function ProfileModal() {
   return (
     <div className="flex flex-col ">
       <div className="h-24 mb-4 text-center">
-        <div className="avatar online group drop-shadow-sm" onClick={() => {fileInput.current?.click()}}>
+        <div className={`avatar group drop-shadow-sm ${currentProfile.isOnline ? 'online' : 'offline'}`} onClick={() => {fileInput.current?.click()}}>
           <div className="w-24 h-24 rounded-full">
             <img src={profileImage} alt="profile_image" className="group-hover:brightness-50"/>
           </div>
@@ -123,13 +125,13 @@ export default function ProfileModal() {
         {!isEditing ? (
           <div className="info">
             <div className="flex justify-between">
-              <p className="text-2xl font-bold">{currentProfile.nickname}</p>
+              <p className="text-lg font-bold">{currentProfile.nickname}</p>
               <div className="tooltip tooltip-bottom" data-tip="온라인 상태">
                 <input 
                   type="checkbox"
-                  className="toggle"
+                  className="toggle toggle-success"
                   onChange={handleOnlineToggle}
-                  defaultChecked={isOnline}
+                  checked={currentProfile.isOnline}
                 />
               </div>
             </div>

@@ -38,14 +38,17 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
               <img src={profile.profileImgUrl} alt="profile_image"/>
             </div>
           </div>
+
           <div className="chat-header">
             {profile.nickname}
-            <time className="pl-1 text-xs opacity-50">{toMessageTime(selectedMessage.sendDate)}</time>
+            <time className="pl-1 text-xs opacity-75">{toMessageTime(selectedMessage.sendDate)}</time>
           </div>
+
           <div className="chat-bubble">
             {renderMessageContent(selectedMessage.content)}
           </div>
-          <div className="chat-footer">3</div>
+
+          <div className="chat-footer">메시지 읽은 사람</div>
         </>
       )}
     </div>

@@ -8,6 +8,10 @@ export const participantService = {
     serverBAxios.get<ParticipantModel[]>(BASE_URL)
       .then(response => response.data),
 
+  getParticipantsByChannelId: (channelId: string) =>
+    serverBAxios.get<ParticipantModel[]>(`${BASE_URL}/${channelId}/channel`)
+      .then(response => response.data),
+
   getParticipantById: (participantId: string) => 
     serverBAxios.get<ParticipantModel>(`${BASE_URL}/${participantId}`)
       .then(response => response.data),

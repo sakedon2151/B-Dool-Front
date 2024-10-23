@@ -6,26 +6,28 @@ import { participantService } from '../services/channel/participant.service';
 const PARTICIPANT_KEYS = {
   all: ['participants'] as const,
   byId: (id: string) => [...PARTICIPANT_KEYS.all, 'byId', id] as const,
+  byChannelId: (channelId: string) => [...PARTICIPANT_KEYS.all, 'byChannelId', channelId] as const,
 };
 
 // Queries
-export const useParticipantById = (participantId: string) => 
-  useQuery({
-    queryKey: PARTICIPANT_KEYS.byId(participantId),
-    queryFn: () => participantService.getParticipantById(participantId),
-  });
-
 export const useAllParticipants = () => 
   useQuery({
     queryKey: PARTICIPANT_KEYS.all,
     queryFn: participantService.getAllParticipants,
   });
 
+export const useParticipantById = (participantId: string) => 
+  useQuery({
+    queryKey: PARTICIPANT_KEYS.byId(participantId),
+    queryFn: () => participantService.getParticipantById(participantId),
+  });
 
+export const useParticipantsByChannelId = (channelId: string) =>
+  useQuery({
+    queryKey: PARTICIPANT_KEYS.byChannelId(channelId),
+    queryFn: () => participantService.getParticipantsByChannelId(channelId),
+  })
 
-
-
-  
 // Mutations
 export const useCreateParticipant = () => {
   const queryClient = useQueryClient();
