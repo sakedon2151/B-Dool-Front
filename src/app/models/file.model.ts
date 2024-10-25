@@ -20,7 +20,7 @@ export interface FileModel {
 export interface FileUploadModel {
   entityType: EntityType; // 파일 
   entityId: string
-  // 파일
+  // + 인풋으로 포함시킨 파일과 함께 전송
 }
 
 export const InitialFile: FileModel = {
@@ -37,5 +37,3 @@ export const InitialFile: FileModel = {
   md5Hash: "",
   status: "ACTIVE"
 }
-
-// Strict Type Model
