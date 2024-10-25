@@ -4,13 +4,13 @@ import { useRouter } from "next/navigation";
 import EmailLoginForm from "@/app/components/auth/EmailLoginForm";
 import CommonFooter from "@/app/components/common/CommonFooter";
 import CommonHeader from "@/app/components/common/CommonHeader";
-import { getToken, removeToken } from "@/app/utils/tokenController";
+import { getToken, removeToken } from "@/app/utils/cookieController";
 import { memberService } from "@/app/services/member/member.service";
 import { authService } from "@/app/services/auth/auth.service";
 import { useMemberStore } from "@/app/stores/member.store";
 import LoadingScreen from "@/app/components/common/LoadingScreen";
 
-export default function auth() {
+export default function Auth() {
   const router = useRouter()
   const [loading, setLoading] = useState(true);
   const { setCurrentMember } = useMemberStore();

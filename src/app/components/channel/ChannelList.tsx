@@ -1,10 +1,10 @@
-import { ChannelModel } from "@/app/models/channel.model";
-import { useChannelsByWorkspaceId } from "@/app/queries/channel.query";
-import { useChannelStore } from "@/app/stores/channel.store";
-import { faHashtag, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ChannelCreateModal from "./ChannelCreateModal";
 import { useEffect, useState } from "react";
+import { useChannelsByWorkspaceId } from "@/app/queries/channel.query";
+import ChannelCreateModal from "./ChannelCreateModal";
+import { ChannelModel } from "@/app/models/channel.model";
+import { useChannelStore } from "@/app/stores/channel.store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHashtag, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 
 interface ChannelListProps {
   workspaceId: number;

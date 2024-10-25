@@ -1,4 +1,5 @@
 import {  InitialWorkspace, WorkspaceModel } from "../models/workspace.model";
+import { setWorkspaceMetadata } from "../utils/cookieController";
 import { createPersistStore } from "./session.middleware";
 
 interface WorkspaceState {
@@ -11,7 +12,10 @@ interface WorkspaceState {
 export const useWorkspaceStore = createPersistStore<WorkspaceState>(
   (set) => ({
     currentWorkspace: InitialWorkspace,
-    setCurrentWorkspace: (workspace) => set({ currentWorkspace: workspace }),
+    setCurrentWorkspace: (workspace) => {
+      set({ currentWorkspace: workspace })
+      setWorkspaceMetadata(workspace); // metadata cookie update
+    },
     fetchedWorkspaces: [],
     setFetchedWorkspaces: (workspaces) => set({ fetchedWorkspaces: workspaces }),
   }),

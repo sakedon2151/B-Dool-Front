@@ -1,9 +1,9 @@
+import React, { useEffect, useState } from 'react'
 import { useCreateChannel } from '@/app/queries/channel.query'
 import { useProfileStore } from '@/app/stores/profile.store'
 import { useWorkspaceStore } from '@/app/stores/workspace.store'
-import { faGlobe, faLock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import { faGlobe, faLock } from '@fortawesome/free-solid-svg-icons'
 
 interface ChannelCreateModalProps {
   isOpen: boolean

@@ -5,8 +5,7 @@ import { mailService } from "@/app/services/auth/mailSender.service";
 import { authService } from "@/app/services/auth/auth.service";
 import { memberService } from "@/app/services/member/member.service";
 import { useMemberStore } from "@/app/stores/member.store";
-import { setToken } from "@/app/utils/tokenController";
-
+import { setToken } from "@/app/utils/cookieController";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleXmark, faEnvelope } from "@fortawesome/free-solid-svg-icons"
 

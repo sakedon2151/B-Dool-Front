@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function session() {
+export default function Session() {
   return (
     <div>page</div>
   )

@@ -2,7 +2,7 @@
 import ChannelCreateModal from "@/app/components/channel/ChannelCreateModal";
 import React from "react";
 
-export default function test() {
+export default function Test() {
   
   const renderCard = (
     <div className="w-[640px] p-4 border rounded-lg bg-green-900">
@@ -23,7 +23,9 @@ export default function test() {
 
       <dialog id="my_modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
-          <ChannelCreateModal/>
+          
+          
+
           <div className="modal-action">
             <form method="dialog">
               <button className="btn">취소</button>

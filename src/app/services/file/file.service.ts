@@ -9,6 +9,7 @@ export const fileService = {
     formData.append("file", params.file);
     formData.append("entityType", params.entityType);
     formData.append("entityId", params.entityId);
+    
     const response = await serverBAxios.post<FileModel>(`${BASE_URL}/upload`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
       onUploadProgress: (progressEvent_1) => {
@@ -20,22 +21,6 @@ export const fileService = {
     });
     return response.data;
   },
-
-  // uploadFile: (params: FileUploadModel & { file: File }, onProgress?: (progress: number) => void) => {
-  //   const formData = new FormData();
-  //   formData.append("file", params.file);
-  //   formData.append("entityType", params.entityType);
-  //   formData.append("entityId", params.entityId);
-  //   return serverBAxios.post<FileModel>(`${BASE_URL}/upload`, formData, {
-  //     headers: { "Content-Type": "multipart/form-data" },
-  //     onUploadProgress: (progressEvent) => {
-  //       if (onProgress && progressEvent.total) {
-  //         const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-  //         onProgress(progress);
-  //       }
-  //     }
-  //   }).then(response => response.data);
-  // },
 
   getAllFiles: () => 
     serverBAxios.get<FileModel[]>(BASE_URL)

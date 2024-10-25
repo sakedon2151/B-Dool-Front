@@ -1,5 +1,5 @@
 "use client";
-import { faCheck, faCircleCheck, faCircleInfo, faInfo } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 

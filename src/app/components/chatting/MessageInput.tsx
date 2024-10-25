@@ -1,11 +1,11 @@
+import { useCallback, useRef, useState, useEffect } from "react";
 import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { MessageInsertModel } from "@/app/models/message.model";
 import { fileService } from "@/app/services/file/file.service";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useProfileStore } from "@/app/stores/profile.store";
-import { faFile, faPaperPlane, faTimes, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useCallback, useRef, useState, useEffect } from "react";
+import { faFile, faPaperPlane, faTimes, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 interface MessageInputProps {
   workspaceId: number

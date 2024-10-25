@@ -10,6 +10,7 @@ import LoadingScreen from "@/app/components/common/LoadingScreen";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { getWorkspaceMetadata, removeWorkspaceMetadata, setWorkspaceMetadata } from "@/app/utils/cookieController";
 
 function DataLoader() {
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
@@ -21,6 +22,39 @@ function DataLoader() {
   const { data: channel } = useDefaultChannelByWorkspaceId(currentWorkspace.id) // API Suspense Query
   const updateProfileOnlineStatus = useUpdateProfileOnlineStatus(); // API Query
 
+  // METADATA Initialize
+  useEffect(() => {
+    if (!currentWorkspace) return;
+    setWorkspaceMetadata(currentWorkspace);
+    const metadata = getWorkspaceMetadata();
+    document.title = metadata?.title ? `B-DOOL | ${metadata.title}` : 'B-DOOL | 워크스페이스';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        'content', 
+        metadata?.description || '가볍게 사용하는 협업 메신저'
+      );
+    }
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogTitle) {
+      ogTitle.setAttribute(
+        'content',
+        metadata?.title ? `B-DOOL | ${metadata.title}` : 'B-DOOL | 워크스페이스'
+      );
+    }
+    if (ogDescription) {
+      ogDescription.setAttribute(
+        'content',
+        metadata?.description || '가볍게 사용하는 협업 메신저'
+      );
+    }
+    return () => {
+      removeWorkspaceMetadata();
+    };
+  }, [currentWorkspace]);
+
+  // STORE DATA Initialize
   useEffect(() => {
     if (!profile || !channel) return;
     const prepareMount = async () => {
@@ -38,7 +72,6 @@ function DataLoader() {
         console.error("워크스페이스 초기화 마운트 오류:", error);
       }
     };
-    prepareMount();
     const prepareUnmount = async () => {
       if (profile) {
         try {
@@ -51,6 +84,7 @@ function DataLoader() {
         }
       }
     };
+    prepareMount();
     window.addEventListener('beforeunload', prepareUnmount);
     return () => {
       window.removeEventListener('beforeunload', prepareUnmount);
@@ -72,7 +106,11 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   )
 }
 
-export default function WorkspaceLayout({children}: {children: React.ReactNode}) {
+export default function WorkspaceClientLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Suspense fallback={<LoadingScreen/>}>

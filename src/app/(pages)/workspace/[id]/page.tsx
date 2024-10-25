@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faList } from "@fortawesome/free-solid-svg-icons";
 
-export default function workspace() {
+export default function Workspace() {
   const params = useParams();
   const workspaceId = parseInt(params.id as string, 10);
 

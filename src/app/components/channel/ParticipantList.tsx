@@ -18,9 +18,6 @@ export default function ParticipantList({ workspaceId }: ParticipantListProps) {
   const currentChannel = useChannelStore(state => state.currentChannel) // Zustand Store
   const { data: participants, isLoading: isLoadingParticipants, error: participantsError } = useParticipantsByChannelId(currentChannel.channelId) // API Query
 
-  console.log(currentChannel)
-  console.log(participants)
-
   const onlineParticipants = participants?.filter(participant => participant.isOnline);
   const offlineParticipants = participants?.filter(participant => !participant.isOnline);
 

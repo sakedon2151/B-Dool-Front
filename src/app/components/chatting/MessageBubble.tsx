@@ -1,9 +1,9 @@
+import React from "react";
 import { MessageModel } from "@/app/models/message.model";
 import { useProfileById } from "@/app/queries/profile.query";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { toMessageTime } from "@/app/utils/formatDateTime";
 
-import React from "react";
 
 interface MessageBubbleProps {
   selectedMessage: MessageModel

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { getToken } from './tokenController';
+import { getToken } from './cookieController';
 
 // 기본 axios 인스턴스 생성 함수
 const createAxiosInstance = (baseURL: string): AxiosInstance => {
