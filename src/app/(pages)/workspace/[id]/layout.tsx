@@ -1,16 +1,16 @@
 "use client"
+import React, { Suspense, useEffect } from "react"
+import LoadingScreen from "@/app/components/common/LoadingScreen";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { useDefaultChannelByWorkspaceId } from "@/app/queries/channel.query";
 import { useProfileByMemberIdAndWorkspaceId, useUpdateProfileOnlineStatus } from "@/app/queries/profile.query";
+import { getWorkspaceMetadata, removeWorkspaceMetadata, setWorkspaceMetadata } from "@/app/utils/cookieController";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useMemberStore } from "@/app/stores/member.store";
 import { useProfileStore } from "@/app/stores/profile.store";
-import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-import React, { Suspense, useEffect } from "react"
-import LoadingScreen from "@/app/components/common/LoadingScreen";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { getWorkspaceMetadata, removeWorkspaceMetadata, setWorkspaceMetadata } from "@/app/utils/cookieController";
 
 function DataLoader() {
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store

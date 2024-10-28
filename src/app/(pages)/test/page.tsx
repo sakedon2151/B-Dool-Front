@@ -1,5 +1,6 @@
 'use client'
 import ChannelCreateModal from "@/app/components/channel/ChannelCreateModal";
+import SearchModal from "@/app/components/search/SearchModal";
 import React from "react";
 
 export default function Test() {
@@ -24,7 +25,7 @@ export default function Test() {
       <dialog id="my_modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
           
-          
+          <SearchModal/>
 
           <div className="modal-action">
             <form method="dialog">
