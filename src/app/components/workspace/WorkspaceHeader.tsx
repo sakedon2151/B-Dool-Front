@@ -3,9 +3,9 @@ import CalendarModal from "../calendar/CalendarModal";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faHashtag, faMagnifyingGlass, faUser, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faGripVertical, faHashtag, faMagnifyingGlass, faUser, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { faBell, faCalendarDays } from '@fortawesome/free-regular-svg-icons'
-import SearchModal from "../search/SearchInput";
+import SearchModal from "../search/SearchModal";
 
 export default function WorkspaceHeader() {
   const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
@@ -38,7 +38,7 @@ export default function WorkspaceHeader() {
 
           <div className="block lg:hidden">
             <button className="btn btn-ghost" onClick={toggleExpand}>
-              <FontAwesomeIcon icon={faEllipsisVertical} className="w-4 h-4 opacity-75"/>
+              <FontAwesomeIcon icon={faGripVertical} className="w-6 h-6 opacity-75"/>
             </button>
 
             {isExpanded && (
@@ -117,12 +117,15 @@ export default function WorkspaceHeader() {
       </dialog>
       
       {/* modal dialog */}
-      <dialog id="search-modal" className="modal">
+      <dialog id="search-modal" className="modal modal-top md:modal-middle">
         <div className="modal-box p-4">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-          </form>
-          <SearchModal/>
+          <SearchModal workspaceId={currentWorkspace.id}/>
+
+          <div className="modal-action mt-4">
+            <form method="dialog">
+              <button className="btn">닫기</button>
+            </form>
+          </div>
         </div>
       </dialog>
     </>

@@ -24,8 +24,6 @@ export default function Test() {
 
       <dialog id="my_modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
-          
-          <SearchModal/>
 
           <div className="modal-action">
             <form method="dialog">

@@ -8,7 +8,6 @@ export const fileService = {
     const formData = new FormData();
     formData.append("file", params.file);
     formData.append("entityType", params.entityType);
-    formData.append("entityId", params.entityId);
     
     const response = await serverBAxios.post<FileModel>(`${BASE_URL}/upload`, formData, {
       headers: { "Content-Type": "multipart/form-data" },

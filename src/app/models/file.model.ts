@@ -11,7 +11,6 @@ export interface FileModel {
   extension: string; // 파일 확장자
   uploadedAt: string;
   entityType: EntityType;  
-  entityId: string
   fileType: FileType
   md5Hash: string
   status: StatusType
@@ -19,7 +18,6 @@ export interface FileModel {
 
 export interface FileUploadModel {
   entityType: EntityType; // 파일 
-  entityId: string
   // + 인풋으로 포함시킨 파일과 함께 전송
 }
 
@@ -32,7 +30,6 @@ export const InitialFile: FileModel = {
   extension: "",
   uploadedAt: "",
   entityType: "MESSAGE",
-  entityId: "",
   fileType: "IMAGE",
   md5Hash: "",
   status: "ACTIVE"

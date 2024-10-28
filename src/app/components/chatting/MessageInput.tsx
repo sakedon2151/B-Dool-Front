@@ -1,6 +1,5 @@
 import { useCallback, useRef, useState, useEffect } from "react";
 import { useWebsocket } from "@/app/hooks/useWebsocket";
-import { MessageInsertModel } from "@/app/models/message.model";
 import { fileService } from "@/app/services/file/file.service";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useProfileStore } from "@/app/stores/profile.store";
@@ -59,7 +58,6 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
     fileInput.current?.click();
   };
 
-
   // 파일 선택 처리
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -105,8 +103,7 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
       if (selectedFile) {
         const uploadedFile = await fileService.uploadFile({
           file: selectedFile.file,
-          entityType: 'MESSAGE',
-          entityId: ''
+          entityType: 'MESSAGE'
         }, (progress) => {
           setUploadProgress(progress);
         });
@@ -146,18 +143,20 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
             />
           ) : (
             <div className="w-12 h-12 flex items-center justify-center bg-base-300 rounded">
-              <FontAwesomeIcon icon={faFile} />
+              <FontAwesomeIcon icon={faFile} className=""/>
             </div>
           )}
+
           <div className="flex-grow">
-            <div className="text-sm font-medium">{selectedFile.file.name}</div>
-            <div className="text-xs text-gray-500">
+            <p className="text-sm font-medium">{selectedFile.file.name}</p>
+            <p className="text-xs text-gray-500">
               {(selectedFile.file.size / 1024 / 1024).toFixed(2)} MB
-            </div>
+            </p>
           </div>
+
           <button 
             onClick={handleRemoveFile}
-            className="btn btn-ghost btn-sm"
+            className="btn btn-circle btn-ghost btn-sm"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>

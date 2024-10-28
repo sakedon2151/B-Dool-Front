@@ -1,23 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import SearchInput from "./SearchInput";
 import { UnifiedSearchResponse } from "@/app/models/search.model";
+import { useProfileStore } from "@/app/stores/profile.store";
+import SearchResults from "./SearchResults";
 
-export default function SearchModal() {
+interface SearchModalProps {
+  workspaceId: number
+}
+
+export default function SearchModal({ workspaceId }: SearchModalProps) {
+  const [searchResults, setSearchResults] = useState<UnifiedSearchResponse | null>(null)
+  const [searching, setSearching] = useState<boolean>(false)
+  const currentProfile = useProfileStore(state => state.currentProfile);
   
   const handleSearchComplete = (results: UnifiedSearchResponse) => {
-    console.log('Search Results:', results)
+    setSearchResults(results)
+    setSearching(false)
   }
 
-  const workspaceId: number = 1;
-
   return (
-    <div className="">
+    <div>
       <SearchInput
         workspaceId={workspaceId}
+        profileId={currentProfile.id}
         onSearchComplete={handleSearchComplete}
         placeholder="검색어를 입력하세요."
       />
-
+      {/* 여기에 위 인풋 결과값 보여주는 컴포넌트 */}
+      <SearchResults results={searchResults} loading={searching}/>
     </div>
   );
 }
