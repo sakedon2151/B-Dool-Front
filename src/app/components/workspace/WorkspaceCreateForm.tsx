@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { WorkspaceInsertModel } from "@/app/models/workspace.model"
 import { useCreateWorkspace } from "@/app/queries/workspace.query";
-import { DEFAULT_WORKSPACE_IMAGE } from "@/app/utils/config";
+import { getRandomWorkspaceImage } from "@/app/utils/randomDefaultImage";
 import { useMemberStore } from "@/app/stores/member.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -14,17 +14,26 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
   const [workspaceName, setWorkspaceName] = useState<string>('');
   const [workspaceInfo, setWorkspaceInfo] = useState<string>('');
   const [workspaceUrl, setWorkspaceUrl] = useState<string>('');
-  const [workspaceImage, setWorkspaceImage] = useState<string>(DEFAULT_WORKSPACE_IMAGE);
+  const [workspaceImage, setWorkspaceImage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const fileInput = useRef<HTMLInputElement>(null);
   
   const createWorkspaceMutation = useCreateWorkspace(); // API Query
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
 
+  useEffect(() => {
+    setIsLoading(true);
+    setWorkspaceImage(getRandomWorkspaceImage());
+    setIsLoading(false);
+  }, []);
+
   const resetForm = () => {
     setWorkspaceName('')
     setWorkspaceInfo('')
     setWorkspaceUrl('')
-    setWorkspaceImage(DEFAULT_WORKSPACE_IMAGE)
+    setIsLoading(true);
+    setWorkspaceImage(getRandomWorkspaceImage());
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -36,10 +45,12 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      setIsLoading(true);
       const reader = new FileReader()
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
           setWorkspaceImage(e.target.result as string)
+          setIsLoading(false);
         }
       };
       reader.readAsDataURL(file)
@@ -62,8 +73,14 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
     <form onSubmit={handleSubmit}>
       <div className="mb-4 text-center">
         <div className="avatar group drop-shadow-sm" onClick={() => fileInput.current?.click()}>
-          <div className="w-24 h-24 rounded-full">
-            <img src={workspaceImage} alt="workspace_image" className="group-hover:brightness-50"/>
+          <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
+
+            {isLoading ? (
+              <div className="skeleton w-full h-full"></div>
+            ) : (
+              <img src={workspaceImage} alt="workspace_image" className="group-hover:brightness-50"/>
+            )}
+
           </div>
           <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
         </div>

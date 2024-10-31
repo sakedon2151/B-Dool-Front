@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { UnifiedSearchResponse } from '@/app/models/search.model'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faMessage, faFile } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faMessage, faFile, faDownload } from '@fortawesome/free-solid-svg-icons'
 
 interface SearchResultsProps {
   results: UnifiedSearchResponse | null
@@ -16,7 +16,7 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
   if (!results && !loading) return null
   const { profiles, messages, files } = results || { profiles: [], messages: [], files: [] }
 
-  // 탭 데이터 설정
+  // 탭 설정
   const tabs = [
     { id: 'profiles' as TabType, label: '프로필', count: profiles.length, icon: faUser },
     { id: 'messages' as TabType, label: '메시지', count: messages.length, icon: faMessage },
@@ -25,18 +25,30 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
 
   // 프로필 결과 렌더링
   const renderProfileResults = () => (
-    <div className="space-y-2">
+    <div className="space-y-2 overflow-y-auto h-72">
       {profiles.map((profile) => (
-        <div key={profile.id} className="flex items-center p-3 hover:bg-base-200 rounded-lg">
-          <div className="avatar">
-            <div className="w-10 h-10 rounded-full">
-              <img src={profile.profileImgUrl || '/default-avatar.png'} alt={profile.name} />
+        <div key={profile.id} className="flex justify-between p-2 hover:bg-base-200 rounded-lg">
+          
+          <div className="flex items-center gap-4">
+            <div className="avatar">
+              <div className="w-12 h-12 rounded-full">
+                <img src={profile.profileImgUrl} alt="profile_image" />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex gap-2">
+                <p className="font-medium">{profile.nickname}</p>•
+                <p className="font-medium">{profile.name}</p>-
+                <p className="font-medium">{profile.position}</p>
+              </div>
+              <p className="text-sm text-gray-500">{profile.email}</p>
             </div>
           </div>
-          <div className="ml-3">
-            <div className="font-medium">{profile.name}</div>
-            <div className="text-sm text-gray-500">{profile.email}</div>
-          </div>
+
+          <button className="btn btn-ghost">
+            <FontAwesomeIcon icon={faMessage} className='w-4 h-4 opacity-75'/>
+          </button>
         </div>
       ))}
     </div>
@@ -44,19 +56,23 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
 
   // 메시지 결과 렌더링
   const renderMessageResults = () => (
-    <div className="space-y-2">
+    <div className="space-y-2 overflow-y-auto h-72">
       {messages.map((message) => (
-        <div key={message.messageId} className="p-3 hover:bg-base-200 rounded-lg">
-          <div className="text-sm mb-1 text-gray-500">
+        <div key={message.messageId} className="p-2 hover:bg-base-200 rounded-lg">
+          
+          <p className="text-sm mb-1 text-gray-500">
             {new Date(message.sendDate).toLocaleString()}
-          </div>
-          <div className="font-medium">{message.content}</div>
+          </p>
+          
+          <p className="font-medium">{message.content}</p>
+          
           {message.fileUrl && (
             <div className="text-sm text-blue-500 mt-1">
               <FontAwesomeIcon icon={faFile} className="mr-1" />
               첨부파일
             </div>
           )}
+        
         </div>
       ))}
     </div>
@@ -64,19 +80,27 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
 
   // 파일 결과 렌더링
   const renderFileResults = () => (
-    <div className="space-y-2">
+    <div className="space-y-2 overflow-y-auto h-72">
       {files.map((file) => (
-        <div key={file.fileId} className="flex items-center p-3 hover:bg-base-200 rounded-lg">
-          <FontAwesomeIcon 
-            icon={faFile} 
-            className="w-10 h-10 text-gray-400"
-          />
-          <div className="ml-3">
-            <div className="font-medium">{file.originalFileName}</div>
-            <div className="text-sm text-gray-500">
-              {(file.size / 1024 / 1024).toFixed(2)} MB • {file.extension.toUpperCase()}
+        <div key={file.fileId} className="flex justify-between p-2 hover:bg-base-200 rounded-lg">
+          
+          <div className="flex items-center gap-4">
+            <div className="btn btn-square">
+              <FontAwesomeIcon icon={faFile} className="w-4 h-4 opacity-75"/>
+            </div>
+
+            <div>
+              <p className="font-medium">{file.originalFileName}</p>
+              <p className="text-sm text-gray-500">
+                {(file.size / 1024 / 1024).toFixed(2)} MB • {file.extension.toUpperCase()}
+              </p>
             </div>
           </div>
+
+          <button className="btn btn-ghost">
+            <FontAwesomeIcon icon={faDownload} className='w-4 h-4 opacity-75'/>
+          </button>
+        
         </div>
       ))}
     </div>
@@ -90,34 +114,30 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
         </div>
       )
     }
-
     switch (activeTab) {
       case 'profiles':
-        return profiles.length ? renderProfileResults() : <div className="text-center p-4 text-gray-500">프로필 검색 결과가 없습니다.</div>
+        return profiles.length ? renderProfileResults() : <p className="text-center p-4 text-gray-500">프로필 검색 결과가 없습니다.</p>
       case 'messages':
-        return messages.length ? renderMessageResults() : <div className="text-center p-4 text-gray-500">메시지 검색 결과가 없습니다.</div>
+        return messages.length ? renderMessageResults() : <p className="text-center p-4 text-gray-500">메시지 검색 결과가 없습니다.</p>
       case 'files':
-        return files.length ? renderFileResults() : <div className="text-center p-4 text-gray-500">파일 검색 결과가 없습니다.</div>
+        return files.length ? renderFileResults() : <p className="text-center p-4 text-gray-500">파일 검색 결과가 없습니다.</p>
     }
   }
 
   return (
     <div className="mt-4">
-      {/* 탭 메뉴 */}
-      <div className="tabs tabs-boxed">
+      <div role="tablist" className="tabs tabs-boxed">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`tab flex-1 gap-2 ${activeTab === tab.id ? 'tab-active' : ''}`}
+            className={`tab gap-2 ${activeTab === tab.id ? 'tab-active' : ''}`}
           >
-            <FontAwesomeIcon icon={tab.icon} />
+            <FontAwesomeIcon icon={tab.icon} className='w-3 h-3 opacity-75'/>
             {tab.label} ({tab.count})
           </button>
         ))}
       </div>
-
-      {/* 결과 컨텐츠 */}
       <div className="mt-4">
         {renderContent()}
       </div>

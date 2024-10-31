@@ -8,7 +8,7 @@ export default function CommonFooter({}) {
       <nav className="flex items-center justify-between w-full">
         <p className="ml-4 text-md font-bold opacity-75">Copyright © {new Date().getFullYear()} - All right reserved</p>
         <button className="btn">
-          <FontAwesomeIcon icon={faGithub} className="w-4 h-4"/>
+          <FontAwesomeIcon icon={faGithub} className="opacity-75 w-4 h-4"/>
         </button>
       </nav>
     </footer>

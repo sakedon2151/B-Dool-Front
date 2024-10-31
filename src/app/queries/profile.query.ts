@@ -31,10 +31,11 @@ export const useProfilesByWorkspaceId = (workspaceId: number) =>
   });
 
 // Suspense
-export const useProfileByMemberIdAndWorkspaceId = (memberId: number, workspaceId: number) => 
+export const useProfileByMemberIdAndWorkspaceId = (memberId: number, workspaceId: number, options = {}) => 
   useSuspenseQuery({
     queryKey: PROFILE_KEYS.byMemberAndWorkspace(memberId, workspaceId),
     queryFn: () => profileService.getProfileByMemberIdAndWorkspaceId(memberId, workspaceId),
+    ...options
   });
 
 // Mutations

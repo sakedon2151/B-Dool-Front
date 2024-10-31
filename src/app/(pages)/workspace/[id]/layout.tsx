@@ -18,8 +18,12 @@ function DataLoader() {
   const setCurrentProfile = useProfileStore(state => state.setCurrentProfile); // Zustand Store
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel); // Zustand Store
 
-  const { data: profile } = useProfileByMemberIdAndWorkspaceId(currentMember.id, currentWorkspace.id) // API Suspense Query
-  const { data: channel } = useDefaultChannelByWorkspaceId(currentWorkspace.id) // API Suspense Query
+  const { data: profile } = useProfileByMemberIdAndWorkspaceId(currentMember.id, currentWorkspace.id, {
+    enabled: !!currentMember.id && !!currentWorkspace.id
+  }) // API Suspense Query
+  const { data: channel } = useDefaultChannelByWorkspaceId(currentWorkspace.id, {
+    enabled: !!currentWorkspace?.id
+  }) // API Suspense Query
   const updateProfileOnlineStatus = useUpdateProfileOnlineStatus(); // API Query
 
   // METADATA Initialize
@@ -89,7 +93,7 @@ function DataLoader() {
     return () => {
       window.removeEventListener('beforeunload', prepareUnmount);
     };
-  }, [currentWorkspace, profile]);
+  }, [currentWorkspace, profile, channel, setCurrentProfile, setCurrentChannel]);
   return null;
 }
 
@@ -120,3 +124,5 @@ export default function WorkspaceClientLayout({
     </ErrorBoundary>
   )
 }
+
+

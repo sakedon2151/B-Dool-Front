@@ -1,9 +1,8 @@
 import { ProfileInsertModel } from "@/app/models/profile.model"
-import { DEFAULT_PROFILE_IMAGE } from "@/app/utils/config";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { getRandomProfileImage } from "@/app/utils/randomDefaultImage";
+import { faL, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { FaPlus } from 'react-icons/fa';
 
 interface ProfileCreateFormProps {
   onSubmit: (data: ProfileInsertModel) => void;
@@ -13,13 +12,22 @@ interface ProfileCreateFormProps {
 export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreateFormProps) {
   const [profileName, setProfileName] = useState<string>('')
   const [profileNickname, setProfileNickname] = useState<string>('')
-  const [profileImage, setProfileImage] = useState<string>(DEFAULT_PROFILE_IMAGE)
+  const [profileImage, setProfileImage] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const fileInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setProfileImage(getRandomProfileImage());
+    setIsLoading(false);
+  }, []);
 
   const resetForm = () => {
     setProfileName('')
     setProfileNickname('')
-    setProfileImage(DEFAULT_PROFILE_IMAGE)
+    setIsLoading(true);
+    setProfileImage(getRandomProfileImage());
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -31,10 +39,12 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsLoading(true)
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
           setProfileImage(e.target.result as string);
+          setIsLoading(false);
         }
       };
       reader.readAsDataURL(file);
@@ -47,7 +57,8 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
       name: profileName,
       nickname: profileNickname,
       profileImgUrl: profileImage,
-      workspaceId: 0
+      workspaceId: 0,
+      position: "-"
     }
     onSubmit(profileData)
   };
@@ -56,8 +67,14 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
     <form onSubmit={handleSubmit}>
       <div className="mb-4 text-center">
         <div className="avatar group drop-shadow-sm" onClick={() => fileInput.current?.click()}>
-          <div className="w-24 h-24 rounded-full">
-            <img src={profileImage} alt="workspace_image" className="group-hover:brightness-50"/>
+          <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
+
+            {isLoading ? (
+              <div className="skeleton w-full h-full"></div>
+            ) : (
+              <img src={profileImage} alt="profile_image" className="group-hover:brightness-50"/>
+            )}
+
           </div>
           <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
         </div>

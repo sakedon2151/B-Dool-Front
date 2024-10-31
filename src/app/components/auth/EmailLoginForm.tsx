@@ -13,7 +13,7 @@ export default function EmailLoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   
   const setCurrentMember = useMemberStore(state => state.setCurrentMember); // Zustand Store
@@ -21,7 +21,7 @@ export default function EmailLoginForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    setLoading(true);
+    setIsLoading(true);
     setError('');
     
     try {
@@ -35,7 +35,7 @@ export default function EmailLoginForm() {
       setError('오류가 발생했습니다. 다시 시도해 주세요.');
       console.error('로그인 에러:', err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -92,10 +92,10 @@ export default function EmailLoginForm() {
               required
             />
           </label>
-          <button className="btn bg-base-100" type="submit" disabled={loading}>
-            {loading ? (
+          <button className="btn bg-base-100" type="submit" disabled={isLoading}>
+            {isLoading ? (
               <>
-                <span className="loading loading-spinner loading-md"></span>
+                <span className="loading loading-spinner"></span>
                 메일을 보내고 있어요.
               </>
             ) : '이메일 전송'}

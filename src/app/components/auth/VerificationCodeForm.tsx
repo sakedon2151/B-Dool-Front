@@ -12,11 +12,11 @@ interface VerificationCodeFormProps {
 
 export default function VerificationCodeForm({ email, onSuccess, onResendCode, onChangeEmail }: VerificationCodeFormProps) {
   const CODE_LENGTH = 6
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  
+  const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, CODE_LENGTH);
   }, []);
@@ -42,19 +42,19 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
   };
 
   const handleSubmit = (fullCode: string) => {
-    setLoading(true);
+    setIsLoading(true);
     setError('');
     try {
       onSuccess(fullCode);
     } catch (err) {
       setError('인증에 실패했습니다. 다시 시도해 주세요.')
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleResendCode = async () => {
-    setLoading(true);
+    setIsLoading(true);
     setError('');
     try {
       await onResendCode();
@@ -62,7 +62,7 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
     } catch (err) {
       setError('인증 코드 재전송에 실패했습니다. 다시 시도해 주세요.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -86,19 +86,19 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
             onChange={e => handleChange(index, e.target.value)}
             onKeyDown={e => handleKeyDown(index, e)}
             maxLength={1}
-            disabled={loading}
+            disabled={isLoading}
           />  
         ))}
       </div>
       
       {error && <p className="mb-4 text-red-500">{error}</p>}
-      {loading && <p className="mb-4 text-blue-500">전송중...</p>}
+      {isLoading && <p className="mb-4 text-blue-500">전송중...</p>}
       
       <div className="flex gap-4">
-        <button className="btn btn-outline btn-sm" onClick={handleResendCode} disabled={loading}>
+        <button className="btn btn-outline btn-sm" onClick={handleResendCode} disabled={isLoading}>
           인증번호 재요청
         </button>
-        <button className="btn btn-outline btn-sm" onClick={onChangeEmail} disabled={loading}>
+        <button className="btn btn-outline btn-sm" onClick={onChangeEmail} disabled={isLoading}>
           이메일 변경
         </button>
       </div>

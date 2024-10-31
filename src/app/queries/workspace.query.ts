@@ -59,9 +59,9 @@ export const useDeleteWorkspace = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: workspaceService.deleteWorkspace,
-    onSuccess: (_, deletedWorkspaceId) => {
+    onSuccess: (_, deletedWorkspace) => {
       queryClient.invalidateQueries({ queryKey: WORKSPACE_KEYS.all });
-      queryClient.removeQueries({ queryKey: WORKSPACE_KEYS.byId(deletedWorkspaceId) });
+      queryClient.removeQueries({ queryKey: WORKSPACE_KEYS.byId(deletedWorkspace.workspaceId) });
     },
   });
 };

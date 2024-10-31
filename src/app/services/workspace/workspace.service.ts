@@ -1,4 +1,4 @@
-import { WorkspaceInsertModel, WorkspaceModel, WorkspaceUpdateModel } from "@/app/models/workspace.model";
+import { WorkspaceDeleteModel, WorkspaceInsertModel, WorkspaceModel, WorkspaceUpdateModel } from "@/app/models/workspace.model";
 import { serverCAxios } from "../../utils/axiosInstance";
 
 const BASE_URL = '/workspaces';
@@ -30,8 +30,8 @@ export const workspaceService = {
       .then(response => response.data),
 
   // workspace 삭제 요청
-  deleteWorkspace: (workspaceId: number) => 
-    serverCAxios.delete(`${BASE_URL}/${workspaceId}`)
+  deleteWorkspace: ({workspaceId, ownerId}: WorkspaceDeleteModel) => 
+    serverCAxios.delete<void>(`${BASE_URL}/${workspaceId}`, {data: {ownerId}})
       .then(response => response.data),
 
   // ----- util -----

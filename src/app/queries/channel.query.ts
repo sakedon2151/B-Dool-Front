@@ -25,11 +25,11 @@ export const useChannelById = (channelId: string) =>
   });
 
 // Suspense
-export const useDefaultChannelByWorkspaceId = (workspaceId: number) =>
+export const useDefaultChannelByWorkspaceId = (workspaceId: number, options = {}) =>
   useSuspenseQuery({
     queryKey: CHANNEL_KEYS.defaultByWorkspaceId(workspaceId),
     queryFn: () => channelService.getDefaultChannelByWorkspaceId(workspaceId),
-
+    ...options
   });
 
 // Mutations

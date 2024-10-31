@@ -14,13 +14,12 @@ interface WorkspaceCreateModalProps {
 
 export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModalProps) {
   const [workspaceData, setWorkspaceData] = useState<WorkspaceInsertModel | null>(null)
-  // const [profileData, setProfileData] = useState<ProfileInsertModel | null>(null)
   const [step, setStep] = useState<number>(1)
 
+  const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const createProfileMutation = useCreateProfile() // API Query
   const createWorkspaceMutation = useCreateWorkspace() // API Query
   const createChannelMutation = useCreateChannel() // API Query
-  const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   
   const handleWorkspaceSubmit = async (data: WorkspaceInsertModel) => {
     setWorkspaceData(data)
@@ -28,7 +27,6 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
   }
 
   const handleProfileSubmit = async (data: ProfileInsertModel) => {
-    // setProfileData(data)
     try {
       if (!currentMember || !workspaceData) {
         throw new Error("필요한 데이터가 없습니다.");
@@ -46,23 +44,15 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
           workspaceId: createdWorkspace.id
         }
       })
-      // default 채널 자동 생성
+      // default 채널 생성
       await createChannelMutation.mutateAsync({
         workspacesId: createdWorkspace.id,
         name: "전체 채널",
         isPrivate: false,
         description: "전체 채널입니다.",
         profileId: createdProfile.id,
-        channelType: "DEFAULT"
-      })
-      // DM 채널 자동 생성
-      await createChannelMutation.mutateAsync({
-        workspacesId: createdWorkspace.id,
-        name: createdProfile.nickname,
-        isPrivate: false,
-        description: "다이렉트 메시지",
-        profileId: createdProfile.id,
-        channelType: "DM"
+        channelType: "DEFAULT",
+        nickname: createdProfile.nickname // for backend auto create data
       })
       onComplete();
     } catch (error) {
@@ -77,7 +67,6 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
   const resetForm = () => {
     setStep(1)
     setWorkspaceData(null)
-    // setProfileData(null)
   }
 
   useEffect(() => {

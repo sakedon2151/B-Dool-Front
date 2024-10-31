@@ -17,7 +17,7 @@ export default function CommonHeader({ showAuthButton }: CommonHeaderProps) {
     <header className="navbar mb-4 bg-base-100 rounded-lg">
       <div className="navbar-start">
         <a className="text-lg btn btn-ghost" href="/">
-          <FontAwesomeIcon icon={faDove} className="w-4 h-4"/>
+          <FontAwesomeIcon icon={faDove} className="opacity-75 w-4 h-4"/>
           B-DOOL
         </a>
       </div>

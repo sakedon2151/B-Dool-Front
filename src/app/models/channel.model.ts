@@ -9,6 +9,7 @@ export interface ChannelModel {
   description: string | null; // 채널설명
   profileId: number; // 채널 생성자 프로필 ID
   channelType: ChannelType; // 채널 타입 (ENUM default, custom, dm)
+  dmRequestId?: number;
 }
 
 export interface ChannelInsertModel {
@@ -18,6 +19,8 @@ export interface ChannelInsertModel {
   description: string; // 채널설명
   profileId: number; // 채널 생성자 프로필 ID
   channelType: ChannelType; // 채널 타입 (ENUM default, custom, dm)
+  nickname: string; // 채널 최초 생성자 participant용 닉네임
+  dmRequestId?: number;
 }
 
 export interface ChannelUpdateModel {
@@ -35,4 +38,5 @@ export const InitialChannel: ChannelModel = {
   description: "",
   profileId: 0,
   channelType: "DEFAULT",
+  dmRequestId: 0
 };

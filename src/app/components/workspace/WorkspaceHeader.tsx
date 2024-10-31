@@ -3,15 +3,19 @@ import CalendarModal from "../calendar/CalendarModal";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faGripVertical, faHashtag, faMagnifyingGlass, faUser, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faGripVertical, faHashtag, faMagnifyingGlass, faUser, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { faBell, faCalendarDays } from '@fortawesome/free-regular-svg-icons'
 import SearchModal from "../search/SearchModal";
+import { useMemberStore } from "@/app/stores/member.store";
+import WorkspaceUpdateModal from "./WorkspaceUpdateModal";
 
 export default function WorkspaceHeader() {
+  const currentMember = useMemberStore(state => state.currentMember);  // Zustand Store
   const currentChannel = useChannelStore(state => state.currentChannel);  // Zustand Store
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace);  // Zustand Store
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -21,9 +25,20 @@ export default function WorkspaceHeader() {
       <div className="justify-between navbar">
         <div className="flex gap-2 ml-14 lg:m-0">
           <div className="avatar">
-            <div className="w-12 rounded-btn">
-              <img src={currentWorkspace.workspaceImageUrl} alt="workspace_thumbnail_image"/>
-            </div>
+            <button className="btn w-12 p-0 overflow-hidden">
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-base-300 rounded-btn">
+                  <div className="loading loading-spinner"></div>
+                </div>
+              )}
+              <img 
+                src={currentWorkspace.workspaceImageUrl} 
+                alt="workspace_thumbnail_image" 
+                className="object-cover w-full h-full"
+                onLoad={() => setIsLoading(false)}
+                onError={() => setIsLoading(false)}
+              />
+            </button>
           </div>
           <div className="flex flex-col">
             <h2 className="font-bold ">{currentWorkspace.name}</h2>
@@ -37,7 +52,7 @@ export default function WorkspaceHeader() {
         <div className="mr-14 lg:m-0">
 
           <div className="block lg:hidden">
-            <button className="btn btn-ghost" onClick={toggleExpand}>
+            <button className="btn btn-ghost btn-square" onClick={toggleExpand}>
               <FontAwesomeIcon icon={faGripVertical} className="w-6 h-6 opacity-75"/>
             </button>
 
@@ -67,12 +82,20 @@ export default function WorkspaceHeader() {
                       알림 리스트 컴포넌트
                     </div>
                   </div>
+
+                  {currentWorkspace.ownerId === currentMember.id && (
+                    <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('workspace-update-modal') as HTMLDialogElement).showModal()}>
+                      <FontAwesomeIcon icon={faGear} className="w-4 h-4 opacity-75"/>
+                    </button>
+                  )}
+
                 </div>
               </div>
             )}
           </div>
 
           <div className="lg:block hidden">
+            
             <div className="lg:tooltip lg:tooltip-bottom" data-tip="캘린더">
               <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('calendar-modal') as HTMLDialogElement).showModal()} >
                 <FontAwesomeIcon icon={faCalendarDays} className="w-4 h-4 opacity-75"/>
@@ -102,11 +125,20 @@ export default function WorkspaceHeader() {
                 알림 리스트 컴포넌트
               </div>
             </div>
+
+            {currentWorkspace.ownerId === currentMember.id && (
+              <div className="lg:tooltip lg:tooltip-bottom" data-tip="설정">
+                <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('workspace-update-modal') as HTMLDialogElement).showModal()}>
+                  <FontAwesomeIcon icon={faGear} className="w-4 h-4 opacity-75"/>
+                </button>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
 
-      {/* modal dialog */}
+      {/* calendar modal dialog */}
       <dialog id="calendar-modal" className="modal">
         <div className="modal-box p-4">
           <form method="dialog">
@@ -114,19 +146,37 @@ export default function WorkspaceHeader() {
           </form>
           <CalendarModal/>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>닫기</button>
+        </form>
       </dialog>
       
-      {/* modal dialog */}
+      {/* search modal dialog */}
       <dialog id="search-modal" className="modal modal-top md:modal-middle">
         <div className="modal-box p-4">
           <SearchModal workspaceId={currentWorkspace.id}/>
-
           <div className="modal-action mt-4">
-            <form method="dialog">
-              <button className="btn">닫기</button>
+            <form method="dialog" className="w-full">
+              <button className="btn btn-block">닫기</button>
             </form>
           </div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>닫기</button>
+        </form>
+      </dialog>
+
+      {/* workspace modal dialog */}
+      <dialog id="workspace-update-modal" className="modal modal-bottom md:modal-middle">
+        <div className="modal-box p-4">
+          <form method="dialog">
+            <button className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">✕</button>
+          </form>
+          <WorkspaceUpdateModal/>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>닫기</button>
+        </form>
       </dialog>
     </>
   );

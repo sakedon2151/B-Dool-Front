@@ -5,6 +5,7 @@ import { useChannelStore } from "@/app/stores/channel.store";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faPaperPlane, faTimes, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 interface MessageInputProps {
   workspaceId: number
@@ -16,8 +17,9 @@ interface SelectedFile {
 }
 
 export default function MessageInput({ workspaceId }: MessageInputProps) {
-  const currentChannel = useChannelStore(state => state.currentChannel)  // Zustand Store
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
+  const currentChannel = useChannelStore(state => state.currentChannel)  // Zustand Store
+
   const { sendMessage } = useWebsocket(currentChannel.channelId, workspaceId) // Stomp Websocket Hook
 
   const [message, setMessage] = useState<string>("")
@@ -135,6 +137,7 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
       {/* 선택된 파일 미리보기 */}
       {selectedFile && (
         <div className="flex items-center gap-2 mx-2 mt-2 p-2 bg-base-200 rounded-lg">
+          
           {selectedFile.previewUrl ? (
             <img 
               src={selectedFile.previewUrl} 
@@ -143,7 +146,7 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
             />
           ) : (
             <div className="w-12 h-12 flex items-center justify-center bg-base-300 rounded">
-              <FontAwesomeIcon icon={faFile} className=""/>
+              <FontAwesomeIcon icon={faFile} className="w-4 h-4 opacity-75"/>
             </div>
           )}
 
@@ -154,18 +157,13 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
             </p>
           </div>
 
-          <button 
-            onClick={handleRemoveFile}
-            className="btn btn-circle btn-ghost btn-sm"
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+          <button className="btn btn-circle btn-ghost btn-sm" onClick={handleRemoveFile}>✕</button>
         </div>
       )}
       
       <div className="flex gap-2 p-2">
         <form className="flex-grow" onSubmit={(e) => {e.preventDefault(); handleSubmit();}}>
-          <div className="relative flex "> 
+          <div className="relative flex"> 
             <textarea 
               value={message} 
               maxLength={MAX_MESSAGE_LENGTH} 
@@ -173,7 +171,7 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
               onChange={handleTextarea} 
               onKeyDown={handleKeyDown} 
               name="message" 
-              className="w-full h-12 leading-8 resize-none textarea textarea-bordered max-h-36 " 
+              className="w-full h-12 leading-8 resize-none textarea textarea-bordered max-h-36 scrollbar-none" 
               placeholder="메시지를 입력하세요."
             ></textarea>
             <button type="submit" className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center">
@@ -190,7 +188,10 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
           ref={fileInput}
           onChange={handleFileChange}
           className="hidden"
-          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+          accept="image/*,
+                  audio/*,
+                  video/*,
+                  application/*"
         />
 
         <div className="tooltip tooltip-top" data-tip="업로드">

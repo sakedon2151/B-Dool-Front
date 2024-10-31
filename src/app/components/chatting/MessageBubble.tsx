@@ -11,8 +11,9 @@ interface MessageBubbleProps {
 
 export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
-  const isCurrentProfileMessage: boolean = selectedMessage.profileId === currentProfile.id;
   const { data: profile, isLoading: isLoadingProfile, error: profileError } = useProfileById(selectedMessage.profileId) // API Query
+
+  const isCurrentProfileMessage: boolean = selectedMessage.profileId === currentProfile.id;
 
   const renderMessageContent = (content: string) => {
     return content.split('\n').map((line, index) => (
@@ -28,9 +29,9 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
       {isLoadingProfile ? (
         <div className="skeleton w-28 h-10"></div>
       ) : profileError ? (
-        <div className="">에러가 발생했습니다.</div>
+        <div>알 수 없는 오류가 발생했습니다.</div>
       ) : !profile ? (
-        <div className="">프로필을 불러 올 수 없습니다.</div>
+        <div>데이터를 불러오지 못했습니다.</div>
       ) : (
         <>
           <div className="chat-image avatar">

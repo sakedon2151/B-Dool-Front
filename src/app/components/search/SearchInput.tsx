@@ -16,7 +16,7 @@ export default function SearchInput({ workspaceId, profileId, onSearchComplete, 
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [isTyping, setIsTyping] = useState<boolean>(false)
   const searchTimeoutRef = useRef<NodeJS.Timeout>()
-  const { loading, error, searchResults, performSearch } = useElastic(workspaceId)
+  const { isLoading, error, searchResults, performSearch } = useElastic(workspaceId)
 
   const executeSearch = useCallback((term: string) => {
     if (term.trim()) {
@@ -77,21 +77,21 @@ export default function SearchInput({ workspaceId, profileId, onSearchComplete, 
           onChange={handleInputChange}
           placeholder={placeholder}
           className="input input-bordered w-full px-12"
-          disabled={loading}
+          disabled={isLoading}
         />
 
         <FontAwesomeIcon icon={faMagnifyingGlass} className='w-4 h-4 opacity-75 absolute left-4 top-4'/>
 
-        {(loading || isTyping || searchTerm) && (
+        {(isLoading || isTyping || searchTerm) && (
           <div>
-            {loading ? (
+            {isLoading ? (
               <span className='loading loading-spinner absolute right-3 top-1/2 -translate-y-1/2'></span>
             ) : isTyping ? (
               <span className="loading loading-dots absolute right-3 top-1/2 -translate-y-1/2"></span>
             ) : (
               <button
                 type="button"
-                className="btn btn-sm btn-ghost btn-circle absolute right-2 top-1/2 -translate-y-1/2"
+                className="btn btn-sm btn-ghost btn-circle absolute right-2 top-2"
                 onClick={handleClearSearch}
               >
                 <FontAwesomeIcon icon={faXmark} className='w-4 h-4 opacity-75'/>

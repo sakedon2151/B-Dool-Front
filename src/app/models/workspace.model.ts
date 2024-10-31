@@ -17,11 +17,15 @@ export interface WorkspaceInsertModel {
 }
 
 export interface WorkspaceUpdateModel {
-  // id: number
   name?: string
   description?: string
   workspaceImageUrl?: string 
   url?: string
+  ownerId: number
+}
+
+export interface WorkspaceDeleteModel {
+  workspaceId: number
   ownerId: number
 }
 

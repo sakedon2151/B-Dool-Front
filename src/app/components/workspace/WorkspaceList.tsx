@@ -15,6 +15,7 @@ import { faCircleInfo, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 export default function WorkspaceList() {
   const router = useRouter()
   const [modalKey, setModalKey] = useState<number>(0);
+  
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const setCurrentWorkspace = useWorkspaceStore(state => state.setCurrentWorkspace);  // Zustand Store
 

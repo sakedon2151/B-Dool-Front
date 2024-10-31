@@ -11,11 +11,11 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import WorkspaceCreateModal from "./WorkspaceCreateModal";
 import CustomTooltip from "../common/CustomTooltip";
-import Image from "next/image";
 
 export default function WorkspaceNav() {
   const router = useRouter()
   const [modalKey, setModalKey] = useState<number>(0);
+  
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
   const currentProfile = useProfileStore(state => state.currentProfile); // Zustand Store
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace) // Zustand Store
@@ -85,13 +85,13 @@ export default function WorkspaceNav() {
         {isLoadingProfiles || isLoadingWorkspaces ? (
           <ul className="p-1 menu">
             <li className="m-1">
-              <div className="skeleton w-12 h-12 rounded-btn"></div>
+              <button className="skeleton w-12 h-12"></button>
             </li>
             <li className="m-1">
-              <div className="skeleton w-12 h-12 rounded-btn"></div>
+              <button className="skeleton w-12 h-12"></button>
             </li>
             <li className="m-1">
-              <div className="skeleton w-12 h-12 rounded-btn"></div>
+              <button className="skeleton w-12 h-12"></button>
             </li>
           </ul>
         ) : profilesError || workspacesError ? (
@@ -104,7 +104,7 @@ export default function WorkspaceNav() {
           </ul>
         ) : !profiles || !workspaces ? (
           <ul className="p-1 menu">
-            <li>NotFound</li>
+            <li>데이터를 불러오지 못했습니다.</li>
           </ul>
         ) : (
           renderWorkspaceList(workspaces)
@@ -113,14 +113,16 @@ export default function WorkspaceNav() {
 
       <dialog id="workspace-modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
+          <form method="dialog">
+            <button className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2 z-50" onClick={handleModalClose}>✕</button>
+          </form>
           <WorkspaceCreateModal key={modalKey} onComplete={handleModalClose} />
-          <div className="modal-action absolute bottom-4 right-4">
-            <form method="dialog">
-              <button className="btn" onClick={handleModalClose} >취소</button>
-            </form>
-          </div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={handleModalClose}>닫기</button>
+        </form>
       </dialog>
+
     </>
   );
 }

@@ -40,7 +40,8 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
         isPrivate: isPrivate,
         description: channelInfo,
         profileId: currentProfile.id,
-        channelType: 'CUSTOM'
+        channelType: 'CUSTOM',
+        nickname: currentProfile.nickname
       })
       resetForm()
       onClose()

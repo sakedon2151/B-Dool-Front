@@ -5,6 +5,7 @@ import { ChannelModel } from "@/app/models/channel.model";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHashtag, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
+import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 interface ChannelListProps {
   workspaceId: number;
@@ -61,23 +62,23 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
         {isLoadingChannels ? (
           <ul className="ms-2">
             <li>
-              <div className="skeleton h-9 rounded-btn"></div>
+              <button className="skeleton h-9 rounded-btn"></button>
             </li>
           </ul>
         ) : channelsError ? (
           <ul className="ms-2">
             <li>
-              <div className="p-2 bg-error rounded-btn">
+              <button className="p-2 text-error rounded-btn">
                 알 수 없는 오류가 발생했습니다.
-              </div>
+              </button>
             </li>
           </ul>
         ) : !channels ? (
           <ul className="ms-2">
             <li>
-              <div className="p-2 bg-warning rounded-btn">
+              <button className="p-2 text-warning rounded-btn">
                 데이터를 불러오지 못했습니다.
-              </div>
+              </button>
             </li>
           </ul>
         ) : (

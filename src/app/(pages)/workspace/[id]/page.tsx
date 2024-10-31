@@ -9,10 +9,13 @@ import WorkspaceNav from "@/app/components/workspace/WorkspaceNav";
 import { useParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faList } from "@fortawesome/free-solid-svg-icons";
+import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 export default function Workspace() {
-  const params = useParams();
-  const workspaceId = parseInt(params.id as string, 10);
+  // const params = useParams();
+  // const workspaceId = parseInt(params.id as string, 10);
+  const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace)
+  const workspaceId = currentWorkspace.id
 
   return (
     <div className="drawer lg:drawer-open">
@@ -48,7 +51,7 @@ export default function Workspace() {
             <div className="flex flex-col overflow-hidden h-dvh bg-base-100">
               <div className="flex flex-grow h-[100px]">
                 <aside className="w-[255px] border-l box-border overflow-y-auto border-base-300">
-                  <ParticipantList workspaceId={workspaceId} />
+                  <ParticipantList/>
                 </aside>
               </div>
             </div>
