@@ -5,7 +5,6 @@ import { ChannelModel } from "@/app/models/channel.model";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHashtag, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 interface ChannelListProps {
   workspaceId: number;
