@@ -4,9 +4,9 @@ export interface TranslateRequestModel {
   // profileId?: number;
   // botResponseId?: number;
   // timestamp?: string;
-  name: string;
-  nickname: string;
-  position: string;
+  // name: string;
+  // nickname: string;
+  // position: string;
   question: string;
 }
 

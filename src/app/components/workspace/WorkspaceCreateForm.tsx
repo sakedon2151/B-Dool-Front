@@ -103,15 +103,15 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
       <input
         type="text" 
         className="input input-bordered w-full mb-4" 
-        placeholder="워크스페이스 도메인(선택)"
+        placeholder="URL 지정(미지정 시 이름 등록)"
         value={workspaceUrl}
         onChange={(e) => setWorkspaceUrl(e.target.value)}
       />
       <textarea
         className="textarea textarea-bordered resize-none w-full mb-4" 
         placeholder="워크스페이스 정보"
-        maxLength={50}
         value={workspaceInfo}
+        maxLength={50}
         onChange={(e) => setWorkspaceInfo(e.target.value)}
       />
       <div className="text-center">

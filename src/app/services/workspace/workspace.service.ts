@@ -31,7 +31,7 @@ export const workspaceService = {
 
   // workspace 삭제 요청
   deleteWorkspace: ({workspaceId, ownerId}: WorkspaceDeleteModel) => 
-    serverCAxios.delete<void>(`${BASE_URL}/${workspaceId}`, {data: {ownerId}})
+    serverCAxios.delete<void>(`${BASE_URL}/${workspaceId}`, {data: ownerId})
       .then(response => response.data),
 
   // ----- util -----

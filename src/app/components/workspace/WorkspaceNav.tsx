@@ -37,7 +37,8 @@ export default function WorkspaceNav() {
         isOnline: false
       });
       setCurrentWorkspace(workspace);
-      router.push(`/workspace/${workspace.id}`);
+      // router.push(`/workspace/${workspace.id}`);
+      router.push(`/workspace/${workspace.url}`);
     } catch (error) {
       console.error("워크스페이스 변경 에러:", error);
     }

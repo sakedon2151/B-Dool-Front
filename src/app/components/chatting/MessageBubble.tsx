@@ -3,7 +3,9 @@ import { MessageModel } from "@/app/models/message.model";
 import { useProfileById } from "@/app/queries/profile.query";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { toMessageTime } from "@/app/utils/formatDateTime";
-import { useTranslateMessage } from "@/app/queries/chatbot.query";
+import { usePapagoMessage } from "@/app/queries/naver.query";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLanguage } from "@fortawesome/free-solid-svg-icons";
 
 interface MessageBubbleProps {
   selectedMessage: MessageModel
@@ -11,11 +13,12 @@ interface MessageBubbleProps {
 
 export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
+  const [showOriginal, setShowOriginal] = useState<boolean>(false);
 
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   const { data: profile, isLoading: isLoadingProfile, error: profileError } = useProfileById(selectedMessage.profileId) // API Query
-  const { mutate: translateMessage, isPending: isTranslating } = useTranslateMessage(); // API Query
-
+  const { mutate: papagoMessage, isPending: isTranslating } = usePapagoMessage(); // API Query
+  
   const isCurrentProfileMessage: boolean = selectedMessage.profileId === currentProfile.id;
 
   const isEnglishOnly = (text: string): boolean => {
@@ -23,20 +26,24 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   };
 
   const handleTranslate = async () => {
-    translateMessage({
-      name: currentProfile.name,
-      nickname: currentProfile.nickname,
-      position: currentProfile.position,
-      question: selectedMessage.content
+    papagoMessage({
+      source: "en",
+      target: "ko",
+      text: selectedMessage.content
     }, {
       onSuccess: (data) => {
-        setTranslatedContent(data.answer)
+        setTranslatedContent(data.message.result.translatedText)
+        setShowOriginal(false);
       },
       onError: (error) => {
         console.error("번역 오류:", error)
       }
     })
   }
+
+  const toggleOriginal = () => {
+    setShowOriginal(!showOriginal);
+  };
 
   const renderMessageContent = (content: string) => {
     return content.split('\n').map((line, index) => (
@@ -48,7 +55,7 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   };
 
   return (
-    <div className={`chat ${isCurrentProfileMessage ? 'chat-end' : 'chat-start'} my-2`}>
+    <div className={`chat ${isCurrentProfileMessage ? "chat-end" : "chat-start"} my-1`}>
       {isLoadingProfile ? (
         <div className="skeleton w-28 h-10"></div>
       ) : profileError ? (
@@ -59,36 +66,57 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
         <>
           <div className="chat-image avatar">
             <div className="w-10 rounded-full">
-              <img src={profile.profileImgUrl} alt="profile_image"/>
+              <img src={profile.profileImgUrl} alt="profile_image" />
             </div>
           </div>
 
           <div className="chat-header">
             {profile.nickname}
-            <time className="pl-1 text-xs opacity-75">{toMessageTime(selectedMessage.sendDate)}</time>
           </div>
 
-          <div className="chat-bubble">
-            {/* {renderMessageContent(selectedMessage.content)} */}
-            {renderMessageContent(translatedContent || selectedMessage.content)}
+          <div className="branch-wrap flex gap-2">
+            <div className="branch flex flex-col justify-end whitespace-nowrap">
+              <p className="text-sm">5</p>
+              <time className="text-xs opacity-75">
+                {toMessageTime(selectedMessage.sendDate)}
+              </time>
+            </div>
+            
+            <div className="chat-bubble">
+              {renderMessageContent(showOriginal ? selectedMessage.content : translatedContent || selectedMessage.content)}
+            </div>
+          </div>
+
+          <div className="chat-footer flex items-center gap-1 mt-1">
+            {translatedContent && !showOriginal && (
+              <p className="text-xs text-gray-500">(번역됨)</p>
+            )}
+
             {isEnglishOnly(selectedMessage.content) && !translatedContent && (
               <button
                 onClick={handleTranslate}
                 disabled={isTranslating}
-                className="absolute bottom-0 right-0 -mb-6 bg-blue-500 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1"
+                className="btn btn-xs bg-base-300"
               >
                 {isTranslating ? (
                   <>
-                    <span className="loading loading-spinner"></span>
+                    <span className="loading loading-spinner loading-xs"></span>
                     번역중...
                   </>
                 ) : (
-                  '번역하기'
+                  <>
+                    <FontAwesomeIcon icon={faLanguage}/>
+                    번역하기
+                  </>
                 )}
               </button>
             )}
+            {translatedContent && (
+              <button onClick={toggleOriginal} className="btn btn-xs">
+                {showOriginal ? "번역문 보기" : "원문 보기"}
+              </button>
+            )}
           </div>
-          <div className="chat-footer">메시지 읽은 사람</div>
         </>
       )}
     </div>

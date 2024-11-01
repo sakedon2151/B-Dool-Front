@@ -47,5 +47,6 @@ export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A
 export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_B_API_URL as string);
 export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_API_URL as string);
 
+export const serverChatBotAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_CHATBOT_URL as string) // ChatBot 서버
 export const serverTokenAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_TOKEN_URL as string) // JWT 서버
 export const serverElasticAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_ELASTIC_URL as string); // Elasticsearch 서버

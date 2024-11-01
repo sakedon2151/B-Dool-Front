@@ -22,18 +22,20 @@ export default function WorkspaceUpdateModal() {
   const formData = useMemo(() => ({
     name: editingFormData?.name ?? currentWorkspace?.name ?? '',
     description: editingFormData?.description ?? currentWorkspace?.description ?? '',
+    url: editingFormData?.url ?? currentWorkspace?.url ?? '',
     workspaceImageUrl: editingFormData?.workspaceImageUrl ?? currentWorkspace?.workspaceImageUrl,
     ownerId: currentMember?.id
-  }), [editingFormData, currentWorkspace?.name, currentWorkspace?.description, workspaceImage, currentMember?.id]);
+  }), [editingFormData, currentWorkspace?.name, currentWorkspace?.description, currentWorkspace?.url, workspaceImage, currentMember?.id]);
 
   const isFormValid = useMemo(() => {
     return Boolean(
       currentWorkspace?.id &&
       currentMember?.id &&
       formData.name &&
-      formData.description
+      formData.description &&
+      formData.url
     );
-  }, [currentWorkspace?.id, currentMember?.id, formData.name, formData.description]);
+  }, [currentWorkspace?.id, currentMember?.id, formData.name, formData.description, formData.url]);
 
   const handleImgChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,7 +53,7 @@ export default function WorkspaceUpdateModal() {
               }
             });
           } catch (error) {
-            console.log("워크스페이스 이미지 변경 실패: ", error);
+            console.log("워크스페이스 이미지 변경 실패:", error);
           }
         }
       };
@@ -132,12 +134,22 @@ export default function WorkspaceUpdateModal() {
                 onChange={handleChange}
                 required
               />
+              <input 
+                className="input input-bordered w-full mb-4"
+                type="text"
+                name="url"
+                placeholder="URL 지정"
+                value={formData.url}
+                onChange={handleChange}
+                required
+              />
               <textarea
                 className="textarea textarea-bordered resize-none w-full mb-4"
                 name="description"
                 placeholder="워크스페이스 정보"
                 value={formData.description}
                 onChange={handleChange}
+                maxLength={50}
                 required
               />
               <div className="flex justify-between">
@@ -145,7 +157,7 @@ export default function WorkspaceUpdateModal() {
                 <button type="submit" className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] ml-2">저장하기</button>
               </div>
             </form>
-            <div className="divider">위험</div>
+            <div className="divider font-bold text-gray-500">위험</div>
             <WorkspaceDeleteForm/>
           </div>
         )}

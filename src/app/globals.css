@@ -20,15 +20,30 @@
   }
 }
 
+/* 유틸리티 클래스 */
 html, body {
   overscroll-behavior: none;
 }
-
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
-
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* 버블이 왼쪽(상대, chat-start)일 경우 */
+.chat-start .branch-wrap{
+  flex-direction: row-reverse;
+}
+.chat-start .branch-wrap .branch{
+  align-items: flex-start;
+}
+
+/* 버블이 오른쪽(나, chat-end)일 경우 */
+.chat-end .branch-wrap{
+  flex-direction: row;
+}
+.chat-end .branch-wrap .branch{
+  align-items: flex-end;
 }

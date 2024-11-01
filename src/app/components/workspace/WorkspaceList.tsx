@@ -38,7 +38,7 @@ export default function WorkspaceList() {
 
   const handleWorkspaceSelect = (workspace: WorkspaceModel) => {
     setCurrentWorkspace(workspace);
-    router.push(`/workspace/${workspace.id}`);
+    router.push(`/workspace/${workspace.url}`);
   };
 
   return (

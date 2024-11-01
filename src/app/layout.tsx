@@ -7,6 +7,32 @@ import { ThemeProvider } from "next-themes";
 export const metadata: Metadata = {
   title: "B-DOOL",
   description: "가볍게 사용하는 협업 메신저",
+  icons: {
+    icon: [
+      {
+        url: '/favicon-16x16.png',
+        sizes: '16x16',
+        type: 'image/x-icon',
+      },
+      {
+        url: '/favicon-32x32.png',
+        sizes: '32x32',
+        type: 'image/x-icon',
+      },
+      {
+        url: '/favicon-96x96.png',
+        sizes: '96x96',
+        type: 'image/x-icon',
+      },
+    ],
+    apple: [
+      {
+        url: '/apple-icon.png',
+        sizes: '180x180',
+        type: 'image/png',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -16,10 +42,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <title>B-DOOL</title>
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-      </head>
       <body>
         <ThemeProvider enableSystem={true} attribute="data-theme" defaultTheme="light">
           <ReactQueryProvider>
