@@ -8,6 +8,6 @@ export const authService = {
       .then(response => response.data),
 
   refreshToken: () => 
-    serverTokenAxios.post<void>(`${BASE_URL}/refresh`)
+    serverTokenAxios.post<string>(`${BASE_URL}/refresh`)
       .then(response => response.data)
 };

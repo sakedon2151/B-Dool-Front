@@ -3,11 +3,12 @@ import CalendarModal from "../calendar/CalendarModal";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear, faGripVertical, faHashtag, faMagnifyingGlass, faUser, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faGripVertical, faHashtag, faMagnifyingGlass, faUser, faUserPlus, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { faBell, faCalendarDays } from '@fortawesome/free-regular-svg-icons'
 import SearchModal from "../search/SearchModal";
 import { useMemberStore } from "@/app/stores/member.store";
 import WorkspaceUpdateModal from "./WorkspaceUpdateModal";
+import MailInviteModal from "../auth/MailInviteModal";
 
 export default function WorkspaceHeader() {
   const currentMember = useMemberStore(state => state.currentMember);  // Zustand Store
@@ -59,6 +60,11 @@ export default function WorkspaceHeader() {
             {isExpanded && (
               <div className="absolute right-0 mt-4 p-2 bg-base-100 rounded-btn rounded-r-none border-y border-l border-base-300 z-10 shadow-lg">
                 <div className="flex flex-col gap-2">
+                  
+                  <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('invite-modal') as HTMLDialogElement).showModal()}>
+                    <FontAwesomeIcon icon={faUserPlus} className="w-4 h-4 opacity-75"/>
+                  </button>
+                  
                   <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('calendar-modal') as HTMLDialogElement).showModal()}>
                     <FontAwesomeIcon icon={faCalendarDays} className="w-4 h-4 opacity-75"/>
                   </button>
@@ -96,7 +102,13 @@ export default function WorkspaceHeader() {
 
           <div className="lg:block hidden">
             
-            <div className="lg:tooltip lg:tooltip-bottom" data-tip="캘린더">
+            <div className="lg:tooltip lg:tooltip-bottom" data-tip="초대">
+              <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('invite-modal') as HTMLDialogElement).showModal()} >
+                <FontAwesomeIcon icon={faUserPlus} className="w-4 h-4 opacity-75"/>
+              </button>
+            </div>
+
+            <div className="lg:tooltip lg:tooltip-bottom" data-tip="일정">
               <button className="btn btn-ghost btn-circle" onClick={() => (document.getElementById('calendar-modal') as HTMLDialogElement).showModal()} >
                 <FontAwesomeIcon icon={faCalendarDays} className="w-4 h-4 opacity-75"/>
               </button>
@@ -138,6 +150,19 @@ export default function WorkspaceHeader() {
         </div>
       </div>
 
+      {/* invite modal dialog */}
+      <dialog id="invite-modal" className="modal">
+        <div className="modal-box p-4">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-50">✕</button>
+          </form>
+          <MailInviteModal/>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>닫기</button>
+        </form>
+      </dialog>
+
       {/* calendar modal dialog */}
       <dialog id="calendar-modal" className="modal">
         <div className="modal-box p-4">
@@ -154,6 +179,7 @@ export default function WorkspaceHeader() {
       {/* search modal dialog */}
       <dialog id="search-modal" className="modal modal-top md:modal-middle">
         <div className="modal-box p-4">
+          
           <SearchModal workspaceId={currentWorkspace.id}/>
           <div className="modal-action mt-4">
             <form method="dialog" className="w-full">

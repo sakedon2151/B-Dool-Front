@@ -59,6 +59,7 @@ export default function WorkspaceList() {
           <div className="h-[calc(100%-108px)] overflow-y-auto">
             <ul className="menu flex-row p-0">
               {workspaces.map((workspace: WorkspaceModel) => (
+                
                 <li key={workspace.id} className='mb-4 bg-base-100 w-full rounded-lg'>
                   <a className="p-4 gap-4" onClick={() => handleWorkspaceSelect(workspace)}>
                     <div className="avatar">
@@ -77,7 +78,7 @@ export default function WorkspaceList() {
                         .map((profile: ProfileModel, index) => (
                           <div key={`${workspace.id}-${profile.id || index}`} className="avatar border border-base-100">
                             <div className="w-8">
-                              <img src={profile.profileImgUrl} alt="profile image"/>
+                              <img src={profile.profileImgUrl} alt="profile_image"/>
                             </div>
                           </div>
                         ))
@@ -92,6 +93,7 @@ export default function WorkspaceList() {
                     </div>
                   </a>
                 </li>
+
               ))}
               {workspaces.length === 0 && (
                 <div role="alert" className="alert alert-info mb-4">

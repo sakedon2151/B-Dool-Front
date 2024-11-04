@@ -1,4 +1,3 @@
-import VerificationCodeForm from "./VerificationCodeForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { mailService } from "@/app/services/auth/mailSender.service";
@@ -8,11 +7,13 @@ import { useMemberStore } from "@/app/stores/member.store";
 import { setToken } from "@/app/utils/cookieController";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleXmark, faEnvelope } from "@fortawesome/free-solid-svg-icons"
+import MailLoginVerifyForm from "./MailLoginVerifyForm";
 
-export default function EmailLoginForm() {
+export default function MailLoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [showVerification, setShowVerification] = useState<boolean>(false);
+  
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   
@@ -20,10 +21,8 @@ export default function EmailLoginForm() {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
     setIsLoading(true);
     setError('');
-    
     try {
       const isCodeSent = await mailService.sendVerificationCode(email);
       if (isCodeSent) {
@@ -45,15 +44,15 @@ export default function EmailLoginForm() {
       if (isVerified) {
         const getToken = await authService.generateToken(email);
         setToken(getToken); // 쿠키에 토큰 담기
-        const member = await memberService.getCurrentMember(); // 받은 토큰으로 member 호출
-        setCurrentMember(member); // store 에 member 담기
+        const member = await memberService.getCurrentMember();
+        setCurrentMember(member);
         router.push("/workspace");
       } else {
         setError('인증에 실패했습니다. 다시 시도해 주세요.');
       }
     } catch (err) {
       setError('오류가 발생했습니다. 다시 시도해 주세요.');
-      console.error('Verification error:', err);
+      console.error('인증코드 오류:', err);
     }
   };
 
@@ -102,7 +101,7 @@ export default function EmailLoginForm() {
           </button>
         </form>
       ) : (
-        <VerificationCodeForm 
+        <MailLoginVerifyForm 
           email={email}
           onSuccess={handleVerificationSuccess} 
           onResendCode={handleResendCode}  

@@ -4,10 +4,6 @@ import { useChannelStore } from "@/app/stores/channel.store";
 import { useParticipantsByChannelId } from "@/app/queries/participant.query";
 import { ParticipantModel } from "@/app/models/participant.model";
 
-interface ParticipantListProps {
-  workspaceId: number;
-}
-
 export default function ParticipantList() {
   const [selectedParticipant, setSelectedParticipant] = useState<ParticipantModel | null>(null);
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
@@ -40,6 +36,7 @@ export default function ParticipantList() {
     (document.getElementById('participant-modal') as HTMLDialogElement).showModal()
   };
 
+  // 기존 닉네임, 온라인 상태 변경에 대한 핸들러 함수 구독 로직
   // const handleNicknameChange = (updatedProfile: ProfileModel) => {
   //   setProfiles(prevProfiles => 
   //     prevProfiles.map(profile =>
@@ -49,7 +46,6 @@ export default function ParticipantList() {
   //     )
   //   );
   // };
-
   // const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
   //   setProfiles(prevProfiles => 
   //     prevProfiles.map(profile =>
@@ -59,14 +55,12 @@ export default function ParticipantList() {
   //     )
   //   );
   // };
-
   // SSE Custom Hook
   // const sseUrl = process.env.NEXT_PUBLIC_SERVER_A_SSE_URL as string
   // useSSE(sseUrl, {
   //   'nickname-change': handleNicknameChange,
   //   'online-status-change': handleOnlineStatusChange
   // });
-
 
   const renderContent = (title: string, filteredParticipant: ParticipantModel[]) => (
     <ul className="menu">

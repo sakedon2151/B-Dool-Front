@@ -3,7 +3,7 @@ import { ParticipantModel } from "@/app/models/participant.model";
 import { participantService } from '../services/channel/participant.service';
 
 // Query keys
-const PARTICIPANT_KEYS = {
+export const PARTICIPANT_KEYS = {
   all: ['participants'] as const,
   byId: (id: string) => [...PARTICIPANT_KEYS.all, 'byId', id] as const,
   byChannelId: (channelId: string) => [...PARTICIPANT_KEYS.all, 'byChannelId', channelId] as const,

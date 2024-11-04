@@ -11,6 +11,7 @@ import { useProfileStore } from "@/app/stores/profile.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { useAuthCheck } from "@/app/hooks/useAuthCheck";
 
 function DataLoader() {
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
@@ -19,10 +20,12 @@ function DataLoader() {
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel); // Zustand Store
 
   const { data: profile } = useProfileByMemberIdAndWorkspaceId(currentMember.id, currentWorkspace.id, {
-    enabled: !!currentMember.id && !!currentWorkspace.id
+    enabled: !!currentMember.id && !!currentWorkspace.id,
+    suspense: true
   }) // API Suspense Query
   const { data: channel } = useDefaultChannelByWorkspaceId(currentWorkspace.id, {
-    enabled: !!currentWorkspace?.id
+    enabled: !!currentWorkspace?.id,
+    suspense: true
   }) // API Suspense Query
   const updateProfileOnlineStatus = useUpdateProfileOnlineStatus(); // API Query
 
@@ -115,6 +118,16 @@ export default function WorkspaceClientLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { isAuthChecked, isAuthenticated } = useAuthCheck()
+  
+  if (!isAuthChecked) {
+    return <LoadingScreen/>;
+  }
+
+  if (!isAuthenticated) {
+    return null; // 인증 실패 시 리다이렉션이 처리됨
+  }
+
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Suspense fallback={<LoadingScreen/>}>
@@ -124,5 +137,3 @@ export default function WorkspaceClientLayout({
     </ErrorBoundary>
   )
 }
-
-

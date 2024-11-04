@@ -13,6 +13,8 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   const [profileName, setProfileName] = useState<string>('')
   const [profileNickname, setProfileNickname] = useState<string>('')
   const [profileImage, setProfileImage] = useState<string>('')
+  const [profilePosition, setProfilePosition] = useState<string>('')
+  
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -25,6 +27,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   const resetForm = () => {
     setProfileName('')
     setProfileNickname('')
+    setProfilePosition('')
     setIsLoading(true);
     setProfileImage(getRandomProfileImage());
     setIsLoading(false);
@@ -57,8 +60,8 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
       name: profileName,
       nickname: profileNickname,
       profileImgUrl: profileImage,
+      position: profilePosition,
       workspaceId: 0,
-      position: "-"
     }
     onSubmit(profileData)
   };
@@ -102,6 +105,15 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
         onChange={(e) => setProfileName(e.target.value)}
         required
       />
+      <input
+        type="text" 
+        className="input input-bordered w-full mb-4" 
+        placeholder="직무/직위"
+        value={profilePosition}
+        onChange={(e) => setProfileName(e.target.value)}
+        required
+      />
+
       <div className="w-full join justify-center">
         <button type="button" onClick={onPrevious} className="btn join-item">이전</button>
         <button type="submit" className="btn join-item">완료</button>

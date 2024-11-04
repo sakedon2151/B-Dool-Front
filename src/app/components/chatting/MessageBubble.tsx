@@ -5,7 +5,7 @@ import { useProfileStore } from "@/app/stores/profile.store";
 import { toMessageTime } from "@/app/utils/formatDateTime";
 import { usePapagoMessage } from "@/app/queries/naver.query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLanguage } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faExternalLink, faFile, faFileAudio, faFileImage, faFileVideo, faLanguage } from "@fortawesome/free-solid-svg-icons";
 
 interface MessageBubbleProps {
   selectedMessage: MessageModel
@@ -54,6 +54,80 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
     ));
   };
 
+  const getFileIcon = (fileUrl: string) => {
+    const extension = fileUrl.split('.').pop()?.toLowerCase();
+    switch(extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return faFileImage;
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+        return faFileVideo;
+      case 'mp3':
+      case 'wav':
+        return faFileAudio;
+      default:
+        return faFile;
+    }
+  };
+
+  const isImageFile = (fileUrl: string) => {
+    const extension = fileUrl.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif'].includes(extension || '');
+  };
+
+  const renderFileContent = () => {
+    if (!selectedMessage.fileUrl) return null;
+    return (
+      <div className="mt-2 flex flex-col gap-2">
+        {isImageFile(selectedMessage.fileUrl) ? (
+          <div className="relative">
+            <img 
+              src={selectedMessage.fileUrl} 
+              alt="첨부 이미지" 
+              className="max-w-80 rounded-lg"
+            />
+            <div className="absolute top-2 right-2 flex gap-2">
+              <a 
+                href={selectedMessage.fileUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn btn-circle btn-sm bg-base-100 bg-opacity-70 hover:bg-opacity-100"
+                title="새 탭에서 보기"
+              >
+                <FontAwesomeIcon icon={faExternalLink} />
+              </a>
+              <a 
+                href={selectedMessage.fileUrl} 
+                download 
+                className="btn btn-circle btn-sm bg-base-100 bg-opacity-70 hover:bg-opacity-100"
+                title="다운로드"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FontAwesomeIcon icon={faDownload} />
+              </a>
+            </div>
+          </div>
+        ) : (
+          <a 
+            href={selectedMessage.fileUrl} 
+            download 
+            className="flex items-center gap-2 bg-base-200 p-2 rounded-lg hover:bg-base-300 transition-colors"
+          >
+            <FontAwesomeIcon icon={getFileIcon(selectedMessage.fileUrl)} className="text-lg" />
+            <span className="text-sm truncate max-w-[200px]">
+              {selectedMessage.fileUrl.split('/').pop()}
+            </span>
+            <FontAwesomeIcon icon={faDownload} className="ml-auto" />
+          </a>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={`chat ${isCurrentProfileMessage ? "chat-end" : "chat-start"} my-1`}>
       {isLoadingProfile ? (
@@ -66,7 +140,7 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
         <>
           <div className="chat-image avatar">
             <div className="w-10 rounded-full">
-              <img src={profile.profileImgUrl} alt="profile_image" />
+              <img src={profile.profileImgUrl} alt="profile_image"/>
             </div>
           </div>
 
@@ -84,6 +158,7 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
             
             <div className="chat-bubble">
               {renderMessageContent(showOriginal ? selectedMessage.content : translatedContent || selectedMessage.content)}
+              {renderFileContent()}
             </div>
           </div>
 

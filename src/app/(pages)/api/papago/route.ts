@@ -1,4 +1,3 @@
-// app/api/papago/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { naverService } from '@/app/services/naver.service';
 

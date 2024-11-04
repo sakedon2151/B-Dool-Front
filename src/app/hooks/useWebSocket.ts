@@ -32,7 +32,6 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
         setCurrentPage(1);
         setHasMore(data.length === 10);
       } else {
-        console.log("메시지를 찾을 수 없습니다.");
         setMessages([]);
         setCurrentPage(0);
         setHasMore(false);
@@ -64,7 +63,7 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
         loadInitialMessages(channelId);
       },
       onStompError: (frame) => {
-        console.error('stomp websocket 연결 오류: ', frame.headers['message']);
+        console.error('stomp websocket 연결 오류:', frame.headers['message']);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -89,11 +88,9 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
     }
     try {
       await messagePublishService(stompClient).sendMessage(channelId, data);
-      
-      // 서버에서 새 메시지를 브로드캐스트할 것이므로, 여기서는 로컬 상태를 업데이트하지 않습니다.
     } catch (error) {
       console.error("메시지 전송 실패:", error);
-      throw error; // 에러를 상위로 전파하여 UI에서 처리할 수 있게 합니다.
+      throw error;
     }
   }, [channelId, stompClient]);
 

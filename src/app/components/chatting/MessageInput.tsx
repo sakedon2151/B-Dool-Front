@@ -4,8 +4,7 @@ import { fileService } from "@/app/services/file/file.service";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile, faPaperPlane, faTimes, faUpload } from "@fortawesome/free-solid-svg-icons";
-import { useWorkspaceStore } from "@/app/stores/workspace.store";
+import { faFile, faPaperPlane, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 interface MessageInputProps {
   workspaceId: number
@@ -14,12 +13,12 @@ interface MessageInputProps {
 interface SelectedFile {
   file: File;
   previewUrl?: string;  // 이미지인 경우 미리보기 URL
+  uploadError?: string;
 }
 
 export default function MessageInput({ workspaceId }: MessageInputProps) {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   const currentChannel = useChannelStore(state => state.currentChannel)  // Zustand Store
-
   const { sendMessage } = useWebsocket(currentChannel.channelId, workspaceId) // Stomp Websocket Hook
 
   const [message, setMessage] = useState<string>("")
@@ -64,45 +63,41 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     // 파일 크기 체크 (예: 100MB)
     const maxSize = 100 * 1024 * 1024;
     if (file.size > maxSize) {
       alert("파일 크기는 100MB를 초과할 수 없습니다.");
       return;
     }
-
     // 이미지 파일인 경우 미리보기 URL 생성
     let previewUrl: string | undefined;
     if (file.type.startsWith('image/')) {
       previewUrl = URL.createObjectURL(file);
     }
-
     setSelectedFile({ file, previewUrl });
-    
     // 파일 input 초기화
     if (fileInput.current) {
       fileInput.current.value = '';
     }
   };
 
-  // 선택된 파일 제거
   const handleRemoveFile = () => {  
     if (selectedFile?.previewUrl) {
       URL.revokeObjectURL(selectedFile.previewUrl);
     }
     setSelectedFile(null);
+    setUploadProgress(0);
   };
 
-  // 메시지와 파일 전송
   const handleSubmit = useCallback(async () => {
     if (message.trim() === '' && !selectedFile) return;
-    try {
-      setIsUploading(true);
-      let fileUrl: string | undefined;
+    if (isUploading) return;
+    if (selectedFile) {
+      try {
+        setIsUploading(true);
+        let fileUrl: string | undefined;
 
-      // 파일이 있으면 먼저 업로드
-      if (selectedFile) {
+        // 1. 파일 업로드 완료까지 대기
         const uploadedFile = await fileService.uploadFile({
           file: selectedFile.file,
           entityType: 'MESSAGE'
@@ -110,38 +105,61 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
           setUploadProgress(progress);
         });
         fileUrl = uploadedFile.path;
-      }
+        
+        // 2. 파일 업로드 완료 후 메시지 데이터 준비
+        const trimmedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();
+        const messageData = {
+          channelId: currentChannel.channelId,
+          content: trimmedMessage || `[파일] ${selectedFile.file.name}`,
+          profileId: currentProfile.id,
+          fileUrl: uploadedFile.path // 업로드 완료된 파일의 URL
+        };
 
+        // 4. 소켓으로 메시지 전송
+        sendMessage(messageData)
+
+        // 5. 메시지 전송 후 초기화
+        setMessage('');
+        handleRemoveFile();
+        if (textarea.current) {
+          textarea.current.style.height = '3rem'
+        }
+
+      } catch (error) {
+        console.error("메시지 전송 실패:", error);
+        setSelectedFile(prev => 
+          prev ? { ...prev, uploadError: "파일 업로드에 실패했습니다." } : null
+        );
+      } finally {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }
+      
+    } else {
+      // 메시지에 파일이 없을 경우 바로 전송
+      const trimmedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();
       sendMessage({
         channelId: currentChannel.channelId,
-        content: message.split('\n').map(line => line.trim()).join('\n').trim() || `[파일] ${selectedFile?.file.name}`,
+        content: trimmedMessage,
         profileId: currentProfile.id,
-        fileUrl: fileUrl,
+        fileUrl: undefined,
       })
-
       setMessage('');
-      handleRemoveFile();
       if (textarea.current) {
-        textarea.current.style.height = '3rem'
+        textarea.current.style.height = '3rem';
       }
-    } catch (error) {
-      console.error("메시지 전송 실패:", error);
-    } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
     }
-  }, [message, selectedFile, currentChannel.channelId, sendMessage]);
+
+  }, [message, selectedFile, currentChannel.channelId, sendMessage, isUploading]);
 
   return (
     <div className="flex flex-col">
-      {/* 선택된 파일 미리보기 */}
       {selectedFile && (
         <div className="flex items-center gap-2 mx-2 mt-2 p-2 bg-base-200 rounded-lg">
-          
           {selectedFile.previewUrl ? (
             <img 
               src={selectedFile.previewUrl} 
-              alt="preview" 
+              alt="preview_image" 
               className="w-12 h-12 object-cover rounded"
             />
           ) : (
@@ -149,15 +167,40 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
               <FontAwesomeIcon icon={faFile} className="w-4 h-4 opacity-75"/>
             </div>
           )}
-
           <div className="flex-grow">
             <p className="text-sm font-medium">{selectedFile.file.name}</p>
-            <p className="text-xs text-gray-500">
-              {(selectedFile.file.size / 1024 / 1024).toFixed(2)} MB
-            </p>
-          </div>
+            <div className="flex flex-col">
+              <p className="text-xs text-gray-500">
+                {(selectedFile.file.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+              {isUploading && (
+                  <div className="w-full bg-base-300 rounded-full h-1.5">
+                    <div 
+                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                )}
 
-          <button className="btn btn-circle btn-ghost btn-sm" onClick={handleRemoveFile}>✕</button>
+                  <div className="w-full bg-base-300 rounded-full h-1.5">
+                    <div 
+                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+
+                {selectedFile.uploadError && (
+                  <p className="text-xs text-error">{selectedFile.uploadError}</p>
+                )}
+            </div>
+          </div>
+          <button 
+            className="btn btn-circle btn-ghost btn-sm" 
+            onClick={handleRemoveFile}
+            disabled={isUploading}
+          >
+            ✕
+          </button>
         </div>
       )}
       
@@ -173,13 +216,18 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
               name="message" 
               className="w-full h-12 leading-8 resize-none textarea textarea-bordered max-h-36 scrollbar-none" 
               placeholder="메시지를 입력하세요."
+              disabled={isUploading}
             ></textarea>
-            <button type="submit" className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center">
+            <button 
+              type="submit" 
+              className="absolute bottom-0 right-0 w-[54px] h-[48px] flex items-center justify-center"
+              disabled={isUploading}
+            >
               <FontAwesomeIcon icon={faPaperPlane} className="w-4 h-4 opacity-75"/>
             </button>
-            <div className="text-xs text-gray-500 absolute bottom-0 right-[54px] h-[48px] leading-[48px]">
+            <p className="text-xs text-gray-500 absolute bottom-0 right-[54px] h-[48px] leading-[48px]">
               {message.length}/{MAX_MESSAGE_LENGTH}
-            </div>
+            </p>
           </div>
         </form>
 
@@ -193,7 +241,6 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
                   video/*,
                   application/*"
         />
-
         <div className="tooltip tooltip-top" data-tip="업로드">
           <button 
             type="button"
@@ -210,6 +257,5 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
         </div>
       </div>
     </div>
-
   );
 }

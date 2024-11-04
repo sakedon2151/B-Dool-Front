@@ -4,7 +4,6 @@ import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { toDayDividerTime } from "@/app/utils/formatDateTime";
 import { debounce } from "lodash";
 import { useChannelStore } from "@/app/stores/channel.store";
-import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 interface MessageListProps {
   workspaceId: number;

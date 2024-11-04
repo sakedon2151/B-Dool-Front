@@ -17,6 +17,8 @@ export default function Workspace() {
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace)
   const workspaceId = currentWorkspace.id
 
+  // 
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="workspace-drawer" type="checkbox" className="drawer-toggle" />

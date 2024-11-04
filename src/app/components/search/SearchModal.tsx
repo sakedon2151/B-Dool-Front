@@ -20,6 +20,7 @@ export default function SearchModal({ workspaceId }: SearchModalProps) {
 
   return (
     <div>
+      <h2 className="text-center font-bold text-lg opacity-75 mb-4">워크스페이스 검색</h2>
       <SearchInput
         workspaceId={workspaceId}
         profileId={currentProfile.id}

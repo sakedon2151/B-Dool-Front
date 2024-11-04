@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import EmailLoginForm from "@/app/components/auth/EmailLoginForm";
+import EmailLoginForm from "@/app/components/auth/MailLoginForm";
 import CommonFooter from "@/app/components/common/CommonFooter";
 import CommonHeader from "@/app/components/common/CommonHeader";
 import { getToken, removeToken } from "@/app/utils/cookieController";
@@ -12,18 +12,17 @@ import LoadingScreen from "@/app/components/common/LoadingScreen";
 
 export default function Auth() {
   const router = useRouter()
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { setCurrentMember } = useMemberStore();
 
   useEffect(() => {    
     checkHasToken();
-  });
+  }, []);
 
   const checkHasToken = async () => {
     const token = getToken();
     if (token) {
       try {
-        // await authService.refreshToken(); // 에러 발생!
         const currentMember = await memberService.getCurrentMember();
         setCurrentMember(currentMember)
         router.push("/workspace");
@@ -31,14 +30,14 @@ export default function Auth() {
         console.error("유효성 검증 실패:", error);
         removeToken(); // 토큰이 유효하지 않은 경우 일단 제거
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     } else {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingScreen/>;
   }
 

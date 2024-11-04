@@ -27,12 +27,14 @@ export const messagePublishService = (stompClient: Client) => ({
     return new Promise((resolve, reject) => {
       if (stompClient.connected) {
         try {
+          console.log('전송하려는 메시지 데이터:', data);
           stompClient.publish({
             destination: `/app/message/${channelId}`,
             body: JSON.stringify(data),
           });
           resolve();
         } catch (error) {
+          console.error('메시지 전송 실패:', error);
           reject(new Error(`Failed to send message: ${error}`));
         }
       } else {

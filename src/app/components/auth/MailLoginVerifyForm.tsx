@@ -3,17 +3,18 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 
-interface VerificationCodeFormProps {
+interface MailLoginVerifyForm {
   email: string;
   onSuccess: (verificationCode: string) => void;
   onResendCode: () => Promise<void>;
   onChangeEmail: () => void;
 }
 
-export default function VerificationCodeForm({ email, onSuccess, onResendCode, onChangeEmail }: VerificationCodeFormProps) {
+export default function MailLoginVerifyForm({ email, onSuccess, onResendCode, onChangeEmail }: MailLoginVerifyForm) {
   const CODE_LENGTH = 6
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(''));
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
@@ -70,7 +71,7 @@ export default function VerificationCodeForm({ email, onSuccess, onResendCode, o
     <div>
       <div role="alert" className="alert alert-info mb-4">
         <FontAwesomeIcon icon={faCircleInfo} className="w-6 h-6 opacity-75"/>
-        <span className="">{email} 로 인증 코드가 전송되었습니다.</span>
+        <span>{email} 로 인증 코드가 전송되었습니다.</span>
       </div>
       <div className="flex gap-2 mb-4">
         {code.map((digit, index) => (

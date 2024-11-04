@@ -6,4 +6,6 @@ export interface MailVerification {
   createdAt: string;
 }
 
+
+
 // Strict Type Model
