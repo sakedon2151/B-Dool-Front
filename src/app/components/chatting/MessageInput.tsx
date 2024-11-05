@@ -95,8 +95,7 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
     if (selectedFile) {
       try {
         setIsUploading(true);
-        let fileUrl: string | undefined;
-
+        
         // 1. 파일 업로드 완료까지 대기
         const uploadedFile = await fileService.uploadFile({
           file: selectedFile.file,
@@ -104,7 +103,6 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
         }, (progress) => {
           setUploadProgress(progress);
         });
-        fileUrl = uploadedFile.path;
         
         // 2. 파일 업로드 완료 후 메시지 데이터 준비
         const trimmedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { WorkspaceInsertModel, WorkspaceModel, WorkspaceUpdateModel } from "@/app/models/workspace.model";
+import { WorkspaceInsertModel, WorkspaceUpdateModel } from "@/app/models/workspace.model";
 import { workspaceService } from '../services/workspace/workspace.service';
 
 // Query keys

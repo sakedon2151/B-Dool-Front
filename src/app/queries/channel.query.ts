@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { ChannelInsertModel, ChannelModel } from "@/app/models/channel.model";
+import { ChannelInsertModel } from "@/app/models/channel.model";
 import { channelService } from '../services/channel/channel.service';
 
 // Query keys

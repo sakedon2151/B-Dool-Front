@@ -1,6 +1,6 @@
 import { ProfileInsertModel } from "@/app/models/profile.model"
 import { getRandomProfileImage } from "@/app/utils/randomDefaultImage";
-import { faL, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 

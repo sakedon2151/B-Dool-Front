@@ -1,6 +1,4 @@
 'use client'
-import ChannelCreateModal from "@/app/components/channel/ChannelCreateModal";
-import SearchModal from "@/app/components/search/SearchModal";
 import React from "react";
 
 export default function Test() {

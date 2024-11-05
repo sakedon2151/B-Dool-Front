@@ -4,7 +4,7 @@ import { authService } from '../services/auth/auth.service';
 
 // 상수 정의
 const AUTH_ERROR_CODES = [401, 403];
-const REFRESH_THRESHOLD = 5 * 60 * 1000; // 5분
+// const REFRESH_THRESHOLD = 5 * 60 * 1000; // 5분
 const PUBLIC_ENDPOINTS = [
   '/mail/send-verification-code',
   '/mail/verify-code',
