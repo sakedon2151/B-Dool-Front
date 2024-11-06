@@ -11,8 +11,6 @@ import { faBars, faList } from "@fortawesome/free-solid-svg-icons";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 export default function Workspace() {
-  // const params = useParams();
-  // const workspaceId = parseInt(params.id as string, 10);
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace)
   const workspaceId = currentWorkspace.id
 

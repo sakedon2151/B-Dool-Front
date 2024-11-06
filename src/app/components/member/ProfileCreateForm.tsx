@@ -10,60 +10,71 @@ interface ProfileCreateFormProps {
 }
 
 export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreateFormProps) {
-  const [profileName, setProfileName] = useState<string>('')
-  const [profileNickname, setProfileNickname] = useState<string>('')
-  const [profileImage, setProfileImage] = useState<string>('')
-  const [profilePosition, setProfilePosition] = useState<string>('')
+  const [formData, setFormData] = useState({
+    profileName: '',
+    profileNickname: '',
+    profilePosition: '',
+    profileImage: null as string | null
+  })
   
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const fileInput = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setProfileImage(getRandomProfileImage());
-    setIsLoading(false);
-  }, []);
-
-  const resetForm = () => {
-    setProfileName('')
-    setProfileNickname('')
-    setProfilePosition('')
-    setIsLoading(true);
-    setProfileImage(getRandomProfileImage());
-    setIsLoading(false);
-  }
-
-  useEffect(() => {
-    return () => {
-      resetForm()
+  const initializeImage = async () => {
+    try {
+      setIsLoading(true);
+      const randomImage = getRandomProfileImage();
+      setFormData(prev => ({ ...prev, profileImage: randomImage }));
+    } catch (error) {
+      console.error('이미지 초기화 실패:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [])
+  };
 
+  useEffect(() => {
+    initializeImage();
+    return () => {
+      setFormData({
+        profileName: '',
+        profileNickname: '',
+        profileImage: null,
+        profilePosition: ''
+      });
+    };
+  }, []);
+  
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsLoading(true)
+      setIsLoading(true);
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          setProfileImage(e.target.result as string);
+        const result = e.target?.result as string;
+        if (result) {
+          setFormData(prev => ({ ...prev, profileImage: result }));
           setIsLoading(false);
         }
+      };
+      reader.onerror = () => {
+        console.error('Error reading file');
+        setIsLoading(false);
       };
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.profileImage) return;
     const profileData: ProfileInsertModel = {
-      name: profileName,
-      nickname: profileNickname,
-      profileImgUrl: profileImage,
-      position: profilePosition,
+      name: formData.profileName,
+      nickname: formData.profileNickname,
+      profileImgUrl: formData.profileImage,
+      position: formData.profilePosition,
       workspaceId: 0,
-    }
-    onSubmit(profileData)
+    };
+    onSubmit(profileData);
   };
 
   return (
@@ -73,13 +84,22 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
           <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
 
             {isLoading ? (
-              <div className="skeleton w-full h-full"></div>
+              <div className="skeleton w-full h-full"/>
+            ) : formData.profileImage ? (
+              <img 
+                src={formData.profileImage} 
+                alt="profile_image" 
+                className="group-hover:brightness-50"
+              />
             ) : (
-              <img src={profileImage} alt="profile_image" className="group-hover:brightness-50"/>
+              <div className="bg-gray-200 w-full h-full rounded-full"/>
             )}
 
           </div>
-          <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
+          <FontAwesomeIcon 
+            icon={faPlus} 
+            className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+          />
         </div>
         <input 
           ref={fileInput}
@@ -89,34 +109,41 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
           onChange={handleImgChange}
         />
       </div>  
+      
       <input
         type="text" 
         className="input input-bordered w-full mb-4" 
         placeholder="프로필 닉네임"
-        value={profileNickname}
-        onChange={(e) => setProfileNickname(e.target.value)}
+        value={formData.profileNickname}
+        onChange={(e) => setFormData(prev => ({ ...prev, profileNickname: e.target.value }))}
         required
       />
       <input
         type="text" 
         className="input input-bordered w-full mb-4" 
         placeholder="이름"
-        value={profileName}
-        onChange={(e) => setProfileName(e.target.value)}
+        value={formData.profileName}
+        onChange={(e) => setFormData(prev => ({ ...prev, profileName: e.target.value }))}
         required
       />
       <input
         type="text" 
         className="input input-bordered w-full mb-4" 
         placeholder="직무/직위"
-        value={profilePosition}
-        onChange={(e) => setProfileName(e.target.value)}
+        value={formData.profilePosition}
+        onChange={(e) => setFormData(prev => ({ ...prev, profilePosition: e.target.value }))}
         required
       />
 
       <div className="w-full join justify-center">
         <button type="button" onClick={onPrevious} className="btn join-item">이전</button>
-        <button type="submit" className="btn join-item">완료</button>
+        <button 
+          type="submit" 
+          className="btn join-item" 
+          disabled={!formData.profileImage}
+        >
+          완료
+        </button>
       </div>
     </form>
   )

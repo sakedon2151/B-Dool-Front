@@ -1,10 +1,11 @@
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { useUpdateProfile, useUpdateProfileOnlineStatus } from "@/app/queries/profile.query";
 import { ProfileModel } from "@/app/models/profile.model";
 import { toCreatedAt, toUpdatedAt } from "@/app/utils/formatDateTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { fileService } from "@/app/services/file/file.service";
 
 export default function ProfileUpdateModal() {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
@@ -12,40 +13,51 @@ export default function ProfileUpdateModal() {
   const updateProfileMutation = useUpdateProfile(); // API Query
   const updateProfileOnlineStatusMutation = useUpdateProfileOnlineStatus(); // API Query
   
-  const [editingFormData, setEditingFormData] = useState<ProfileModel | null>(null);
-  const [isOnline, setIsOnline] = useState<boolean>(currentProfile.isOnline);
+  const [editingProfile, setEditingProfile] = useState<ProfileModel | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const fileInput = useRef<HTMLInputElement>(null)
   
-  const profileImage = useMemo(() => currentProfile.profileImgUrl, [currentProfile.profileImgUrl]);
-  const formData = useMemo(() => editingFormData ?? currentProfile, [editingFormData, currentProfile]);
+  const profileData = editingProfile ?? currentProfile;
 
   const formatCreatedDate = toCreatedAt(currentProfile.createdAt)
   const formatUpdatedDate = toUpdatedAt(currentProfile.updatedAt, currentProfile.createdAt)
 
   const handleImgChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          const newProfileImage = e.target.result as string;
-          try {
-            await updateProfileMutation.mutateAsync({
-              profileId: currentProfile.id,
-              data: {
-                ...currentProfile,
-                profileImgUrl: newProfileImage
-              }
-            });
-          } catch (error) {
-            console.log("프로필 이미지 변경 실패: ", error);
-          }
-        }
+    if (!file) return
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+      // 파일 업로드를 위한 FormData 구성
+      const formData = new FormData();
+      formData.append('file', file);
+      // 파일 서버에 업로드
+      const uploadedFile = await fileService.uploadFile({
+        file,
+        entityType: 'PROFILE'
+      }, (progress) => {
+        setUploadProgress(progress);
+      });
+      // 프로필 정보 업데이트
+      const updatedProfile = {
+        ...profileData,
+        profileImgUrl: uploadedFile.path
       };
-      reader.readAsDataURL(file);
+      await updateProfileMutation.mutateAsync({
+        profileId: currentProfile.id,
+        data: updatedProfile
+      });
+      setCurrentProfile(updatedProfile);
+      setEditingProfile(updatedProfile);
+    } catch (error) {
+      console.error("프로필 이미지 변경 실패:", error);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
-  }, [currentProfile, updateProfileMutation, setCurrentProfile]);
+  }, [profileData, currentProfile.id, updateProfileMutation, setCurrentProfile]);
 
   const handleOnlineToggle = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const newOnlineStatus = e.target.checked;
@@ -54,22 +66,22 @@ export default function ProfileUpdateModal() {
         profileId: currentProfile.id,
         isOnline: newOnlineStatus
       });
-      setIsOnline(newOnlineStatus);
-      setCurrentProfile({
-        ...currentProfile,
+      const updatedProfile = {
+        ...profileData,
         isOnline: newOnlineStatus
-      })
-      console.log("로그인 상태가 변경되었습니다.")
+      };
+      setCurrentProfile(updatedProfile);
+      setEditingProfile(updatedProfile);
     } catch (error) {
       console.error("온라인 상태 변경 실패:", error);
-      e.target.checked = isOnline;
+      e.target.checked = profileData.isOnline;
     }
-  }, [currentProfile.id, isOnline, updateProfileOnlineStatusMutation]);
+  }, [profileData, currentProfile.id, updateProfileOnlineStatusMutation, setCurrentProfile]);
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditingFormData(prevData => ({
-      ...(prevData ?? currentProfile),
+    setEditingProfile(prev => ({
+      ...(prev ?? currentProfile),
       [name]: value
     }));
   }, [currentProfile]);
@@ -77,38 +89,62 @@ export default function ProfileUpdateModal() {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const updatedProfile = {
+        ...currentProfile,
+        ...editingProfile
+      };
       await updateProfileMutation.mutateAsync({
         profileId: currentProfile.id,
-        data: formData,
+        data: updatedProfile
       });
+      setCurrentProfile(updatedProfile);
+      setEditingProfile(null);
       setIsEditing(false);
-      setCurrentProfile({ // Zustand Update
-        ...currentProfile,
-        nickname: formData.nickname,
-        name: formData.name,
-        position: formData.position
-      })
-      console.log("프로필이 업데이트 되었습니다.")
+      console.log("프로필이 업데이트 되었습니다.");
     } catch (error) {
-      console.error("프로필 업데이트 실패: ", error);
-      // 에러 처리 로직 (예: 사용자에게 알림)
+      console.error("프로필 업데이트 실패:", error);
     }
-  }, [currentProfile.id, formData, updateProfileMutation]);
+  }, [currentProfile, editingProfile, updateProfileMutation, setCurrentProfile]);
 
   const handleCancel = useCallback(() => {
-    setEditingFormData(null);
+    setEditingProfile(null);
     setIsEditing(false);
   }, []);
 
   return (
     <div className="flex flex-col ">
-      
       <div className="h-24 mb-4 text-center">
-        <div className={`avatar group drop-shadow-sm ${currentProfile.isOnline ? 'online' : 'offline'}`} onClick={() => {fileInput.current?.click()}}>
+        <div 
+          className={`avatar group drop-shadow-sm ${profileData.isOnline ? 'online' : 'offline'}`} 
+          onClick={() => !isUploading && fileInput.current?.click()}
+        >
           <div className="w-24 h-24 rounded-full">
-            <img src={profileImage} alt="profile_image" className="group-hover:brightness-50"/>
+            {profileData.profileImgUrl ? (
+              <img 
+                src={profileData.profileImgUrl}
+                alt="profile_image" 
+                className="group-hover:brightness-50"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="text-gray-500">No Image</span>
+              </div>
+            )}
+            {isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                <div className="text-center text-white">
+                  <div className="loading loading-spinner loading-md"></div>
+                  <div className="text-xs mt-1">{uploadProgress}%</div>
+                </div>
+              </div>
+            )}
           </div>
-          <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
+          {!isUploading && (
+            <FontAwesomeIcon 
+              icon={faPlus} 
+              className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+            />
+          )}
         </div>
         <input 
           ref={fileInput}
@@ -116,6 +152,7 @@ export default function ProfileUpdateModal() {
           accept="image/png, image/jpg, image/jpeg"
           type="file" 
           onChange={handleImgChange}
+          disabled={isUploading}
         />
       </div>
       
@@ -129,21 +166,29 @@ export default function ProfileUpdateModal() {
                   type="checkbox"
                   className="toggle toggle-success"
                   onChange={handleOnlineToggle}
-                  checked={currentProfile.isOnline}
+                  checked={profileData.isOnline}
                 />
               </div>
             </div>
-            <p className="text-lg font-bold opacity-75">{currentProfile.name}</p>
-            <p className="text-base font-normal">{currentProfile.email}</p>  
-            <p className="text-base font-normal mb-4">{currentProfile.status}</p>
-            <button className="bg-base-300 btn rounded-btn w-full" onClick={() => setIsEditing(true)}>프로필 수정</button>
+            <p className="text-lg font-bold opacity-75">{profileData.name}</p>
+            <p className="text-base font-normal">{profileData.email}</p>  
+            <p className="text-base font-normal mb-4">{profileData.status}</p>
+            <button 
+              className="bg-base-300 btn rounded-btn w-full" 
+              onClick={() => {
+                setEditingProfile(currentProfile);
+                setIsEditing(true);
+              }}
+            >
+              프로필 수정
+            </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <input 
               type="text" 
               name="nickname"
-              value={formData.nickname}
+              value={profileData.nickname}
               placeholder="닉네임" 
               className="input w-full mb-4"
               onChange={handleChange}
@@ -152,8 +197,8 @@ export default function ProfileUpdateModal() {
             <input 
               type="text" 
               name="name"
-              value={formData.name}
-              placeholder="실명" 
+              value={profileData.name}
+              placeholder="성명"
               className="input w-full mb-4" 
               onChange={handleChange}
               required
@@ -161,20 +206,41 @@ export default function ProfileUpdateModal() {
             <input
               type="text"
               name="position"
-              value={formData.position}
-              placeholder="직책"
+              value={profileData.position}
+              placeholder="직책/직무"
               className="input w-full mb-4"
               onChange={handleChange}
             />
             <div className="flex justify-between">
-              <button type="button" className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] mr-2" onClick={handleCancel}>취소하기</button>
-              <button type="submit" className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] ml-2">저장하기</button>
+              <button 
+                type="button" 
+                className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] mr-2" 
+                onClick={handleCancel}
+              >
+                취소하기
+              </button>
+              <button 
+                type="submit" 
+                className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] ml-2"
+                disabled={updateProfileMutation.isPending}
+              >
+                {updateProfileMutation.isPending ? (
+                  <>
+                    <span className="loading loading-spinner"/>
+                    저장 중...
+                  </> 
+                ) : '저장하기'}
+              </button>
             </div>
           </form>
         )}
-        <p className="font-bold text-xs opacity-50 text-center mt-4">마지막 프로필 수정일 - {formatUpdatedDate}</p>
+        <p className="font-bold text-xs opacity-50 text-center mt-4">
+          마지막 프로필 수정일 - {formatUpdatedDate}
+        </p>
       </div>
-      <p className="font-bold text-xs opacity-50 text-right mt-4">워크스페이스 참가일 - {formatCreatedDate}</p>
+      <p className="font-bold text-xs opacity-50 text-right mt-4">
+        워크스페이스 참가일 - {formatCreatedDate}
+      </p>
     </div>
   );
 }

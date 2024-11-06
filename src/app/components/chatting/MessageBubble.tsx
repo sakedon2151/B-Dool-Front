@@ -94,17 +94,16 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
               <a 
                 href={selectedMessage.fileUrl} 
                 target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn btn-circle btn-sm bg-base-100 bg-opacity-70 hover:bg-opacity-100"
                 title="새 탭에서 보기"
+                className="btn btn-circle btn-sm bg-base-300 bg-opacity-75 hover:bg-opacity-100"
               >
                 <FontAwesomeIcon icon={faExternalLink} />
               </a>
               <a 
                 href={selectedMessage.fileUrl} 
                 download 
-                className="btn btn-circle btn-sm bg-base-100 bg-opacity-70 hover:bg-opacity-100"
                 title="다운로드"
+                className="btn btn-circle btn-sm bg-base-300 bg-opacity-75 hover:bg-opacity-100"
                 onClick={(e) => e.stopPropagation()}
               >
                 <FontAwesomeIcon icon={faDownload} />

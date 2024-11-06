@@ -31,12 +31,10 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
       if (!currentMember || !workspaceData) {
         throw new Error("필요한 데이터가 없습니다.");
       }
-      // 워크스페이스 생성
       const createdWorkspace = await createWorkspaceMutation.mutateAsync({
         ...workspaceData,
         ownerId: currentMember.id
       })
-      // 프로필 생성
       const createdProfile = await createProfileMutation.mutateAsync({
         memberId: currentMember.id,
         data: {
@@ -44,7 +42,6 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
           workspaceId: createdWorkspace.id
         }
       })
-      // default 채널 생성
       await createChannelMutation.mutateAsync({
         workspacesId: createdWorkspace.id,
         name: "전체 채널",
@@ -52,7 +49,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         description: "전체 채널입니다.",
         profileId: createdProfile.id,
         channelType: "DEFAULT",
-        nickname: createdProfile.nickname // for backend auto create data
+        nickname: createdProfile.nickname
       })
       onComplete();
     } catch (error) {

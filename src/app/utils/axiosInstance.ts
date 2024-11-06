@@ -1,34 +1,56 @@
 import axios, { AxiosInstance } from 'axios';
-import { getToken, isTokenExpiringSoon, removeToken, setToken } from './cookieController';
+import { getToken, setToken } from './cookieController';
 import { authService } from '../services/auth/auth.service';
 
-// 상수 정의
 const AUTH_ERROR_CODES = [401, 403];
-// const REFRESH_THRESHOLD = 5 * 60 * 1000; // 5분
-const PUBLIC_ENDPOINTS = [
-  '/mail/send-verification-code',
-  '/mail/verify-code',
-  '/auth/token',
-  '/auth/refresh'
-];
+
+const PUBLIC_ENDPOINTS = {
+  AUTH: [
+    '/auth',
+    '/auth/token',
+    '/auth/refresh'
+  ],
+  MAIL: [
+    '/mail/send-verification-code',
+    '/mail/verify-code',
+    '/mail/verify-invitation',
+    '/mail/send-invitation'
+  ],
+};
 
 interface QueueItem {
   resolve: (value?: any) => void;
   reject: (reason?: any) => void;
 }
 
-const isPublicEndpoint = (url: string): boolean => 
-  PUBLIC_ENDPOINTS.some(endpoint => url.endsWith(endpoint));
+const isPublicEndpoint = (url: string): boolean => {
+  return Object.values(PUBLIC_ENDPOINTS)
+    .flat()
+    .some(pattern => {
+      if (pattern.includes('*')) {
+        const regexPattern = pattern
+          .replace(/\*/g, '.*')
+          .replace(/\//g, '\\/');
+        const regex = new RegExp(`^${regexPattern}`);
+        return regex.test(url);
+      }
+      return url.endsWith(pattern);
+    });
+};
+
 const redirectToAuth = () => {
   if (typeof window !== 'undefined') {
     window.location.href = '/auth';
   }
 };
 
-// debug logging
 const debugLog = (message: string, data?: any) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`[Auth Debug] ${message}`, data);
+    if (data) {
+      console.log('URL:', data?.config?.url);
+      console.log('Is public:', isPublicEndpoint(data?.config?.url || ''));
+    }
   }
 };
 
@@ -46,7 +68,40 @@ const processQueue = (error: any = null) => {
   failedQueue = [];
 };
 
+const refreshToken = async (): Promise<string | null> => {
+  try {
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      });
+    }
+
+    const token = getToken();
+    if (!token) return null;
+
+    isRefreshing = true;
+    debugLog('Refreshing token');
+
+    try {
+      const newToken = await authService.refreshToken();
+      setToken(newToken);
+      processQueue();
+      return newToken;
+    } catch (error) {
+      processQueue(error);
+      throw error;
+    } finally {
+      isRefreshing = false;
+    }
+
+  } catch (error) {
+    debugLog('Token refresh failed:', error);
+    return null;
+  }
+};
+
 const createAxiosInstance = (baseURL: string): AxiosInstance => {
+  // axios 인스턴스
   const instance = axios.create({
     baseURL,
     timeout: 10000,
@@ -59,55 +114,20 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
   // request 인터셉터
   instance.interceptors.request.use(
     async (config) => {
+      // 토큰 불필요 공개 엔드포인트
       if (isPublicEndpoint(config.url || '')) {
         return config;
       }
-      try {
-        let token = getToken();
-        if (!token) {
-          debugLog('No token found, attempting refresh');
-          try {
-            const newToken = await authService.refreshToken();
-            setToken(newToken);
-            token = newToken;
-          } catch (error) {
-            debugLog('Token refresh failed during request', error);
-            redirectToAuth();
-            throw new Error('인증이 필요합니다.');
-          }
-        }
-        if (isTokenExpiringSoon(token)) {
-          if (!isRefreshing) {
-            isRefreshing = true;
-            debugLog('Token expiring soon, refreshing');
-            try {
-              const newToken = await authService.refreshToken();
-              setToken(newToken);
-              token = newToken;
-              isRefreshing = false;
-              processQueue();
-            } catch (error) {
-              debugLog('Token refresh failed', error);
-              isRefreshing = false;
-              processQueue(error);
-              removeToken();
-              redirectToAuth();
-              throw error;
-            }
-          } else {
-            debugLog('Waiting for token refresh');
-            await new Promise((resolve, reject) => {
-              failedQueue.push({ resolve, reject });
-            });
-            token = getToken();
-          }
-        }
-        config.headers['Authorization'] = `Bearer ${token}`;
-        return config;
-      } catch (error) {
-        debugLog('Request interceptor error', error);
-        throw error;
+
+      const token = getToken();
+      if (!token) {
+        // 토큰이 없는 경우에만 리다이렉트
+        redirectToAuth();
+        throw new Error('인증이 필요합니다.');
       }
+      // 토큰이 있으면 헤더에 추가
+      config.headers['Authorization'] = `Bearer ${token}`;
+      return config;
     },
     (error) => {
       debugLog('Request error', error);
@@ -119,49 +139,29 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (!error.config) {
-        debugLog('No config in error object', error);
+      if (!error.config || isPublicEndpoint(error.config.url)) {
         return Promise.reject(error);
       }
-      const originalRequest = error.config;
-      if (isPublicEndpoint(originalRequest.url)) {
-        return Promise.reject(error);
-      }
-      // 인증 에러 처리
-      if (AUTH_ERROR_CODES.includes(error.response?.status) && !originalRequest._retry) {
-        if (!isRefreshing) {
-          isRefreshing = true;
-          originalRequest._retry = true;
-          debugLog('Auth error, attempting token refresh');
-          try {
-            const newToken = await authService.refreshToken();
-            setToken(newToken);
-            isRefreshing = false;
-            processQueue();
-            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-            return instance(originalRequest);
-          } catch (refreshError) {
-            debugLog('Token refresh failed in response interceptor', refreshError);
-            isRefreshing = false;
-            processQueue(refreshError);
-            removeToken();
-            redirectToAuth();
-            return Promise.reject(refreshError);
+      
+      if (AUTH_ERROR_CODES.includes(error.response?.status) && !error.config._retry) {
+        error.config._retry = true;
+        
+        try {
+          const newToken = await refreshToken();
+          if (newToken) {
+            error.config.headers['Authorization'] = `Bearer ${newToken}`;
+            return instance(error.config);
           }
-        } else {
-          debugLog('Waiting for token refresh in response interceptor');
-          return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          }).then(() => {
-            const newToken = getToken();
-            if (newToken) {
-              originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-              return instance(originalRequest);
-            }
-            return Promise.reject(new Error('토큰 갱신 실패'));
-          });
+        } catch (refreshError) {
+          debugLog('Response refresh failed:', refreshError);
+        }
+
+        // 현재 경로가 /auth가 아닐 때만 리다이렉트
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/auth')) {
+          redirectToAuth();
         }
       }
+
       return Promise.reject(error);
     }
   );

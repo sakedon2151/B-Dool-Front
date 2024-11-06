@@ -2,103 +2,95 @@ import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { WorkspaceModel } from "../models/workspace.model";
 import { jwtDecode } from 'jwt-decode';
 
-interface JWTPayload {
-  exp: number;
-}
+const TOKEN_NAME = 'accessToken';
+const TOKEN_MAX_AGE = 24 * 60 * 60; // 24시간으로 설정
 
 interface WorkspaceMetadata {
   title: string;
   description: string;
 }
 
-// 30분 유효기간의 쿠키로 토큰 저장
+// 토큰 생성하기
 export const setToken = (token: string) => {
   if (!token) {
     throw new Error('유효한 토큰이 없습니다.');
   }
-  setCookie(null, "accessToken", token, {
-    maxAge: 15 * 60, // 15분
-    // sameSite: 'strict',
-    sameSite: 'lax',
-    path: "/",
-    secure: process.env.NODE_ENV === 'production',
-    // httpOnly: true,
-  });
-};
-
-// 토큰 존재 및 유효성 검증 후 반환
-export const getToken = (ctx = null) => {
-  const cookies = parseCookies(ctx);
-  const token = cookies.accessToken;
-  // 토큰 존재 여부와 유효성 체크
-  if (token) {
-    try {
-      const decoded = jwtDecode<JWTPayload>(token);
-      if (decoded.exp * 1000 > Date.now()) {
-        return token;
-      }
-    } catch (error) {
-      console.error('Token decode error:', error);
-    }
-  }
-  return null;
-};
-
-// 토큰 제거
-export const removeToken = (ctx = null) => {
-  destroyCookie(ctx, "accessToken", {
-    path: '/',
-  });
-};
-
-// 만료 5분 전 체크
-export const isTokenExpiringSoon = (token: string): boolean => {
+  
   try {
-    const decoded = jwtDecode<JWTPayload>(token);
-    const expiresIn = decoded.exp * 1000 - Date.now();
-    return expiresIn < 5 * 60 * 1000; // 5분 미만 남은 경우
-  } catch {
-    return false;
-  }
-};
-
-// 완전 만료 여부 체크
-export const isTokenExpired = (token: string): boolean => {
-  try {
-    const decoded = jwtDecode<JWTPayload>(token);
-    const expiresIn = decoded.exp * 1000 - Date.now();
-    return expiresIn < 2 * 60 * 1000; // 2분 전에 체크하도록 수정
-  } catch {
-    return true;
-  }
-};
-
-// METADATA 관련 함수들
-export const setWorkspaceMetadata = (workspace: WorkspaceModel) => {
-  const metadata: WorkspaceMetadata = {
-    title: workspace.name,
-    description: workspace.description || '가볍게 사용하는 협업 메신저'
-  };
-  setCookie(null, "workspaceMetadata", JSON.stringify(metadata), {
-    path: "/",
-    sameSite: 'strict',
-  });
-};
-
-export const getWorkspaceMetadata = (ctx = null): WorkspaceMetadata | null => {
-  const cookies = parseCookies(ctx);
-  try {
-    return cookies.workspaceMetadata ? 
-      JSON.parse(cookies.workspaceMetadata) : 
-      null;
+    setCookie(null, TOKEN_NAME, token, {
+      maxAge: TOKEN_MAX_AGE,
+      path: "/",
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
   } catch (error) {
-    console.error('워크스페이스 메타데이터 파싱 오류:', error);
+    console.error('Token setting error:', error);
+    throw error;
+  }
+};
+
+// 토큰 가져오기
+export const getToken = (ctx = null): string | null => {
+  try {
+    const cookies = parseCookies(ctx);
+    return cookies[TOKEN_NAME] || null;
+  } catch (error) {
+    console.error('Token retrieval error:', error);
     return null;
   }
 };
 
+// 토큰 제거하기
+export const removeToken = (ctx = null) => {
+  try {
+    destroyCookie(ctx, TOKEN_NAME, {
+      path: '/',
+    });
+  } catch (error) {
+    console.error('Token removal error:', error);
+  }
+};
+
+// 워크스페이스 메타데이터 설정
+export const setWorkspaceMetadata = (workspace: WorkspaceModel) => {
+  try {
+    const metadata: WorkspaceMetadata = {
+      title: workspace.name,
+      description: workspace.description || '가볍게 사용하는 협업 메신저'
+    };
+    setCookie(null, 'workspaceMetadata', JSON.stringify(metadata), {
+      path: '/',
+      sameSite: 'lax',
+    });
+  } catch (error) {
+    console.error('Workspace metadata setting error:', error);
+  }
+};
+
+// 워크스페이스 메타데이터 가져오기
+export const getWorkspaceMetadata = (ctx = null): WorkspaceMetadata | null => {
+  try {
+    const cookies = parseCookies(ctx);
+    const metadataStr = cookies.workspaceMetadata;
+    if (!metadataStr) return null;
+    
+    const metadata = JSON.parse(metadataStr);
+    if (!metadata.title) return null;
+    
+    return metadata;
+  } catch (error) {
+    console.error('Workspace metadata retrieval error:', error);
+    return null;
+  }
+};
+
+// 워크스페이스 메타데이터 제거
 export const removeWorkspaceMetadata = (ctx = null) => {
-  destroyCookie(ctx, "workspaceMetadata", {
-    path: '/',
-  });
+  try {
+    destroyCookie(ctx, 'workspaceMetadata', {
+      path: '/',
+    });
+  } catch (error) {
+    console.error('Workspace metadata removal error:', error);
+  }
 };

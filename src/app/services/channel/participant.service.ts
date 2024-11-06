@@ -1,4 +1,4 @@
-import { ParticipantModel } from "@/app/models/participant.model";
+import { ParticipantInsertModel, ParticipantModel } from "@/app/models/participant.model";
 import { serverBAxios } from "../../utils/axiosInstance";
 
 const BASE_URL = '/participant';
@@ -16,7 +16,7 @@ export const participantService = {
     serverBAxios.get<ParticipantModel>(`${BASE_URL}/${participantId}`)
       .then(response => response.data),
 
-  createParticipant: (data: ParticipantModel) => 
+  createParticipant: (data: ParticipantInsertModel) => 
     serverBAxios.post<ParticipantModel>(BASE_URL, data)
       .then(response => response.data),
 

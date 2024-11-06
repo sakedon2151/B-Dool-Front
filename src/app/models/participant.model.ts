@@ -5,12 +5,14 @@ export interface ParticipantModel {
   joinedAt: string;
   isOnline: boolean;
   profileId: number;
+  profileURL: string;
 }
 
 export interface ParticipantInsertModel {
   channelId: string;
   nickname: string;
-  joinedAt: string;
+  profileURL: string;
+  profileId: number;
 }
 
 export interface ParticipantUpdateModel {
@@ -26,5 +28,6 @@ export const InitialParticipant: ParticipantModel = {
   nickname: "",
   joinedAt: "",
   isOnline: false,
-  profileId: 0
+  profileId: 0,
+  profileURL: ""
 }

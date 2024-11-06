@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import EmailLoginForm from "@/app/components/auth/MailLoginForm";
 import CommonFooter from "@/app/components/common/CommonFooter";
 import CommonHeader from "@/app/components/common/CommonHeader";
-import { getToken, removeToken } from "@/app/utils/cookieController";
+import { getToken } from "@/app/utils/cookieController";
 import { memberService } from "@/app/services/member/member.service";
 import { useMemberStore } from "@/app/stores/member.store";
 import LoadingScreen from "@/app/components/common/LoadingScreen";
@@ -19,19 +19,20 @@ export default function Auth() {
   }, []);
 
   const checkHasToken = async () => {
-    const token = getToken();
-    if (token) {
+    try {
+      const token = getToken();
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
       try {
         const currentMember = await memberService.getCurrentMember();
-        setCurrentMember(currentMember)
+        setCurrentMember(currentMember);
         router.push("/workspace");
       } catch (error) {
-        console.error("유효성 검증 실패:", error);
-        removeToken(); // 토큰이 유효하지 않은 경우 일단 제거
-      } finally {
-        setIsLoading(false);
+        console.error("Auth check failed:", error);
       }
-    } else {
+    } finally {
       setIsLoading(false);
     }
   };

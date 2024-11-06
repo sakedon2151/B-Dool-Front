@@ -42,8 +42,8 @@ export default function MailLoginForm() {
     try {
       const isVerified = await mailService.verifyCode(email, parseInt(verificationCode, 10));
       if (isVerified) {
-        const getToken = await authService.generateToken(email);
-        setToken(getToken); // 쿠키에 토큰 담기
+        const getToken = await authService.generateToken(email); // body 로 jwt string 값 받음
+        setToken(getToken); // 쿠키에 jwt 토큰 담기
         const member = await memberService.getCurrentMember();
         setCurrentMember(member);
         router.push("/workspace");

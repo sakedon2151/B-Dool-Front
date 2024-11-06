@@ -23,9 +23,6 @@ export default function CommonHeader({ showAuthButton }: CommonHeaderProps) {
       </div>
 
       <div className="navbar-end">
-        <button className="btn" onClick={() => router.push("/test")}>
-          테스트
-        </button>
         {authButton && (
           <button className="btn" onClick={() => router.push("/auth")}>
             시작하기

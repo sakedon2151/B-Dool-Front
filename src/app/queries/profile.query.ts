@@ -56,7 +56,12 @@ export const useUpdateProfile = () => {
     mutationFn: ({ profileId, data }: { profileId: number; data: ProfileUpdateModel }) => 
       profileService.updateProfile(profileId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: PROFILE_KEYS.byId(data.id) });
+      queryClient.invalidateQueries({ 
+        queryKey: PROFILE_KEYS.byId(data.id) 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: PROFILE_KEYS.byMemberAndWorkspace(data.memberId, data.workspaceId) 
+      });
     },
   });
 };
