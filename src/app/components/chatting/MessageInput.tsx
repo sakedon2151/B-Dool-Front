@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, useEffect } from "react";
-import { useWebsocket } from "@/app/hooks/useWebsocket";
+import { useWebsocket } from "@/app/hooks/useWebSocket";
 import { fileService } from "@/app/services/file/file.service";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useProfileStore } from "@/app/stores/profile.store";

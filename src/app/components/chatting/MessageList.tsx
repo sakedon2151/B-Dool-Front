@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ChannelMessage from "./MessageBubble";
-import { useWebsocket } from "@/app/hooks/useWebsocket";
+import { useWebsocket } from "@/app/hooks/useWebSocket";
 import { toDayDividerTime } from "@/app/utils/formatDateTime";
 import { debounce } from "lodash";
 import { useChannelStore } from "@/app/stores/channel.store";
