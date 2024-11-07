@@ -6,10 +6,12 @@ import { toCreatedAt, toUpdatedAt } from "@/app/utils/formatDateTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { fileService } from "@/app/services/file/file.service";
+import toast from "react-hot-toast";
 
 export default function ProfileUpdateModal() {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   const setCurrentProfile = useProfileStore(state => state.setCurrentProfile)  // Zustand Store
+  
   const updateProfileMutation = useUpdateProfile(); // API Query
   const updateProfileOnlineStatusMutation = useUpdateProfileOnlineStatus(); // API Query
   
@@ -18,7 +20,7 @@ export default function ProfileUpdateModal() {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const fileInput = useRef<HTMLInputElement>(null)
-  
+
   const profileData = editingProfile ?? currentProfile;
 
   const formatCreatedDate = toCreatedAt(currentProfile.createdAt)
@@ -72,8 +74,10 @@ export default function ProfileUpdateModal() {
       };
       setCurrentProfile(updatedProfile);
       setEditingProfile(updatedProfile);
+      toast.success(newOnlineStatus ? "온라인" : "오프라인");
     } catch (error) {
       console.error("온라인 상태 변경 실패:", error);
+      toast.error('온라인 상태 변경에 실패했습니다.');
       e.target.checked = profileData.isOnline;
     }
   }, [profileData, currentProfile.id, updateProfileOnlineStatusMutation, setCurrentProfile]);

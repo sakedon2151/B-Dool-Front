@@ -7,6 +7,7 @@ import { useMemberStore } from "@/app/stores/member.store";
 import { useEffect, useState } from "react";
 import WorkspaceCreateForm from "./WorkspaceCreateForm";
 import ProfileCreateForm from "../member/ProfileCreateForm";
+import toast from "react-hot-toast";
 
 interface WorkspaceCreateModalProps {
   onComplete: () => void;
@@ -39,7 +40,8 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         memberId: currentMember.id,
         data: {
           ...data,
-          workspaceId: createdWorkspace.id
+          workspaceId: createdWorkspace.id,
+          isWorkspaceCreater: true
         }
       })
       await createChannelMutation.mutateAsync({
@@ -51,9 +53,11 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         channelType: "DEFAULT",
         nickname: createdProfile.nickname
       })
+      toast.success('워크스페이스가 생성되었습니다.');
       onComplete();
     } catch (error) {
       console.error("워크스페이스 생성 실패: ", error)
+      toast.error('워크스페이스 생성에 실패했습니다.');
     }
   }
 

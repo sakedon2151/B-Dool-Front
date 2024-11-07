@@ -73,6 +73,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
       profileImgUrl: formData.profileImage,
       position: formData.profilePosition,
       workspaceId: 0,
+      isWorkspaceCreater: false
     };
     onSubmit(profileData);
   };

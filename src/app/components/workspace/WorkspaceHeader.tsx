@@ -151,20 +151,22 @@ export default function WorkspaceHeader() {
       </div>
 
       {/* invite modal dialog */}
-      <dialog id="invite-modal" className="modal">
+      <dialog id="invite-modal" className="modal modal-top md:modal-middle">
         <div className="modal-box p-4">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-50">✕</button>
           </form>
+        
           <MailInviteModal/>
         </div>
+        
         <form method="dialog" className="modal-backdrop">
           <button>닫기</button>
         </form>
       </dialog>
 
       {/* calendar modal dialog */}
-      <dialog id="calendar-modal" className="modal">
+      <dialog id="calendar-modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -181,11 +183,13 @@ export default function WorkspaceHeader() {
         <div className="modal-box p-4">
           
           <SearchModal workspaceId={currentWorkspace.id}/>
+          
           <div className="modal-action mt-4">
             <form method="dialog" className="w-full">
               <button className="btn btn-block">닫기</button>
             </form>
           </div>
+        
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>닫기</button>

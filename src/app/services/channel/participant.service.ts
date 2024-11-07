@@ -1,4 +1,4 @@
-import { ParticipantInsertModel, ParticipantModel } from "@/app/models/participant.model";
+import { ParticipantInsertModel, ParticipantModel, ParticipantUpdateModel } from "@/app/models/participant.model";
 import { serverBAxios } from "../../utils/axiosInstance";
 
 const BASE_URL = '/participant';
@@ -20,8 +20,8 @@ export const participantService = {
     serverBAxios.post<ParticipantModel>(BASE_URL, data)
       .then(response => response.data),
 
-  updateParticipant: (participantId: string, data: ParticipantModel) => 
-    serverBAxios.put<ParticipantModel>(`${BASE_URL}/${participantId}`, data)
+  updateParticipant: (participantId: string, data: ParticipantUpdateModel) => 
+    serverBAxios.patch<ParticipantModel>(`${BASE_URL}/${participantId}`, data)
       .then(response => response.data),
 
   deleteParticipant: (participantId: string) => 

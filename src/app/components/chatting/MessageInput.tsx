@@ -12,7 +12,7 @@ interface MessageInputProps {
 
 interface SelectedFile {
   file: File;
-  previewUrl?: string;  // 이미지인 경우 미리보기 URL
+  previewUrl?: string;
   uploadError?: string;
 }
 
@@ -59,17 +59,14 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
     fileInput.current?.click();
   };
 
-  // 파일 선택 처리
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    // 파일 크기 체크 (예: 100MB)
     const maxSize = 100 * 1024 * 1024;
     if (file.size > maxSize) {
       alert("파일 크기는 100MB를 초과할 수 없습니다.");
       return;
     }
-    // 이미지 파일인 경우 미리보기 URL 생성
     let previewUrl: string | undefined;
     if (file.type.startsWith('image/')) {
       previewUrl = URL.createObjectURL(file);
@@ -95,34 +92,25 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
     if (selectedFile) {
       try {
         setIsUploading(true);
-        
-        // 1. 파일 업로드 완료까지 대기
         const uploadedFile = await fileService.uploadFile({
           file: selectedFile.file,
           entityType: 'MESSAGE'
         }, (progress) => {
           setUploadProgress(progress);
         });
-        
-        // 2. 파일 업로드 완료 후 메시지 데이터 준비
         const trimmedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();
         const messageData = {
           channelId: currentChannel.channelId,
           content: trimmedMessage || `[파일] ${selectedFile.file.name}`,
           profileId: currentProfile.id,
-          fileUrl: uploadedFile.path // 업로드 완료된 파일의 URL
+          fileUrl: uploadedFile.path
         };
-
-        // 4. 소켓으로 메시지 전송
         sendMessage(messageData)
-
-        // 5. 메시지 전송 후 초기화
         setMessage('');
         handleRemoveFile();
         if (textarea.current) {
           textarea.current.style.height = '3rem'
         }
-
       } catch (error) {
         console.error("메시지 전송 실패:", error);
         setSelectedFile(prev => 
@@ -132,9 +120,7 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
         setIsUploading(false);
         setUploadProgress(0);
       }
-      
     } else {
-      // 메시지에 파일이 없을 경우 바로 전송
       const trimmedMessage = message.split('\n').map(line => line.trim()).join('\n').trim();
       sendMessage({
         channelId: currentChannel.channelId,
@@ -147,7 +133,6 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
         textarea.current.style.height = '3rem';
       }
     }
-
   }, [message, selectedFile, currentChannel.channelId, sendMessage, isUploading]);
 
   return (
@@ -172,24 +157,16 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
                 {(selectedFile.file.size / 1024 / 1024).toFixed(2)} MB
               </p>
               {isUploading && (
-                  <div className="w-full bg-base-300 rounded-full h-1.5">
-                    <div 
-                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-                )}
-
-                  <div className="w-full bg-base-300 rounded-full h-1.5">
-                    <div 
-                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-
-                {selectedFile.uploadError && (
-                  <p className="text-xs text-error">{selectedFile.uploadError}</p>
-                )}
+                <div className="w-full bg-base-300 rounded-full h-1.5">
+                  <div 
+                    className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              )}
+              {selectedFile.uploadError && (
+                <p className="text-xs text-error">{selectedFile.uploadError}</p>
+              )}
             </div>
           </div>
           <button 

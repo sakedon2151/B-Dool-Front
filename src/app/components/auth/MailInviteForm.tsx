@@ -66,7 +66,8 @@ export default function MailInviteForm({ invitationCode }:MailInviteFormProps) {
         memberId: memberData.id,
         data: {
           ...data,
-          workspaceId: workspaceData.id
+          workspaceId: workspaceData.id,
+          isWorkspaceCreater: false
         }
       })
       const channelData = await channelService.getDefaultChannelByWorkspaceId(workspaceData.id)

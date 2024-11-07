@@ -20,12 +20,14 @@ export interface ProfileInsertModel {
   profileImgUrl: string; // 프로필 이미지 URL
   workspaceId: number; // 워크스페이스 ID
   position: string // 직책
+  isWorkspaceCreater: boolean; // 워크스페이스 소유 여부
 }
 
 export interface ProfileUpdateModel {
   nickname: string; // 닉네임
-  position: string; // 직책
-  profileImgUrl: string; // 프로필 이미지 URL (파일 서버 생성시 분리)
+  name?: string // 이름
+  position?: string; // 직책
+  profileImgUrl?: string; // 프로필 이미지 URL (파일 서버 생성시 분리)
 }
 
 export const InitialProfile: ProfileModel = {

@@ -36,7 +36,7 @@ export const profileService = {
 
   // profile 수정 요청
   updateProfile: (profileId: number, data: ProfileUpdateModel) => 
-    serverAAxios.put<ProfileModel>(`${BASE_URL}/${profileId}`, data)
+    serverAAxios.patch<ProfileModel>(`${BASE_URL}/${profileId}`, data)
   .then(response => response.data),
   
   // profile 삭제 요청

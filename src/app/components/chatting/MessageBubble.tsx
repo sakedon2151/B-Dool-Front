@@ -5,15 +5,18 @@ import { useProfileStore } from "@/app/stores/profile.store";
 import { toMessageTime } from "@/app/utils/formatDateTime";
 import { usePapagoMessage } from "@/app/queries/naver.query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faExternalLink, faFile, faFileAudio, faFileImage, faFileVideo, faLanguage } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faExternalLink, faFile, faFileAudio, faFileImage, faFileVideo, faLanguage, faTrash } from "@fortawesome/free-solid-svg-icons";
+import toast from "react-hot-toast";
 
 interface MessageBubbleProps {
-  selectedMessage: MessageModel
+  selectedMessage: MessageModel,
+  onMessageDeleted: () => void;
 }
 
-export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
+export default function MessageBubble({selectedMessage, onMessageDeleted}: MessageBubbleProps) {
   const [translatedContent, setTranslatedContent] = useState<string | null>(null);
   const [showOriginal, setShowOriginal] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   const { data: profile, isLoading: isLoadingProfile, error: profileError } = useProfileById(selectedMessage.profileId) // API Query
@@ -43,6 +46,16 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
 
   const toggleOriginal = () => {
     setShowOriginal(!showOriginal);
+  };
+
+  const handleDelete = async() => {
+    if (selectedMessage.messageId && window.confirm('정말로 이 메시지를 삭제하시겠습니까?')) {
+      try {
+        onMessageDeleted();
+      } catch (error) {
+        toast.error('메시지 삭제에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
   };
 
   const renderMessageContent = (content: string) => {
@@ -114,13 +127,13 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
           <a 
             href={selectedMessage.fileUrl} 
             download 
-            className="flex items-center gap-2 bg-base-200 p-2 rounded-lg hover:bg-base-300 transition-colors"
+            className="text-base-content flex items-center gap-2 bg-base-200 p-2 hover:bg-base-300 transition-colors max-w-80 rounded-lg"
           >
-            <FontAwesomeIcon icon={getFileIcon(selectedMessage.fileUrl)} className="text-lg" />
-            <span className="text-sm truncate max-w-[200px]">
+            <FontAwesomeIcon icon={getFileIcon(selectedMessage.fileUrl)} />
+            <span className="text-sm truncate">
               {selectedMessage.fileUrl.split('/').pop()}
             </span>
-            <FontAwesomeIcon icon={faDownload} className="ml-auto" />
+            <FontAwesomeIcon icon={faDownload}/>
           </a>
         )}
       </div>
@@ -130,11 +143,11 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
   return (
     <div className={`chat ${isCurrentProfileMessage ? "chat-end" : "chat-start"} my-1`}>
       {isLoadingProfile ? (
-        <div className="skeleton w-28 h-10"></div>
+        <div className="skeleton w-28 h-10"/>
       ) : profileError ? (
-        <div>알 수 없는 오류가 발생했습니다.</div>
+        <div className="w-28 h-10">알 수 없는 오류가 발생했습니다.</div>
       ) : !profile ? (
-        <div>데이터를 불러오지 못했습니다.</div>
+        <div className="w-28 h-10">데이터를 불러오지 못했습니다.</div>
       ) : (
         <>
           <div className="chat-image avatar">
@@ -155,7 +168,21 @@ export default function MessageBubble({selectedMessage}: MessageBubbleProps) {
               </time>
             </div>
             
-            <div className="chat-bubble">
+            <div 
+              className="chat-bubble group"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              {isCurrentProfileMessage && isHovered && (
+                <button
+                  onClick={handleDelete}
+                  className="absolute -top-2 -left-2 btn btn-circle btn-xs btn-error opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="메시지 삭제"
+                >
+                  <FontAwesomeIcon icon={faTrash}/>
+                </button>
+              )}
+              
               {renderMessageContent(showOriginal ? selectedMessage.content : translatedContent || selectedMessage.content)}
               {renderFileContent()}
             </div>

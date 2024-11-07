@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ParticipantModel } from "@/app/models/participant.model";
+import { ParticipantModel, ParticipantUpdateModel } from "@/app/models/participant.model";
 import { participantService } from '../services/channel/participant.service';
 
 // Query keys
@@ -43,7 +43,7 @@ export const useCreateParticipant = () => {
 export const useUpdateParticipant = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ participantId, data }: { participantId: string; data: ParticipantModel }) => 
+    mutationFn: ({ participantId, data }: { participantId: string; data: ParticipantUpdateModel }) => 
       participantService.updateParticipant(participantId, data),
     onSuccess: (updatedParticipant, { participantId }) => {
       queryClient.invalidateQueries({ queryKey: PARTICIPANT_KEYS.byId(participantId) });

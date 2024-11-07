@@ -7,15 +7,18 @@ import SockJS from "sockjs-client";
 interface WebSocketHook {
   messages: MessageModel[];
   sendMessage: (data: MessageInsertModel) => void;
+  deleteMessage: (messageId: string) => Promise<void>;
   loadMoreMessages: () => Promise<void>;
   hasMore: boolean;
+  isConnected: boolean;
 }
 
 export const useWebsocket = (channelId: string, workspaceId: number): WebSocketHook => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<MessageModel[]>([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isConnected, setIsConnected] = useState(false);
 
   const resetState = useCallback(() => {
     setMessages([]);
@@ -53,17 +56,36 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
     const socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_B_WEBSOCKET_URL as string);
     const client = new Client({
       webSocketFactory: () => socket,
+      
       onConnect: () => {
         if (!isCurrentConnection) return;
         console.log("websocket 에 연결되었습니다.");
+        setIsConnected(true);
+
+        // 메시지 수신 구독
         client.subscribe(`/topic/channel/${channelId}`, (message: Message) => {
           const newMessage: MessageModel = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
+
+        // 메시지 삭제 이벤트 구독
+        client.subscribe(`/topic/channel/${channelId}/delete`, (message: Message) => {
+          const { messageId } = JSON.parse(message.body);
+          setMessages((prevMessages) => 
+            prevMessages.filter((msg) => msg.messageId !== messageId)
+          );
+        });
+
         loadInitialMessages(channelId);
       },
+
+      onDisconnect: () => {
+        setIsConnected(false);
+      },
+      
       onStompError: (frame) => {
         console.error('stomp websocket 연결 오류:', frame.headers['message']);
+        setIsConnected(false);
       },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -94,6 +116,28 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
     }
   }, [channelId, stompClient]);
 
+  // 메시지 삭제 함수
+  const deleteMessage = useCallback(async (messageId: string): Promise<void> => {
+    if (!channelId || !stompClient || !messageId) {
+      throw new Error("필요한 정보가 없거나 WebSocket이 연결되지 않았습니다.");
+    }
+    if (!isConnected) {
+      throw new Error("서버와 연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.");
+    }
+    try {
+      const messageToDelete = messages.find(msg => msg.messageId === messageId);
+      setMessages(prev => prev.filter(msg => msg.messageId !== messageId));
+      await messageService.deleteMessage(messageId);
+      stompClient.publish({
+        destination: `/pub/channel/${channelId}/delete`,
+        body: JSON.stringify({ messageId })
+      });
+    } catch (error) {
+      loadInitialMessages(channelId);
+      throw new Error("메시지 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
+  }, [channelId, stompClient, isConnected, messages, loadInitialMessages]);
+
   // 메시지 추가 요청 함수
   const loadMoreMessages = useCallback(async (): Promise<void> => {
     if (!channelId || !hasMore) return;
@@ -113,8 +157,9 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
       }
     } catch (error) {
       console.error("메시지 로드 오류:", error);
+      throw error;
     }
   }, [channelId, currentPage, hasMore]);
 
-  return { messages, sendMessage, loadMoreMessages, hasMore };
+  return { messages, sendMessage, deleteMessage, loadMoreMessages, hasMore, isConnected };
 };

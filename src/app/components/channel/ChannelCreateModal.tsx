@@ -4,6 +4,7 @@ import { useProfileStore } from '@/app/stores/profile.store'
 import { useWorkspaceStore } from '@/app/stores/workspace.store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGlobe, faLock } from '@fortawesome/free-solid-svg-icons'
+import toast from 'react-hot-toast'
 
 interface ChannelCreateModalProps {
   isOpen: boolean
@@ -13,7 +14,6 @@ interface ChannelCreateModalProps {
 export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateModalProps) {
   const [channelName, setChannelName] = useState<string>('')
   const [channelInfo, setChannelInfo] = useState<string>('')
-  const [isPrivate, setIsPrivate] = useState<boolean>(false)
 
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace) // Zustand Store
@@ -22,7 +22,6 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
   const resetForm = () => {
     setChannelName('')
     setChannelInfo('')
-    setIsPrivate(false)
   }
 
   useEffect(() => {
@@ -37,16 +36,18 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       await createChannelMutation.mutateAsync({
         workspacesId: currentWorkspace.id,
         name: channelName,
-        isPrivate: isPrivate,
+        isPrivate: false,
         description: channelInfo,
         profileId: currentProfile.id,
         channelType: 'CUSTOM',
         nickname: currentProfile.nickname
       })
+      toast.success('채널이 생성되었습니다.');
       resetForm()
       onClose()
     } catch (error) {
       console.error('채널 생성 오류:', error)
+      toast.error('채널 생성에 실패했습니다.');
     }
   }
 
@@ -70,24 +71,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
           onChange={(e) => setChannelInfo(e.target.value)}
           required
         />
-        <h2 className="divider font-bold text-lg opacity-75">채널 공개 여부</h2>
-        <p className="font-thin text-sm text-center">*비공개 채널은 해당 채널의 참가자 초대로만 접속이 가능합니다.</p>
-        <div className="form-control justify-center gap-4 mb-4">
-          <label className="label cursor-pointer p-0">
-            <div>
-              <FontAwesomeIcon icon={faGlobe} className='w-4 h-4 opacity-75'/>
-              <span className="label-text ml-4">공개</span>
-            </div>
-            <input type="radio" name="radio-10" className="radio" checked={!isPrivate} onChange={() => setIsPrivate(false)} />
-          </label>
-          <label className="label cursor-pointer p-0">
-            <div>
-              <FontAwesomeIcon icon={faLock} className='w-4 h-4 opacity-75'/>
-              <span className="label-text ml-4">비공개</span>
-            </div>
-            <input type="radio" name="radio-10" className="radio" checked={isPrivate} onChange={() => setIsPrivate(true)}/>
-          </label>
-        </div>
+        
         <div className="text-center">
           <button 
             className='btn'

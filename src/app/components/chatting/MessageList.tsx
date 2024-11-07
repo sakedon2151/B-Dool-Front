@@ -4,6 +4,7 @@ import { useWebsocket } from "@/app/hooks/useWebsocket";
 import { toDayDividerTime } from "@/app/utils/formatDateTime";
 import { debounce } from "lodash";
 import { useChannelStore } from "@/app/stores/channel.store";
+import toast from "react-hot-toast";
 
 interface MessageListProps {
   workspaceId: number;
@@ -11,7 +12,7 @@ interface MessageListProps {
 
 export default function MessageList({ workspaceId }: MessageListProps) {
   const currentChannel = useChannelStore((state) => state.currentChannel); // Zustand Store
-  const { messages, loadMoreMessages, hasMore } = useWebsocket(currentChannel.channelId, workspaceId); // Stomp Websocket Hook
+  const { messages, loadMoreMessages, hasMore, isConnected, deleteMessage } = useWebsocket(currentChannel.channelId, workspaceId); // Stomp Websocket Hook
   
   const messageAreaRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -94,6 +95,15 @@ export default function MessageList({ workspaceId }: MessageListProps) {
     }
   }, [handleLoadMore, isLoading, debouncedCheckIfNearBottom]);
 
+  const handleMessageDeleted = useCallback(async (messageId: string) => {
+    try {
+      await deleteMessage(messageId);
+      toast.success('메시지가 삭제되었습니다.');
+    } catch (error) {
+      toast.error('메시지 삭제에 실패했습니다.');
+    }
+  }, [deleteMessage]);
+
   useEffect(() => {
     const messageArea = messageAreaRef.current;
     if (messageArea) {
@@ -110,8 +120,35 @@ export default function MessageList({ workspaceId }: MessageListProps) {
   
   return (
     <div className="h-full p-4 overflow-y-auto" ref={messageAreaRef}>
-      {isLoading && <div className="text-center">메시지 불러오는 중...</div>}
-      {error && <div className="text-center text-red-500">{error}</div>}
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center h-full">
+          <span className="loading loading-spinner"></span>
+          <div className="text-sm text-gray-500">메시지 불러오는 중...</div>
+        </div>
+      )}
+      
+      {error && (
+        <div className="flex flex-col items-center justify-center h-full">
+          <span className="text-error">{error}</span>
+          <button 
+            className="btn btn-error"
+            onClick={() => {
+              setError(null);
+              handleLoadMore();
+            }}
+          >
+            다시 시도
+          </button>
+        </div>
+      )}
+
+      {!isConnected && (
+        <div className="flex flex-col items-center justify-center h-full">
+          <span className="loading loading-spinner"></span>
+          <p className="text-lg">연결이 끊겼습니다.</p>
+          <p className="text-sm text-gray-500">재연결 중...</p>
+        </div>
+      )}
 
       {messages.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full">
@@ -133,7 +170,10 @@ export default function MessageList({ workspaceId }: MessageListProps) {
           return (
             <div key={message.messageId} ref={index === messages.length - 1 ? lastMessageRef : null}>
               {divider}
-              <ChannelMessage selectedMessage={message} />
+              <ChannelMessage 
+                selectedMessage={message}
+                onMessageDeleted={() => handleMessageDeleted(message.messageId)}  
+              />
             </div>
           );
         })

@@ -16,10 +16,9 @@ export interface ParticipantInsertModel {
 }
 
 export interface ParticipantUpdateModel {
-  participantId: string; 
-  channelId: string;
-  nickname: string;
-  joinedAt: string;
+  nickname?: string;
+  isOnline?: boolean;
+  profileURL?: string;
 }
 
 export const InitialParticipant: ParticipantModel = {

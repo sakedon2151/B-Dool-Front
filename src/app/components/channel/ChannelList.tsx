@@ -102,13 +102,15 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
       {/* modal dialog */}
       <dialog id="channel-modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-50" onClick={handleModalClose}>✕</button>
+          </form>
           <ChannelCreateModal isOpen={isModalOpen} onClose={handleModalClose} />
-          <div className="modal-action absolute bottom-4 right-4">
-            <form method="dialog">
-              <button className="btn" onClick={handleModalClose}>취소</button>
-            </form>
-          </div>
         </div>
+        
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={handleModalClose}>닫기</button>
+        </form>
       </dialog>
     </>
   );
