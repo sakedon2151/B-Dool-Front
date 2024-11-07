@@ -1,5 +1,5 @@
 import { useMemberStore } from "@/app/stores/member.store";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ProfileCreateForm from "../member/ProfileCreateForm";
 import { ProfileInsertModel } from "@/app/models/profile.model";
@@ -13,13 +13,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { channelService } from "@/app/services/channel/channel.service";
 import { participantService } from "@/app/services/channel/participant.service";
 
-interface MailInviteFormProps {
-  invitationCode: string | null
-}
-
-export default function MailInviteForm({ invitationCode }:MailInviteFormProps) {
+export default function MailInviteForm() {
   const router = useRouter();
   const [step, setStep] = useState<number>(1)
+
+  const searchParams = useSearchParams();
+  const invitationCode = searchParams.get('code');
 
   const [memberData, setMemberData] = useState<MemberModel | null>(null);
   const [workspaceData, setWorkspaceData] = useState<WorkspaceModel | null>(null);

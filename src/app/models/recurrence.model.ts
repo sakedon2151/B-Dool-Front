@@ -7,5 +7,3 @@ export interface RecurrenceModel {
   isCustom: boolean;
   eventId: number; // 일정 ID
 }
-
-// Strict Type Model

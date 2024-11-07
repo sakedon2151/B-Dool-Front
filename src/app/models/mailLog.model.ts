@@ -6,5 +6,3 @@ export interface MailLogModel {
   isSent: boolean;
   sentAt: string;
 }
-
-// Strict Type Model

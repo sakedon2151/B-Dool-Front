@@ -12,5 +12,3 @@ export interface EventModel {
   channelId: number; // 채널 이벤트일 경우
   hostId: number; // 해당 이벤트 등록자 ID 컬럼명 수정 했어요..!
 }
-
-// Strict Type Model

@@ -30,7 +30,7 @@ export default function Auth() {
         setCurrentMember(currentMember);
         router.push("/workspace");
       } catch (error) {
-        console.error("Auth check failed:", error);
+        console.error("Auth check failed:", error); // 여기에서 에러 처리되어 로컬브라우저에 error 버튼이 띄어집니다.
       }
     } finally {
       setIsLoading(false);

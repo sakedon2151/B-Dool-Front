@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useCreateChannel } from '@/app/queries/channel.query'
 import { useProfileStore } from '@/app/stores/profile.store'
 import { useWorkspaceStore } from '@/app/stores/workspace.store'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGlobe, faLock } from '@fortawesome/free-solid-svg-icons'
 import toast from 'react-hot-toast'
 
 interface ChannelCreateModalProps {

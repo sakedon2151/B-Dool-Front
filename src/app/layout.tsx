@@ -43,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="min-w-[375px] min-h-[667px]">
         <ThemeProvider
           enableSystem={true}
           attribute="data-theme"

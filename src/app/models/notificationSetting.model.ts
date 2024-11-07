@@ -4,5 +4,3 @@ export interface NotificationSettingModel {
   enabled: boolean; // 알림 활성화 여부
   profileId: number; // 프로필 ID
 }
-
-// Strict Type Model

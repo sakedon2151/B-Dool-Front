@@ -24,8 +24,8 @@ export interface ChannelInsertModel {
 }
 
 export interface ChannelUpdateModel {
-  name?: string; // 채널 이름
-  description?: string; // 채널설명
+  name?: string;
+  description?: string;
 }
 
 export const InitialChannel: ChannelModel = {

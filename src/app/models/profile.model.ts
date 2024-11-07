@@ -24,7 +24,7 @@ export interface ProfileInsertModel {
 }
 
 export interface ProfileUpdateModel {
-  nickname: string; // 닉네임
+  nickname?: string; // 닉네임
   name?: string // 이름
   position?: string; // 직책
   profileImgUrl?: string; // 프로필 이미지 URL (파일 서버 생성시 분리)

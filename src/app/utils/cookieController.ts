@@ -1,6 +1,5 @@
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { WorkspaceModel } from "../models/workspace.model";
-import { jwtDecode } from 'jwt-decode';
 
 const TOKEN_NAME = 'accessToken';
 const TOKEN_MAX_AGE = 24 * 60 * 60; // 24시간으로 설정

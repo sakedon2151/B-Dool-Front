@@ -5,7 +5,3 @@ export interface MailVerification {
   expiredAt: string;
   createdAt: string;
 }
-
-
-
-// Strict Type Model
