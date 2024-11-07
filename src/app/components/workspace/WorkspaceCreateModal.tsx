@@ -41,7 +41,7 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         data: {
           ...data,
           workspaceId: createdWorkspace.id,
-          isWorkspaceCreater: true
+          isWorkspaceCreator: true,
         }
       })
       await createChannelMutation.mutateAsync({
