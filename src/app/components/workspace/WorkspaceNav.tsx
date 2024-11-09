@@ -1,9 +1,8 @@
 import { ProfileModel } from "@/app/models/profile.model";
 import { WorkspaceModel } from "@/app/models/workspace.model";
-import { useProfilesByMemberId, useUpdateProfileOnlineStatus } from "@/app/queries/profile.query";
+import { useProfilesByMemberId } from "@/app/queries/profile.query";
 import { useWorkspacesByIds } from "@/app/queries/workspace.query";
 import { useMemberStore } from "@/app/stores/member.store";
-import { useProfileStore } from "@/app/stores/profile.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { faExclamation, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
