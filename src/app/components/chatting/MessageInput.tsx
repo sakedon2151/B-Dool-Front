@@ -5,6 +5,8 @@ import { useChannelStore } from "@/app/stores/channel.store";
 import { useProfileStore } from "@/app/stores/profile.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faPaperPlane, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { useParticipantStore } from "@/app/stores/participant.store";
+import ParticipantCreatePanel from "../channel/ParticipantCreatePanel";
 
 interface MessageInputProps {
   workspaceId: number
@@ -19,6 +21,7 @@ interface SelectedFile {
 export default function MessageInput({ workspaceId }: MessageInputProps) {
   const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
   const currentChannel = useChannelStore(state => state.currentChannel)  // Zustand Store
+  const currentParticipant = useParticipantStore(state => state.currentParticipant); // Zustand Store - 지금 만들 로직에 사용될 zustand store
   const { sendMessage } = useWebsocket(currentChannel.channelId, workspaceId) // Stomp Websocket Hook
 
   const [message, setMessage] = useState<string>("")
@@ -72,7 +75,6 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
       previewUrl = URL.createObjectURL(file);
     }
     setSelectedFile({ file, previewUrl });
-    // 파일 input 초기화
     if (fileInput.current) {
       fileInput.current.value = '';
     }
@@ -134,6 +136,10 @@ export default function MessageInput({ workspaceId }: MessageInputProps) {
       }
     }
   }, [message, selectedFile, currentChannel.channelId, sendMessage, isUploading]);
+
+  if (!currentParticipant) {
+    return (<ParticipantCreatePanel channelData={currentChannel} profileData={currentProfile}/>)
+  }
 
   return (
     <div className="flex flex-col">

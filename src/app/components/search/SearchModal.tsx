@@ -21,13 +21,15 @@ export default function SearchModal({ workspaceId }: SearchModalProps) {
   return (
     <div>
       <h2 className="text-center font-bold text-lg opacity-75 mb-4">워크스페이스 검색</h2>
-      <SearchInput
-        workspaceId={workspaceId}
-        profileId={currentProfile.id}
-        onSearchComplete={handleSearchComplete}
-        placeholder="검색어를 입력하세요."
-      />
-      <SearchResults results={searchResults} loading={searching}/>
+      <div className="bg-base-200 p-4 rounded-lg">
+        <SearchInput
+          workspaceId={workspaceId}
+          profileId={currentProfile.id}
+          onSearchComplete={handleSearchComplete}
+          placeholder="검색어를 입력하세요."
+        />
+        <SearchResults results={searchResults} loading={searching}/>
+      </div>
     </div>
   );
 }

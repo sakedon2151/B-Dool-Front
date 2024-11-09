@@ -3,6 +3,7 @@ import { Client, Message } from "@stomp/stompjs";
 import { MessageInsertModel, MessageModel } from "../models/message.model";
 import { messagePublishService, messageService } from "../services/message/message.service";
 import SockJS from "sockjs-client";
+import { getToken } from "../utils/cookieController";
 
 interface WebSocketHook {
   messages: MessageModel[];
@@ -19,6 +20,8 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isConnected, setIsConnected] = useState(false);
+
+  const token = getToken();
 
   const resetState = useCallback(() => {
     setMessages([]);
@@ -53,13 +56,19 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
     if (!channelId) return;
     let isCurrentConnection = true;
     resetState();
-    const socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_B_WEBSOCKET_URL as string);
+    const socket = new SockJS(process.env.NEXT_PUBLIC_CHAT_SERVER_WEBSOCKET_API as string, null, {
+      timeout: 5000, // 연결 타임아웃 설정
+      transports: ['websocket', 'xhr-streaming', 'xhr-polling'] // 전송 프로토콜 우선순위 설정
+    });
+
     const client = new Client({
       webSocketFactory: () => socket,
-      
+      connectHeaders: { // 인증 헤더 추가
+        'Authorization': `Bearer ${token}`,
+      },
       onConnect: () => {
         if (!isCurrentConnection) return;
-        console.log("websocket 에 연결되었습니다.");
+        console.log("websocket 연결 성공");
         setIsConnected(true);
 
         // 메시지 수신 구독

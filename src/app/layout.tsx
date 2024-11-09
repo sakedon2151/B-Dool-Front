@@ -54,19 +54,16 @@ export default function RootLayout({
             <Toaster
               position="top-center"
               toastOptions={{
-                // 기본 스타일 설정
                 style: {
                   background: "#333",
                   color: "#fff",
                 },
-                // 성공 토스트 스타일
                 success: {
                   duration: 3000,
                   style: {
                     background: "green",
                   },
                 },
-                // 에러 토스트 스타일
                 error: {
                   duration: 3000,
                   style: {

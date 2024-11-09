@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { WorkspaceInsertModel } from "@/app/models/workspace.model"
-import { useCreateWorkspace } from "@/app/queries/workspace.query";
+import { useCheckWorkspaceUrl, useCreateWorkspace } from "@/app/queries/workspace.query";
 import { getRandomWorkspaceImage } from "@/app/utils/randomDefaultImage";
 import { useMemberStore } from "@/app/stores/member.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,10 +18,13 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
     workspaceImage: null as string | null
   });
 
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const urlTimeoutRef = useRef<NodeJS.Timeout>();
   const fileInput = useRef<HTMLInputElement>(null);
   
   const createWorkspaceMutation = useCreateWorkspace(); // API Query
+  const checkWorkspaceUrl = useCheckWorkspaceUrl(formData.workspaceUrl); // API Query
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
 
   const initializeImage = async () => {
@@ -45,6 +48,9 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
         workspaceUrl: '',
         workspaceImage: null
       });
+      if (urlTimeoutRef.current) {
+        clearTimeout(urlTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -68,9 +74,35 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
     }
   };
 
+  const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, workspaceUrl: value }));
+    setIsTyping(true);
+    // 이전 타이머 취소
+    if (urlTimeoutRef.current) {
+      clearTimeout(urlTimeoutRef.current);
+    }
+    // 새로운 타이머 설정
+    urlTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      checkWorkspaceUrl.refetch();
+    }, 1000);
+  };
+
+  const getUrlCheckMessage = () => {
+    if (!formData.workspaceUrl) return "";
+    if (isTyping) return "URL 입력 중...";
+    if (checkWorkspaceUrl.isLoading) return "URL 검증 중...";
+    if (checkWorkspaceUrl.data === true) return "사용 가능한 URL입니다";
+    if (checkWorkspaceUrl.data === false) return "이미 사용 중인 URL입니다";
+    return "";
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.workspaceImage || !currentMember) return;
+    if (isTyping || checkWorkspaceUrl.data === false) return;
+    
     const workspaceData: WorkspaceInsertModel = {
       name: formData.workspaceName,
       description: formData.workspaceInfo,
@@ -114,39 +146,59 @@ export default function WorkspaceCreateForm({ onSubmit }: WorkspaceCreateFormPro
         />
       </div>  
 
-      <input
-        type="text" 
-        className="input input-bordered w-full mb-4" 
-        placeholder="워크스페이스 이름"
-        value={formData.workspaceName}
-        onChange={(e) => setFormData(prev => ({ ...prev, workspaceName: e.target.value }))}
-        required
-      />
-      <input
-        type="text" 
-        className="input input-bordered w-full mb-4" 
-        placeholder="URL 지정(미지정 시 이름 등록)"
-        value={formData.workspaceUrl}
-        onChange={(e) => setFormData(prev => ({ ...prev, workspaceUrl: e.target.value }))}
-      />
-      <textarea
-        className="textarea textarea-bordered resize-none w-full mb-4" 
-        placeholder="워크스페이스 정보"
-        value={formData.workspaceInfo}
-        maxLength={50}
-        onChange={(e) => setFormData(prev => ({ ...prev, workspaceInfo: e.target.value }))}
-      />
+      <div className="bg-base-200 p-4 rounded-lg">
+        <input
+          type="text" 
+          className="input input-bordered w-full mb-4" 
+          placeholder="워크스페이스 이름"
+          value={formData.workspaceName}
+          onChange={(e) => setFormData(prev => ({ ...prev, workspaceName: e.target.value }))}
+          required
+        />
 
-      <div className="text-center">
-        <button 
-          type="submit" 
-          className="btn" 
-          disabled={createWorkspaceMutation.isPending}
-        >
-          {createWorkspaceMutation.isPending ? (
-            <span className="loading loading-spinner loading-md"></span>
-          ) : '다음'}
-        </button>
+        <div className="mb-4 relative">
+          <input
+            type="text" 
+            className="input input-bordered w-full" 
+            placeholder="URL 지정(미지정 시 이름 등록)"
+            value={formData.workspaceUrl}
+            onChange={handleUrlChange}
+          />
+          {formData.workspaceUrl && (
+            <div className={`text-sm absolute top-1/2 right-4 -translate-y-1/2 ${
+              isTyping ? 'text-warning' :
+              checkWorkspaceUrl.data === true ? 'text-success' : 
+              checkWorkspaceUrl.data === false ? 'text-error' : 
+              'text-warning'}`}
+            >
+              {getUrlCheckMessage()}
+            </div>
+          )}
+        </div>
+
+        <textarea
+          className="textarea textarea-bordered resize-none w-full mb-4" 
+          placeholder="워크스페이스 정보"
+          value={formData.workspaceInfo}
+          maxLength={50}
+          onChange={(e) => setFormData(prev => ({ ...prev, workspaceInfo: e.target.value }))}
+        />
+
+        <div className="text-center">
+          <button 
+            type="submit" 
+            className="btn btn-block bg-base-100" 
+            disabled={
+              createWorkspaceMutation.isPending ||
+              isTyping || 
+              checkWorkspaceUrl.data === false
+            }
+          >
+            {createWorkspaceMutation.isPending ? (
+              <span className="loading loading-spinner loading-md"></span>
+            ) : '다음'}
+          </button>
+        </div>
       </div>
     </form>
   )

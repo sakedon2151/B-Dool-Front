@@ -15,7 +15,7 @@ export const useChannelsByWorkspaceId = (workspaceId: number) =>
   useQuery({
     queryKey: CHANNEL_KEYS.byWorkspaceId(workspaceId),
     queryFn: () => channelService.getChannelsByWorkspaceId(workspaceId),
-    refetchOnMount: 'always', // SSE 연결시 고려할 것
+    // refetchOnMount: 'always', // SSE 연결시 고려할 것
   });
 
 export const useChannelById = (channelId: string) => 

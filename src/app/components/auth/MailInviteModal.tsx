@@ -42,32 +42,35 @@ export default function MailInviteModal() {
   return (
     <div>
       <h2 className="text-center font-bold text-lg opacity-75 mb-4">워크스페이스 초대</h2>
-      <form className="text-center" onSubmit={handleSubmit}>
-        <label className="flex items-center gap-2 mb-4 input input-bordered">
-          <FontAwesomeIcon icon={faEnvelope} className="opacity-50 w-4 h-4" />
-          <input
-            className="w-full"
-            type="email"
-            value={email}
-            placeholder="이메일"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          />
-        </label>
-        
-        {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        
-        <button className="btn btn-block" type="submit" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <span className="loading loading-spinner"></span>
-              메일을 보내고 있어요.
-            </>
-          ) : (
-            "이메일 전송"
-          )}
-        </button>
-      </form>
+
+      <div className="bg-base-200 p-4 rounded-lg">
+        <form className="text-center" onSubmit={handleSubmit}>
+          <label className="flex items-center gap-2 mb-4 input input-bordered">
+            <FontAwesomeIcon icon={faEnvelope} className="opacity-50 w-4 h-4" />
+            <input
+              className="w-full"
+              type="email"
+              value={email}
+              placeholder="이메일"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+            />
+          </label>
+          
+          {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          
+          <button className="btn btn-block bg-base-100" type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <span className="loading loading-spinner"></span>
+                메일을 보내고 있어요.
+              </>
+            ) : (
+              "이메일 전송"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

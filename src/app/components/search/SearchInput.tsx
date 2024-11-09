@@ -107,9 +107,6 @@ export default function SearchInput({ workspaceId, profileId, onSearchComplete, 
           {error.message}
         </div>
       )}
-
-      {/* 검색 결과 요약 (타이핑 중이 아닐 때만 표시) */}
-      
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ParticipantModel, ParticipantUpdateModel } from "@/app/models/participant.model";
+import { ParticipantInsertModel, ParticipantUpdateModel } from "@/app/models/participant.model";
 import { participantService } from '../services/channel/participant.service';
 
 // Query keys
@@ -7,6 +7,7 @@ export const PARTICIPANT_KEYS = {
   all: ['participants'] as const,
   byId: (id: string) => [...PARTICIPANT_KEYS.all, 'byId', id] as const,
   byChannelId: (channelId: string) => [...PARTICIPANT_KEYS.all, 'byChannelId', channelId] as const,
+  byProfileIdAndChannelId: (profileId: number, channelId: string) => [...PARTICIPANT_KEYS.all, 'byProfileAndChannel', profileId, channelId] as const,
 };
 
 // Queries
@@ -26,13 +27,21 @@ export const useParticipantsByChannelId = (channelId: string) =>
   useQuery({
     queryKey: PARTICIPANT_KEYS.byChannelId(channelId),
     queryFn: () => participantService.getParticipantsByChannelId(channelId),
-  })
+  });
+
+export const useParticipantsByProfileIdAndChannelId = (profileId: number, channelId: string, option = {}) =>
+  useQuery({
+    queryKey: PARTICIPANT_KEYS.byProfileIdAndChannelId(profileId, channelId),
+    queryFn: () => participantService.getParticipantByProfileIdAndChannelId(profileId, channelId),
+    ...option
+  });
+
 
 // Mutations
 export const useCreateParticipant = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: ParticipantModel) => participantService.createParticipant(data),
+    mutationFn: (data: ParticipantInsertModel) => participantService.createParticipant(data),
     onSuccess: (newParticipant) => {
       queryClient.invalidateQueries({ queryKey: PARTICIPANT_KEYS.all });
       queryClient.setQueryData(PARTICIPANT_KEYS.byId(newParticipant.participantId), newParticipant);

@@ -17,25 +17,18 @@ export default function WorkspaceNav() {
   const [modalKey, setModalKey] = useState<number>(0);
   
   const currentMember = useMemberStore(state => state.currentMember); // Zustand Store
-  const currentProfile = useProfileStore(state => state.currentProfile); // Zustand Store
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace) // Zustand Store
   const setCurrentWorkspace = useWorkspaceStore(state => state.setCurrentWorkspace);  // Zustand Store
-  
-  const updateProfileOnlineStatusMutation = useUpdateProfileOnlineStatus(); // API Query
 
   const { data: profiles, isLoading: isLoadingProfiles, error: profilesError } = useProfilesByMemberId(currentMember.id) // API Query
   const workspaceIds = useMemo(() => {
     if (!profiles) return [];
     return Array.from(new Set(profiles.map((profile: ProfileModel) => profile.workspaceId)));
   }, [profiles]);
-  const { data: workspaces, isLoading: isLoadingWorkspaces, error: workspacesError } = useWorkspacesByIds(workspaceIds);
+  const { data: workspaces, isLoading: isLoadingWorkspaces, error: workspacesError } = useWorkspacesByIds(workspaceIds);  // API Query
 
   const handleWorkspaceSelect = async (workspace: WorkspaceModel) => {
     try {
-      await updateProfileOnlineStatusMutation.mutateAsync({
-        profileId: currentProfile.id,
-        isOnline: false
-      });
       setCurrentWorkspace(workspace);
       router.push(`/workspace/${workspace.url}`);
     } catch (error) {

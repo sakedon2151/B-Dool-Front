@@ -28,7 +28,6 @@ export const useCheckWorkspaceUrl = (url: string) =>
     queryKey: WORKSPACE_KEYS.checkUrl(url),
     queryFn: () => workspaceService.checkWorkspaceUrl(url),
     enabled: url.length > 0,
-    staleTime: 300,
   });
 
 // Mutations

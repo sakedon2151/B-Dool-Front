@@ -64,7 +64,7 @@ export default function WorkspaceList() {
                   <a className="p-4 gap-4" onClick={() => handleWorkspaceSelect(workspace)}>
                     <div className="avatar">
                       <div className="w-16 rounded-lg">
-                        <img src={workspace.workspaceImageUrl} />
+                        <img src={workspace.workspaceImageUrl} alt="workspace_thumbnail"/>
                       </div>
                     </div>
                     <div>
@@ -112,13 +112,14 @@ export default function WorkspaceList() {
 
       <dialog id="workspace-modal" className="modal modal-bottom lg:modal-middle">
         <div className="modal-box p-4">
+          <form method="dialog">
+            <button className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2 z-50" onClick={handleModalClose}>✕</button>
+          </form>
           <WorkspaceCreateModal key={modalKey} onComplete={handleModalClose} />
-          <div className="modal-action absolute bottom-4 right-4">
-            <form method="dialog">
-              <button className="btn" onClick={handleModalClose} >취소</button>
-            </form>
-          </div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={handleModalClose}>닫기</button>
+        </form>
       </dialog>
     </>
   )

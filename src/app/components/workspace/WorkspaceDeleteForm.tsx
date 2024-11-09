@@ -5,6 +5,7 @@ import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function WorkspaceDeleteForm() {
   const router = useRouter()
@@ -44,8 +45,10 @@ export default function WorkspaceDeleteForm() {
         ownerId: currentMember.id
       });
       router.push("/workspace");
+      toast.success('워크스페이스가 삭제되었습니다.')
     } catch (error) {
       setError("워크스페이스 삭제 중 오류가 발생했습니다.");
+      toast.success('워크스페이스 삭제에 실패했습니다.')
     }
   }, [currentWorkspace?.id, isNameMatch, currentMember?.id, deleteWorkspaceMutation]);
 
@@ -93,7 +96,7 @@ export default function WorkspaceDeleteForm() {
             )}
           </div>
           <div className="flex justify-between">
-            <button className="bg-base-300 btn w-[calc(50%-8px)] mr-2" onClick={handleCancel}>
+            <button className="bg-base-100 btn w-[calc(50%-8px)] mr-2" onClick={handleCancel}>
               취소
             </button>
             <button

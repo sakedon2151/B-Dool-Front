@@ -16,6 +16,15 @@ export const participantService = {
     serverBAxios.get<ParticipantModel>(`${BASE_URL}/${participantId}`)
       .then(response => response.data),
 
+  getParticipantByProfileIdAndChannelId: (profileId: number, channelId: string) => 
+    serverBAxios.get<ParticipantModel>(`${BASE_URL}/isInChannel`, {
+      params: {
+        profileId,
+        channelId
+      }
+    })
+      .then(response => response.data),
+
   createParticipant: (data: ParticipantInsertModel) => 
     serverBAxios.post<ParticipantModel>(BASE_URL, data)
       .then(response => response.data),

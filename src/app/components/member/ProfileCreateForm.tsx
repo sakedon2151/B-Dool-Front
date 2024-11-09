@@ -111,40 +111,42 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
         />
       </div>  
       
-      <input
-        type="text" 
-        className="input input-bordered w-full mb-4" 
-        placeholder="프로필 닉네임"
-        value={formData.profileNickname}
-        onChange={(e) => setFormData(prev => ({ ...prev, profileNickname: e.target.value }))}
-        required
-      />
-      <input
-        type="text" 
-        className="input input-bordered w-full mb-4" 
-        placeholder="이름"
-        value={formData.profileName}
-        onChange={(e) => setFormData(prev => ({ ...prev, profileName: e.target.value }))}
-        required
-      />
-      <input
-        type="text" 
-        className="input input-bordered w-full mb-4" 
-        placeholder="직무/직위"
-        value={formData.profilePosition}
-        onChange={(e) => setFormData(prev => ({ ...prev, profilePosition: e.target.value }))}
-        required
-      />
+      <div className="bg-base-200 p-4 rounded-lg">
+        <input
+          type="text" 
+          className="input input-bordered w-full mb-4" 
+          placeholder="프로필 닉네임"
+          value={formData.profileNickname}
+          onChange={(e) => setFormData(prev => ({ ...prev, profileNickname: e.target.value }))}
+          required
+        />
+        <input
+          type="text" 
+          className="input input-bordered w-full mb-4" 
+          placeholder="이름"
+          value={formData.profileName}
+          onChange={(e) => setFormData(prev => ({ ...prev, profileName: e.target.value }))}
+          required
+        />
+        <input
+          type="text" 
+          className="input input-bordered w-full mb-4" 
+          placeholder="직무/직위"
+          value={formData.profilePosition}
+          onChange={(e) => setFormData(prev => ({ ...prev, profilePosition: e.target.value }))}
+          required
+        />
 
-      <div className="w-full join justify-center">
-        <button type="button" onClick={onPrevious} className="btn join-item">이전</button>
-        <button 
-          type="submit" 
-          className="btn join-item" 
-          disabled={!formData.profileImage}
-        >
-          완료
-        </button>
+        <div className="w-full justify-center">
+          <button type="button" onClick={onPrevious} className="btn w-[calc(50%-8px)] mr-2 bg-base-100">이전</button>
+          <button 
+            type="submit" 
+            className="btn w-[calc(50%-8px)] ml-2 bg-base-100" 
+            disabled={!formData.profileImage}
+          >
+            완료
+          </button>
+        </div>
       </div>
     </form>
   )

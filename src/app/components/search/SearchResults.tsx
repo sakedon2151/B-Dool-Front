@@ -82,7 +82,7 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
   const renderFileResults = () => (
     <div className="space-y-2 overflow-y-auto h-72">
       {files.map((file) => (
-        <div key={file.fileId} className="flex justify-between p-2 hover:bg-base-200 rounded-lg">
+        <div key={file.fileId} className="flex justify-between p-2 bg-base-100 hover:bg-base-300 rounded-lg">
           
           <div className="flex items-center gap-4">
             <div className="btn btn-square">
@@ -126,14 +126,14 @@ export default function SearchResults({ results, loading }: SearchResultsProps) 
 
   return (
     <div className="mt-4">
-      <div role="tablist" className="tabs tabs-boxed">
+      <div role="tablist" className="tabs tabs-boxed bg-base-100">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`tab gap-2 ${activeTab === tab.id ? 'tab-active' : ''}`}
           >
-            <FontAwesomeIcon icon={tab.icon} className='w-3 h-3 opacity-75'/>
+            <FontAwesomeIcon icon={tab.icon} className='w-4 h-4 opacity-75'/>
             {tab.label} ({tab.count})
           </button>
         ))}

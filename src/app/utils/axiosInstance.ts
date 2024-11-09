@@ -168,9 +168,16 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
   return instance;
 };
 
-export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_API_URL as string);
-export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_B_API_URL as string);
-export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_API_URL as string);
-export const serverChatBotAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_CHATBOT_URL as string);
-export const serverTokenAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_TOKEN_URL as string);
-export const serverElasticAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_ELASTIC_URL as string);
+// export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_API_URL as string);
+// export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_B_API_URL as string);
+// export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_API_URL as string);
+// export const serverChatBotAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_CHATBOT_URL as string);
+// export const serverTokenAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_A_TOKEN_URL as string);
+// export const serverElasticAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SERVER_C_ELASTIC_URL as string);
+
+export const serverAAxios = createAxiosInstance(process.env.NEXT_PUBLIC_MEMBER_SERVER_API as string);
+export const serverBAxios = createAxiosInstance(process.env.NEXT_PUBLIC_CHAT_SERVER_API as string);
+export const serverCAxios = createAxiosInstance(process.env.NEXT_PUBLIC_WORKSPACE_SERVER_API as string);
+export const serverChatBotAxios = createAxiosInstance(process.env.NEXT_PUBLIC_CHATBOT_SERVER_API as string);
+export const serverTokenAxios = createAxiosInstance(process.env.NEXT_PUBLIC_TOKEN_SERVER_API as string);
+export const serverElasticAxios = createAxiosInstance(process.env.NEXT_PUBLIC_SEARCH_SERVER_API as string);

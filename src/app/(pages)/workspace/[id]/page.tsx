@@ -12,7 +12,6 @@ import { useWorkspaceStore } from "@/app/stores/workspace.store";
 
 export default function Workspace() {
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace)
-  const workspaceId = currentWorkspace.id
 
   return (
     <div className="drawer lg:drawer-open">
@@ -34,11 +33,11 @@ export default function Workspace() {
               <main className="flex flex-col flex-grow">
                 <div className="flex flex-row flex-grow h-[100px]">
                   <section className="flex-grow overflow-y-auto">
-                    <MessageList workspaceId={workspaceId} />
+                    <MessageList workspaceId={currentWorkspace.id} />
                   </section>
                 </div>
                 <div className="box-border border-t border-base-300">
-                  <MessageInput workspaceId={workspaceId} />
+                  <MessageInput workspaceId={currentWorkspace.id} />
                 </div>
               </main>
             </div>
@@ -63,7 +62,7 @@ export default function Workspace() {
               <WorkspaceNav/>
             </nav>
             <aside className="box-border flex-shrink-0 w-48 overflow-y-auto border-r border-base-300">
-              <ChannelList workspaceId={workspaceId}/>
+              <ChannelList workspaceId={currentWorkspace.id}/>
             </aside>
           </div>
           <div className="w-64 border-t border-r border-base-300">

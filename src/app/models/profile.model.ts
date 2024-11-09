@@ -15,19 +15,31 @@ export interface ProfileModel {
 }
 
 export interface ProfileInsertModel {
-  name: string; // 이름
-  nickname: string; // 닉네임
-  profileImgUrl: string; // 프로필 이미지 URL
-  workspaceId: number; // 워크스페이스 ID
-  position: string // 직책
-  isWorkspaceCreator: boolean; // 워크스페이스 소유 여부
+  name: string;
+  nickname: string;
+  profileImgUrl: string;
+  workspaceId: number;
+  position: string
+  isWorkspaceCreator: boolean;
 }
 
 export interface ProfileUpdateModel {
-  nickname?: string; // 닉네임
-  name?: string // 이름
-  position?: string; // 직책
-  profileImgUrl?: string; // 프로필 이미지 URL (파일 서버 생성시 분리)
+  nickname?: string;
+  name?: string
+  position?: string;
+  profileImgUrl?: string;
+}
+
+export interface ProfileSSENicknameModel {
+  profileId: number;
+  workspaceId: number;
+  nickname: string;
+}
+
+export interface ProfileSSEOnlineModel {
+  profileId: number;
+  workspaceId: number;
+  isOnline: boolean;
 }
 
 export const InitialProfile: ProfileModel = {

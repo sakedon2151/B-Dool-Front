@@ -52,36 +52,40 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
   return (
     <div>
       <h2 className="text-lg font-bold mb-4 text-center opacity-75">새 채널 생성</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text" 
-          className="input input-bordered w-full mb-4" 
-          placeholder="채널 이름"
-          value={channelName}
-          onChange={(e) => setChannelName(e.target.value)}
-          required
-        />
-        <textarea
-          className="textarea textarea-bordered resize-none w-full mb-4" 
-          placeholder="채널 정보"
-          maxLength={50}
-          value={channelInfo}
-          onChange={(e) => setChannelInfo(e.target.value)}
-          required
-        />
-        
-        <div className="text-center">
-          <button 
-            className='btn'
-            disabled={createChannelMutation.isPending}
-            type='submit'
-          >
-            {createChannelMutation.isPending ? (
-              <span className="loading loading-spinner"></span>
-            ) : '채널 생성'}
-          </button>  
-        </div>
-      </form>
+
+      <div className="bg-base-200 p-4 rounded-lg">
+
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text" 
+            className="input input-bordered w-full mb-4" 
+            placeholder="채널 이름"
+            value={channelName}
+            onChange={(e) => setChannelName(e.target.value)}
+            required
+          />
+          <textarea
+            className="textarea textarea-bordered resize-none w-full mb-4" 
+            placeholder="채널 정보"
+            maxLength={50}
+            value={channelInfo}
+            onChange={(e) => setChannelInfo(e.target.value)}
+            required
+          />
+          
+          <div className="text-center">
+            <button 
+              className='btn btn-block bg-base-100'
+              disabled={createChannelMutation.isPending}
+              type='submit'
+            >
+              {createChannelMutation.isPending ? (
+                <span className="loading loading-spinner"></span>
+              ) : '채널 생성'}
+            </button>  
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

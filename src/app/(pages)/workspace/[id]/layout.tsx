@@ -3,7 +3,7 @@ import React, { Suspense, useEffect, useState } from "react"
 import LoadingScreen from "@/app/components/common/LoadingScreen";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { useDefaultChannelByWorkspaceId } from "@/app/queries/channel.query";
-import { useProfileByMemberIdAndWorkspaceId, useUpdateProfileOnlineStatus } from "@/app/queries/profile.query";
+import { useProfileByMemberIdAndWorkspaceId } from "@/app/queries/profile.query";
 import { getToken, getWorkspaceMetadata, removeWorkspaceMetadata, setWorkspaceMetadata } from "@/app/utils/cookieController";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { useMemberStore } from "@/app/stores/member.store";
@@ -11,12 +11,16 @@ import { useProfileStore } from "@/app/stores/profile.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { useProfileSSE } from "@/app/hooks/useProfileSSE";
+import toast from "react-hot-toast";
+import { useParticipantsByProfileIdAndChannelId } from "@/app/queries/participant.query";
+import { useParticipantStore } from "@/app/stores/participant.store";
 
 function LoadingWithTimeout() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       window.location.reload();
-    }, 5000); // 5초 경과 시 새로고침
+    }, 5000); // 5초 경과 시 새로고침?
     return () => clearTimeout(timeoutId);
   }, []);
   return <LoadingScreen />;
@@ -27,16 +31,45 @@ function DataLoader() {
   const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace) // Zustand Store
   const setCurrentProfile = useProfileStore(state => state.setCurrentProfile); // Zustand Store
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel); // Zustand Store
+  const setCurrentParticipant = useParticipantStore(state => state.setCurrentParticipant); // Zustand Store
+
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
 
   const { data: profile } = useProfileByMemberIdAndWorkspaceId(currentMember.id, currentWorkspace.id, {
     enabled: !!currentMember.id && !!currentWorkspace.id,
-    suspense: true
+    suspense: true,
   }) // API Suspense Query
+
   const { data: channel } = useDefaultChannelByWorkspaceId(currentWorkspace.id, {
     enabled: !!currentWorkspace?.id,
-    suspense: true
+    suspense: true,
   }) // API Suspense Query
-  const updateProfileOnlineStatus = useUpdateProfileOnlineStatus(); // API Query
+
+  const { data: participant } = useParticipantsByProfileIdAndChannelId(profile.id, channel.channelId, {
+    enabled: !!profile.id && !!channel.channelId,
+    suspense: true,
+  })
+
+  useProfileSSE({
+    workspaceId: currentWorkspace.id,
+    enabled: !!currentWorkspace?.id && !!profile,
+    onError: (error) => {
+      console.error('SSE 연결 오류:', error);
+      toast.error('실시간 연결에 문제가 발생했습니다');
+    },
+    onConnectionChange: (isConnected) => {
+      setConnectionStatus(isConnected ? 'connected' : 'disconnected');
+    }
+  });
+
+  // SSE Connecting
+  useEffect(() => {
+    if (connectionStatus === 'disconnected') {
+      toast.error('실시간 연결이 끊어졌습니다.');
+    } else if (connectionStatus === 'connected') {
+      toast.success('실시간 연결이 복구되었습니다.');
+    }
+  }, [connectionStatus]);
 
   // METADATA Initialize
   useEffect(() => {
@@ -75,43 +108,24 @@ function DataLoader() {
 
   // STORE DATA Initialize
   useEffect(() => {
-    if (!profile || !channel) return;
+    if (!profile || !channel || !participant) return;
     let isSubscribed = true; // cleanup 플래그
-    const prepareMount = async () => {
-      try {
-        await updateProfileOnlineStatus.mutateAsync({
-          profileId: profile.id,
-          isOnline: true
-        });
-        if (isSubscribed) {
-          setCurrentProfile({
-            ...profile,
-            isOnline: true
-          });
+
+    const initializeStore = () => {
+      if (isSubscribed) {
+        try {
+          setCurrentProfile(profile);
           setCurrentChannel(channel);
+          setCurrentParticipant(participant);
+        } catch (error) {
+          console.error('Store 초기화 중 오류 발생:', error);
         }
-      } catch (error) {
-        console.error("워크스페이스 초기화 마운트 오류:", error);
-        throw new Error("워크스페이스 초기화에 실패했습니다.");
       }
     };
-    const prepareUnmount = async () => {
-      if (!profile) return;
-      try {
-        await updateProfileOnlineStatus.mutateAsync({
-          profileId: profile.id,
-          isOnline: false
-        });
-      } catch (error) {
-        console.error("워크스페이스 초기화 언마운트 오류:", error);
-      }
-    };
-    prepareMount();
-    window.addEventListener('beforeunload', prepareUnmount);
+    initializeStore();
+
     return () => {
       isSubscribed = false;
-      window.removeEventListener('beforeunload', prepareUnmount);
-      prepareUnmount();
     };
   }, [currentWorkspace, profile, channel, setCurrentProfile, setCurrentChannel]);
   return null;

@@ -71,7 +71,8 @@ export default function MailLoginForm() {
 
   return (
     <div className="bg-base-200 rounded-lg p-4 lg:w-[768px] w-full shadow-lg">      
-      <h2 className="text-lg font-bold opacity-75 text-center mb-4">이메일로 시작하기</h2>
+      <h2 className="text-lg font-bold opacity-75 text-center">이메일로 시작하기</h2>
+      <p className="text-sm text-gray-500 text-center mb-4">서비스 이용을 위해 이메일로 로그인하세요</p>
 
       {error && <div role="alert" className="mb-4 alert alert-error">
         <FontAwesomeIcon icon={faCircleXmark} className="w-6 h-6 opacity-75"/>

@@ -3,7 +3,7 @@ import { ProfileInsertModel, ProfileModel, ProfileUpdateModel } from "@/app/mode
 import { profileService } from '../services/member/profile.service';
 
 // Query keys
-const PROFILE_KEYS = {
+export const PROFILE_KEYS = {
   all: ['profiles'] as const,
   byId: (id: number) => [...PROFILE_KEYS.all, 'byId', id] as const,
   byMemberId: (memberId: number) => [...PROFILE_KEYS.all, 'byMemberId', memberId] as const,

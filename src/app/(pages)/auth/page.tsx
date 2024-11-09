@@ -12,7 +12,8 @@ import LoadingScreen from "@/app/components/common/LoadingScreen";
 export default function Auth() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { setCurrentMember } = useMemberStore();
+
+  const setCurrentMember = useMemberStore(state => state.setCurrentMember);
 
   useEffect(() => {    
     checkHasToken();
@@ -30,7 +31,9 @@ export default function Auth() {
         setCurrentMember(currentMember);
         router.push("/workspace");
       } catch (error) {
-        console.error("Auth check failed:", error); // 여기에서 에러 처리되어 로컬브라우저에 error 버튼이 띄어집니다.
+        console.error("Auth check failed:", error);
+        // 세션 스토리지 전부 날리기
+        sessionStorage.clear();
       }
     } finally {
       setIsLoading(false);
@@ -43,15 +46,13 @@ export default function Auth() {
 
   return (
     <div className="flex flex-col p-4 bg-base-300 h-dvh">
-      <CommonHeader />
+      <CommonHeader/>
       <main className="flex-grow p-4 bg-base-100 rounded-lg h-full">
-        
         <div className="flex flex-col items-center justify-center h-full">  
-          <EmailLoginForm />
+          <EmailLoginForm/>
         </div>
-      
       </main>
-      <CommonFooter />
+      <CommonFooter/>
     </div>
   );
 }

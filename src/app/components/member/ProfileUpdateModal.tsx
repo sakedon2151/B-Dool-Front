@@ -93,20 +93,28 @@ export default function ProfileUpdateModal() {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const updateData = {
+        name: editingProfile?.name ?? currentProfile.name,
+        nickname: editingProfile?.nickname ?? currentProfile.nickname,
+        position: editingProfile?.position ?? currentProfile.position,
+        profileImgUrl: editingProfile?.profileImgUrl ?? currentProfile.profileImgUrl
+      };
+      await updateProfileMutation.mutateAsync({
+        profileId: currentProfile.id,
+        data: updateData
+      });
       const updatedProfile = {
         ...currentProfile,
         ...editingProfile
       };
-      await updateProfileMutation.mutateAsync({
-        profileId: currentProfile.id,
-        data: updatedProfile
-      });
       setCurrentProfile(updatedProfile);
       setEditingProfile(null);
       setIsEditing(false);
       console.log("프로필이 업데이트 되었습니다.");
+      toast.success('프로필이 업데이트 되었습니다.');
     } catch (error) {
       console.error("프로필 업데이트 실패:", error);
+      toast.error('프로필 업데이트에 실패했습니다.');
     }
   }, [currentProfile, editingProfile, updateProfileMutation, setCurrentProfile]);
 
@@ -122,8 +130,9 @@ export default function ProfileUpdateModal() {
           className={`avatar group drop-shadow-sm ${profileData.isOnline ? 'online' : 'offline'}`} 
           onClick={() => !isUploading && fileInput.current?.click()}
         >
-          <div className="w-24 h-24 rounded-full">
+          <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
             {profileData.profileImgUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img 
                 src={profileData.profileImgUrl}
                 alt="profile_image" 
@@ -178,7 +187,7 @@ export default function ProfileUpdateModal() {
             <p className="text-base font-normal">{profileData.email}</p>  
             <p className="text-base font-normal mb-4">{profileData.status}</p>
             <button 
-              className="bg-base-300 btn rounded-btn w-full" 
+              className="bg-base-100 btn btn-block" 
               onClick={() => {
                 setEditingProfile(currentProfile);
                 setIsEditing(true);
@@ -218,14 +227,14 @@ export default function ProfileUpdateModal() {
             <div className="flex justify-between">
               <button 
                 type="button" 
-                className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] mr-2" 
+                className="bg-base-100 btn w-[calc(50%-8px)] mr-2" 
                 onClick={handleCancel}
               >
                 취소하기
               </button>
               <button 
                 type="submit" 
-                className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] ml-2"
+                className="bg-base-100 btn w-[calc(50%-8px)] ml-2"
                 disabled={updateProfileMutation.isPending}
               >
                 {updateProfileMutation.isPending ? (

@@ -5,16 +5,27 @@ import { ChannelModel } from "@/app/models/channel.model";
 import { useChannelStore } from "@/app/stores/channel.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHashtag, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
+import { useProfileStore } from "@/app/stores/profile.store";
+import { useParticipantsByProfileIdAndChannelId } from "@/app/queries/participant.query";
+import { useParticipantStore } from "@/app/stores/participant.store";
+import toast from "react-hot-toast";
 
 interface ChannelListProps {
   workspaceId: number;
 }
 
 export default function ChannelList({ workspaceId }: ChannelListProps) {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
+
+  const currentProfile = useProfileStore(state => state.currentProfile) // Zustand Store
+  const setCurrentChannel = useChannelStore(state => state.setCurrentChannel) // Zustand Store
+  const setCurrentParticipant = useParticipantStore(state => state.setCurrentParticipant) // Zustand Store
 
   const { data: channels, isLoading: isLoadingChannels, error: channelsError } = useChannelsByWorkspaceId(workspaceId) // API Query
-  const setCurrentChannel = useChannelStore(state => state.setCurrentChannel) // Zustand Store
+  const { data: participant } = useParticipantsByProfileIdAndChannelId(currentProfile.id, selectedChannelId!, {
+    enabled: !!selectedChannelId,
+  }) // API Query
 
   useEffect(() => {
     const dialog = document.getElementById('channel-modal') as HTMLDialogElement;
@@ -33,17 +44,36 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
   }
 
   const handleModalClose = () => {
-    setIsModalOpen(false);  // 모달 상태 변경
-    (document.getElementById('channel-modal') as HTMLDialogElement).close(); // 모달 닫기
-    // TODO: toast 메시지 출력 - 채널이 추가되었습니다.
+    setIsModalOpen(false);
+    (document.getElementById('channel-modal') as HTMLDialogElement).close();
   }
+
+  useEffect(() => {
+    if (participant) {
+      setCurrentParticipant(participant);
+    } else if (selectedChannelId && !participant) {
+      toast.error('채널 접근 권한이 없습니다.');
+      setCurrentParticipant(null)
+      setSelectedChannelId(null);
+    }  
+  }, [participant, setCurrentParticipant, selectedChannelId]);
+
+  const handleChannelSelect = async (channel: ChannelModel) => {
+    try {
+      setCurrentChannel(channel);
+      setSelectedChannelId(channel.channelId);
+    } catch (error) {
+      toast.error('채널 선택 중 오류가 발생했습니다.');
+      setSelectedChannelId(null);
+    }
+  };
 
   const renderChannelList = (channels: ChannelModel[], isDM: boolean) => (
     <ul className="ms-2">
       {channels
         .filter(channel => isDM ? channel.channelType === "DM" : channel.channelType !== "DM")
         .map((channel) => (
-          <li key={channel.channelId} onClick={() => setCurrentChannel(channel)}>
+          <li key={channel.channelId} onClick={() => handleChannelSelect(channel)}>
             <button className="p-2">
               {isDM ? <FontAwesomeIcon icon={faUser} className="w-4 h-4 opacity-75"/> : <FontAwesomeIcon icon={faHashtag} className="w-4 h-4 opacity-75"/>}
               <p className="overflow-hidden truncate whitespace-nowrap">{channel.name}</p>
@@ -96,10 +126,10 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
 
       <button className="btn w-[176px] absolute bottom-[72px] right-[8px]" onClick={handleModalOpen}>
         <FontAwesomeIcon icon={faPlus} className="w-4 h-4 opacity-75"/>
-        <p>채널 생성</p>
+        채널 생성
       </button>
 
-      {/* modal dialog */}
+      {/* channel create modal dialog */}
       <dialog id="channel-modal" className="modal modal-bottom md:modal-middle">
         <div className="modal-box p-4">
           <form method="dialog">

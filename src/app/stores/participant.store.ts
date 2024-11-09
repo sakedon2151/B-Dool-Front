@@ -1,16 +1,16 @@
-import { InitialParticipant, ParticipantModel } from '../models/participant.model';
+import { ParticipantModel } from '../models/participant.model';
 import { createPersistStore } from './session.middleware';
 
 interface ParticipantState {
-  currentParticipant: ParticipantModel;
-  setCurrentParticipant: (participant: ParticipantModel) => void
+  currentParticipant: ParticipantModel | null;
+  setCurrentParticipant: (participant: ParticipantModel | null) => void
   fetchedParticipants: ParticipantModel[];
   setFetchedParticipants: (participants: ParticipantModel[]) => void
 }
 
 export const useParticipantStore = createPersistStore<ParticipantState>(
   (set) => ({
-    currentParticipant: InitialParticipant,
+    currentParticipant: null,
     setCurrentParticipant: (participant) => set({ currentParticipant: participant }),
     fetchedParticipants: [],
     setFetchedParticipants: (participants) => set({ fetchedParticipants: participants })

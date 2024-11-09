@@ -79,7 +79,7 @@ export default function MailInviteVerifyForm({ invitationCode, onEmailSubmit }: 
               <span className="loading loading-spinner"></span>
               이메일 확인 중...
             </>
-          ) : '이메일 전송'}
+          ) : '이메일 확인'}
         </button>
       </form>
     </div>

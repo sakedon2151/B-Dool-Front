@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
 import CalendarModal from "../calendar/CalendarModal";
 import { useChannelStore } from "@/app/stores/channel.store";

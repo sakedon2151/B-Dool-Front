@@ -55,6 +55,7 @@ export const profileService = {
   
   // profile online 변경 요청
   updateProfileOnlineStatus: (profileId: number, isOnline: boolean) => 
-    serverAAxios.patch<ProfileModel>(`${BASE_URL}/${profileId}/online?isOnline=${isOnline}`)
+    // serverAAxios.patch<ProfileModel>(`${BASE_URL}/${profileId}/online?isOnline=${isOnline}`)
+  serverAAxios.patch<ProfileModel>(`${BASE_URL}/${profileId}/online`, null, {params: {isOnline: isOnline}})
   .then(response => response.data),
 };

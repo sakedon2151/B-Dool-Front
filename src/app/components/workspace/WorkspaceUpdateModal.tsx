@@ -6,6 +6,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
 import WorkspaceDeleteForm from "./WorkspaceDeleteForm";
+import toast from "react-hot-toast";
 
 export default function WorkspaceUpdateModal() {
   const currentMember = useMemberStore(state => state.currentMember)
@@ -87,8 +88,10 @@ export default function WorkspaceUpdateModal() {
       });
       setEditingFormData(null);
       console.log("워크스페이스가 업데이트 되었습니다.");
+      toast.success('워크스페이스 업데이트 되었습니다.');
     } catch (error) {
       console.error("워크스페이스 업데이트 실패:", error);
+      toast.success('워크스페이스 업데이트에 실패했습니다.');
     }
   }, [formData, currentWorkspace, setCurrentWorkspace, updateWorkspaceMutation, isFormValid]);
 
@@ -120,7 +123,7 @@ export default function WorkspaceUpdateModal() {
           <div className="info">
             <p className="text-lg font-bold opacity-75">{currentWorkspace.name}</p>
             <p className="text-base font-normal mb-4">{currentWorkspace.description}</p>
-            <button className="bg-base-300 btn rounded-btn w-full" onClick={() => setIsEditing(true)}>워크스페이스 수정</button>
+            <button className="bg-base-100 btn btn-block" onClick={() => setIsEditing(true)}>워크스페이스 수정</button>
           </div>
         ) : (
           <div>
@@ -153,8 +156,8 @@ export default function WorkspaceUpdateModal() {
                 required
               />
               <div className="flex justify-between">
-                <button type="button" className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] mr-2" onClick={handleCancel}>취소하기</button>
-                <button type="submit" className="bg-base-300 btn rounded-btn w-[calc(50%-8px)] ml-2">저장하기</button>
+                <button type="button" className="bg-base-100 btn w-[calc(50%-8px)] mr-2" onClick={handleCancel}>취소하기</button>
+                <button type="submit" className="bg-base-100 btn w-[calc(50%-8px)] ml-2">저장하기</button>
               </div>
             </form>
             <div className="divider font-bold text-gray-500">위험</div>
