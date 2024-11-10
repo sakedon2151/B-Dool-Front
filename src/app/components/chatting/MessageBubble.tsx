@@ -101,7 +101,7 @@ export default function MessageBubble({selectedMessage, onMessageDeleted}: Messa
             <img 
               src={selectedMessage.fileUrl} 
               alt="첨부 이미지" 
-              className="sm:max-w-40 max-w-80 rounded-lg"
+              className="max-w-80 rounded-lg"
             />
             <div className="absolute top-2 right-2 flex gap-2">
               <a 
