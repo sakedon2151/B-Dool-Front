@@ -26,6 +26,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   const initializeImage = async () => {
     try {
       setIsUploading(true);
+      setUploadProgress(0);
       const randomImage = getRandomProfileImage();
       setFormData(prev => ({ ...prev, profileImage: randomImage }));
     } catch (error) {
@@ -33,6 +34,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
       toast.error("프로필 이미지 초기화에 실패했습니다.")
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -54,6 +56,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
     try {
       setIsUploading(true);
       setUploadProgress(0);
+      
       // 파일 서버에 업로드
       const uploadedFile = await fileService.uploadFile({
         file,
@@ -61,6 +64,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
       }, (progress) => {
         setUploadProgress(progress);
       });
+      
       // 업로드된 파일의 경로를 프로필 이미지로 설정
       setFormData(prev => ({ 
         ...prev, 
@@ -78,6 +82,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.profileImage) return;
+
     const profileData: ProfileInsertModel = {
       name: formData.profileName,
       nickname: formData.profileNickname,
@@ -92,10 +97,10 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4 text-center">
-        <div className="avatar group drop-shadow-sm" onClick={() => isUploading && fileInput.current?.click()}>
+        <div className="avatar group drop-shadow-sm" onClick={() => !isUploading && fileInput.current?.click()}>
           <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
 
-            {formData.profileImage ? (
+            {isUploading ? (
               <div className="skeleton w-full h-full"/>
             ) : formData.profileImage ? (
               <img 
@@ -161,7 +166,14 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
         />
 
         <div className="w-full justify-center">
-          <button type="button" onClick={onPrevious} className="btn w-[calc(50%-8px)] mr-2 bg-base-100">이전</button>
+          <button 
+            type="button" 
+            onClick={onPrevious} 
+            className="btn w-[calc(50%-8px)] mr-2 bg-base-100"
+            disabled={isUploading}
+          >
+            이전
+          </button>
           <button 
             type="submit" 
             className="btn w-[calc(50%-8px)] ml-2 bg-base-100" 

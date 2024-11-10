@@ -19,7 +19,7 @@ export interface WorkspaceInsertModel {
 export interface WorkspaceUpdateModel {
   name?: string
   description?: string
-  workspaceImageUrl?: string 
+  workspaceImageUrl?: string
   url?: string
   ownerId: number
 }

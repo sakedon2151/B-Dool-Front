@@ -1,4 +1,4 @@
-import { WorkspaceUpdateModel } from "@/app/models/workspace.model";
+import { WorkspaceModel } from "@/app/models/workspace.model";
 import { useUpdateWorkspace } from "@/app/queries/workspace.query";
 import { useMemberStore } from "@/app/stores/member.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
 import WorkspaceDeleteForm from "./WorkspaceDeleteForm";
 import toast from "react-hot-toast";
+import { fileService } from "@/app/services/file/file.service";
 
 export default function WorkspaceUpdateModal() {
   const currentMember = useMemberStore(state => state.currentMember)
@@ -14,7 +15,9 @@ export default function WorkspaceUpdateModal() {
   const setCurrentWorkspace = useWorkspaceStore(state => state.setCurrentWorkspace) // Zustand Store
   const updateWorkspaceMutation = useUpdateWorkspace(); // API Query
 
-  const [editingFormData, setEditingFormData] = useState<WorkspaceUpdateModel | null>(null);
+  const [editingFormData, setEditingFormData] = useState<WorkspaceModel | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -29,49 +32,55 @@ export default function WorkspaceUpdateModal() {
   }), [editingFormData, currentWorkspace?.name, currentWorkspace?.description, currentWorkspace?.url, workspaceImage, currentMember?.id]);
 
   const isFormValid = useMemo(() => {
-    return Boolean(
-      currentWorkspace?.id &&
-      currentMember?.id &&
-      formData.name &&
-      formData.description &&
-      formData.url
-    );
+    return Boolean( currentWorkspace?.id && currentMember?.id && formData.name && formData.description && formData.url );
   }, [currentWorkspace?.id, currentMember?.id, formData.name, formData.description, formData.url]);
 
   const handleImgChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          const newWorkspaceImage = e.target.result as string;
-          try {
-            await updateWorkspaceMutation.mutateAsync({
-              workspaceId: currentWorkspace.id,
-              data: {
-                workspaceImageUrl: newWorkspaceImage,
-                ownerId: currentMember.id
-              }
-            });
-          } catch (error) {
-            console.log("워크스페이스 이미지 변경 실패:", error);
-          }
-        }
+    if (!file || !currentWorkspace) return
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      const uploadedFile = await fileService.uploadFile({
+        file,
+        entityType: 'WORKSPACE'
+      }, (progress) => {
+        setUploadProgress(progress);
+      });
+
+      const updatedWorkspace: WorkspaceModel = {
+        ...currentWorkspace,
+        workspaceImageUrl: uploadedFile.path
       };
-      reader.readAsDataURL(file);
+
+      await updateWorkspaceMutation.mutateAsync({
+        workspaceId: currentWorkspace.id,
+        data: {
+          ...formData,
+          workspaceImageUrl: uploadedFile.path,
+        }
+      });
+
+      setCurrentWorkspace(updatedWorkspace);
+      setEditingFormData(updatedWorkspace)
+    } catch (error) {
+      console.error("워크스페이스 이미지 변경 실패:", error);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   }, [currentWorkspace, currentMember?.id, updateWorkspaceMutation, setCurrentWorkspace]);
 
-  const handleChange = useCallback((
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setEditingFormData(prevData => ({
-      ...(prevData ?? {}),
+
+    setEditingFormData(prev => ({
+      ...(prev ?? currentWorkspace),
       [name]: value,
-      ownerId: currentMember?.id
+      ownerId: currentMember?.id ?? currentWorkspace?.ownerId
     }));
-  }, []);
+  }, [currentWorkspace, currentMember?.id]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,12 +112,40 @@ export default function WorkspaceUpdateModal() {
   return (
     <div className="flex flex-col">
       <div className="h-24 mb-4 text-center">
+        
         <div className="avatar group drop-shadow-sm" onClick={() => fileInput.current?.click()}>
           <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
-            <img src={workspaceImage} alt="workspace_image" className="group-hover:brightness-50"/>
+            {isUploading ? (
+              <div className="skeleton w-full h-full"/>
+            ) : workspaceImage ? (
+              <img 
+                src={workspaceImage} 
+                alt="workspace_image" 
+                className="group-hover:brightness-50"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="text-gray-500">No Image</span>
+              </div>
+            )}
+            {isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                <div className="text-center text-white">
+                  <div className="loading loading-spinner loading-md"></div>
+                  <div className="text-xs mt-1">{uploadProgress}%</div>
+                </div>
+              </div>
+            )}
           </div>
-          <FontAwesomeIcon icon={faPlus} className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"/>
+          {!isUploading && (
+            <FontAwesomeIcon 
+              icon={faPlus} 
+              className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+            />
+          )}
+
         </div>
+        
         <input 
           ref={fileInput}
           className="hidden"

@@ -162,7 +162,7 @@ export default function MessageBubble({selectedMessage, onMessageDeleted}: Messa
 
           <div className="branch-wrap flex gap-2">
             <div className="branch flex flex-col justify-end whitespace-nowrap">
-              <p className="text-sm">5</p>
+              {/* <p className="text-sm">5</p> */}
               <time className="text-xs opacity-75">
                 {toMessageTime(selectedMessage.sendDate)}
               </time>

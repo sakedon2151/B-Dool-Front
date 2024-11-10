@@ -23,11 +23,13 @@ export const useWorkspacesByIds = (workspaceIds: number[]) =>
     queryFn: () => workspaceService.getWorkspacesByIds(workspaceIds),
   });
 
-export const useCheckWorkspaceUrl = (url: string) => 
+export const useCheckWorkspaceUrl = (url: string, enabled: boolean = false) => 
   useQuery({
     queryKey: WORKSPACE_KEYS.checkUrl(url),
     queryFn: () => workspaceService.checkWorkspaceUrl(url),
-    enabled: url.length > 0,
+    enabled: url.length > 0 && enabled,
+    staleTime: 30000,
+    retry: false
   });
 
 // Mutations

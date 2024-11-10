@@ -132,7 +132,6 @@ export default function ProfileUpdateModal() {
         >
           <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
             {profileData.profileImgUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img 
                 src={profileData.profileImgUrl}
                 alt="profile_image" 
