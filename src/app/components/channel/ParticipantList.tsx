@@ -88,7 +88,7 @@ export default function ParticipantList() {
               <button onClick={(e) => handleParticipantClick(participant, e)}>
                 <div className="avatar online placeholder">
                   <div className="w-8 rounded-full bg-neutral text-neutral-content">
-                    <img src={participant.profileURL} alt="profile_image"/>
+                    <img src={participant.profileUrl} alt="profile_image"/>
                   </div>
                 </div>
                 <p className="overflow-hidden truncate whitespace-nowrap">{participant.nickname}</p>

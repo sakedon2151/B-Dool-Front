@@ -23,8 +23,8 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
   const setCurrentParticipant = useParticipantStore(state => state.setCurrentParticipant) // Zustand Store
 
   const { data: channels, isLoading: isLoadingChannels, error: channelsError } = useChannelsByWorkspaceId(workspaceId) // API Query
-  const { data: participant } = useParticipantsByProfileIdAndChannelId(currentProfile.id, selectedChannelId!, {
-    enabled: !!selectedChannelId,
+  const { data: participant, isLoading: isLoadingParticipant } = useParticipantsByProfileIdAndChannelId(currentProfile.id, selectedChannelId!, {
+    enabled: !!selectedChannelId && !!currentProfile.id,
   }) // API Query
 
   useEffect(() => {
@@ -48,25 +48,29 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
     (document.getElementById('channel-modal') as HTMLDialogElement).close();
   }
 
-  useEffect(() => {
-    if (participant) {
-      setCurrentParticipant(participant);
-    } else if (selectedChannelId && !participant) {
-      toast.error('채널 접근 권한이 없습니다.');
-      setCurrentParticipant(null)
-      setSelectedChannelId(null);
-    }  
-  }, [participant, setCurrentParticipant, selectedChannelId]);
-
   const handleChannelSelect = async (channel: ChannelModel) => {
     try {
+      setCurrentParticipant(null); // 이전 필드 초기화
+      
       setCurrentChannel(channel);
       setSelectedChannelId(channel.channelId);
     } catch (error) {
       toast.error('채널 선택 중 오류가 발생했습니다.');
       setSelectedChannelId(null);
+      setCurrentParticipant(null);
     }
   };
+
+  useEffect(() => {
+    if (!isLoadingParticipant) {
+      if (participant) {
+        setCurrentParticipant(participant);
+      } else if (selectedChannelId) {
+        toast.error('채널 접근 권한이 없습니다.');
+        setCurrentParticipant(null)
+      }  
+    }
+  }, [participant, isLoadingParticipant, setCurrentParticipant, selectedChannelId]);
 
   const renderChannelList = (channels: ChannelModel[], isDM: boolean) => (
     <ul className="ms-2">

@@ -74,7 +74,7 @@ export default function MailInviteForm() {
         channelId: channelData.channelId,
         profileId: profileData.id,
         nickname: profileData.nickname,
-        profileURL: profileData.profileImgUrl,
+        profileUrl: profileData.profileImgUrl,
       })
       setCurrentWorkspace(workspaceData);
       router.push(`/workspace/${workspaceData.url}`);

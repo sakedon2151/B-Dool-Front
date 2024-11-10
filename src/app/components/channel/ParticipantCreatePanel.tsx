@@ -24,7 +24,7 @@ export default function ParticipantCreatePanel({ channelData, profileData }: Par
       const createParticipant = await createParticipantMutation.mutateAsync({
         channelId: channelData.channelId,
         nickname: profileData.nickname,
-        profileURL: profileData.profileImgUrl,
+        profileUrl: profileData.profileImgUrl,
         profileId: profileData.id
       })
       setCurrentParticipant(createParticipant);
