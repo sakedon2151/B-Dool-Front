@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { PROFILE_KEYS } from "@/app/queries/profile.query";
-import { ProfileSSENicknameModel, ProfileSSEOnlineModel } from "@/app/models/profile.model";
+import { ProfileSSENicknameModel, ProfileSSEOnlineModel } from "../models/sse.model";
+
 
 interface UseProfileSSEProps {
   workspaceId: number; // 구독할 워크스페이스 ID

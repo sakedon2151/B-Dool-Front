@@ -23,6 +23,8 @@
 /* 유틸리티 클래스 */
 html, body {
   overscroll-behavior: none;
+  min-width: 375px;
+  min-height: 667px;
 }
 .scrollbar-none::-webkit-scrollbar {
   display: none;

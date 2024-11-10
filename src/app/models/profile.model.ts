@@ -30,18 +30,6 @@ export interface ProfileUpdateModel {
   profileImgUrl?: string;
 }
 
-export interface ProfileSSENicknameModel {
-  profileId: number;
-  workspaceId: number;
-  nickname: string;
-}
-
-export interface ProfileSSEOnlineModel {
-  profileId: number;
-  workspaceId: number;
-  isOnline: boolean;
-}
-
 export const InitialProfile: ProfileModel = {
   id: 0,
   name: "",

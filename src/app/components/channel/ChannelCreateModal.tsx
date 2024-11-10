@@ -37,8 +37,9 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
         isPrivate: false,
         description: channelInfo,
         profileId: currentProfile.id,
+        profileUrl: currentProfile.profileImgUrl,
         channelType: 'CUSTOM',
-        nickname: currentProfile.nickname
+        nickname: currentProfile.nickname,
       })
       toast.success('채널이 생성되었습니다.');
       resetForm()
@@ -54,7 +55,6 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       <h2 className="text-lg font-bold mb-4 text-center opacity-75">새 채널 생성</h2>
 
       <div className="bg-base-200 p-4 rounded-lg">
-
         <form onSubmit={handleSubmit}>
           <input
             type="text" 

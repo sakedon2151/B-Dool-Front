@@ -3,7 +3,7 @@ import { ChannelInsertModel } from "@/app/models/channel.model";
 import { channelService } from '../services/channel/channel.service';
 
 // Query keys
-const CHANNEL_KEYS = {
+export const CHANNEL_KEYS = {
   all: ['channels'] as const,
   byId: (id: string) => [...CHANNEL_KEYS.all, 'byId', id] as const,
   byWorkspaceId: (workspaceId: number) => [...CHANNEL_KEYS.all, 'byWorkspaceId', workspaceId] as const,

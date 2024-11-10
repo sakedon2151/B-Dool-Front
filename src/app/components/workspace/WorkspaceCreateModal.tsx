@@ -50,8 +50,9 @@ export default function WorkspaceCreateModal({ onComplete }: WorkspaceCreateModa
         isPrivate: false,
         description: "전체 채널입니다.",
         profileId: createdProfile.id,
+        profileUrl: createdProfile.profileImgUrl,
         channelType: "DEFAULT",
-        nickname: createdProfile.nickname
+        nickname: createdProfile.nickname,
       })
       toast.success('워크스페이스가 생성되었습니다.');
       onComplete();
