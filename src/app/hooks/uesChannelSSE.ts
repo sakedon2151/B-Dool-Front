@@ -103,14 +103,14 @@ export const useChannelSSE = ({ workspaceId, enabled = true, onError, onConnecti
       onError?.(new Error("SSE endpoint not defined"));
       return null;
     }
-    console.log(`Initializing SSE connection for workspace ${workspaceId}`);
+    // console.log(`Initializing SSE connection for workspace ${workspaceId}`);
     // 새로운 SSE 연결 생성
     const newEventSource = new EventSource(`${sseEndpoint}/subscribe`, {
       withCredentials: true,
     });
     // 연결 성공시
     newEventSource.onopen = () => {
-      console.log(`SSE connection established for workspace ${workspaceId}`);
+      // console.log(`SSE connection established for workspace ${workspaceId}`);
       conn.isActive = true;
       onConnectionChange?.(true);
     };
@@ -147,7 +147,7 @@ export const useChannelSSE = ({ workspaceId, enabled = true, onError, onConnecti
     return () => {
       const conn = connectionRef.current;
       if (conn.eventSource) {
-        console.log(`Closing SSE connection for workspace ${workspaceId}`);
+        // console.log(`Closing SSE connection for workspace ${workspaceId}`);
         conn.isActive = false;
         conn.eventSource.removeEventListener("channel-add", handleChannelAdd);
         conn.eventSource.removeEventListener("channel-rename", handleChannelRename);

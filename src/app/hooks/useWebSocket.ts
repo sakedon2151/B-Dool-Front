@@ -134,7 +134,6 @@ export const useWebsocket = (channelId: string, workspaceId: number): WebSocketH
       throw new Error("서버와 연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.");
     }
     try {
-      // const messageToDelete = messages.find(msg => msg.messageId === messageId);
       setMessages(prev => prev.filter(msg => msg.messageId !== messageId));
       await messageService.deleteMessage(messageId);
       stompClient.publish({
