@@ -98,7 +98,7 @@ export const useChannelSSE = ({ workspaceId, enabled = true, onError, onConnecti
       console.warn("Connection already active");
       return null;
     }
-    const sseEndpoint = process.env.NEXT_PUBLIC_CHAT_SERVER_SSE_API as string;
+    const sseEndpoint = process.env.NEXT_PUBLIC_CHAT_SERVER_CHANNEL_SSE_API as string;
     if (!sseEndpoint) {
       onError?.(new Error("SSE endpoint not defined"));
       return null;

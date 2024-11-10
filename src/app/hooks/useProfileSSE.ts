@@ -96,7 +96,6 @@ export const useProfileSSE = ({ workspaceId, enabled = true, onError, onConnecti
     };
     // 연결 에러 또는 서버 타임아웃시 (30초)
     newEventSource.onerror = () => {
-      // console.error(`SSE connection error for workspace ${workspaceId}:`, error);
       conn.isActive = false;
       onConnectionChange?.(false);
       // 기존 연결 정리
