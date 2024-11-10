@@ -27,6 +27,8 @@ export const useParticipantsByChannelId = (channelId: string, option = {}) =>
   useQuery({
     queryKey: PARTICIPANT_KEYS.byChannelId(channelId),
     queryFn: () => participantService.getParticipantsByChannelId(channelId),
+    refetchInterval: 5000, // 주의! - sse 구현이 늦어져 임시방편으로 구현
+    staleTime: 1000, // 10초
     ...option
   });
 

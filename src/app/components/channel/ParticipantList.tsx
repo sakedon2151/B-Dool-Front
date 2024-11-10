@@ -11,6 +11,7 @@ export default function ParticipantList() {
   const currentChannel = useChannelStore(state => state.currentChannel) // Zustand Store
   const { data: participants, isLoading: isLoadingParticipants, error: participantsError } = useParticipantsByChannelId(currentChannel?.channelId ?? '', {
     enabled: !!currentChannel.channelId
+    
   }) // API Query
 
   const onlineParticipants = participants?.filter(participant => participant.isOnline) ?? [];
