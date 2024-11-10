@@ -1,8 +1,10 @@
 import { ProfileInsertModel } from "@/app/models/profile.model"
+import { fileService } from "@/app/services/file/file.service";
 import { getRandomProfileImage } from "@/app/utils/randomDefaultImage";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 interface ProfileCreateFormProps {
   onSubmit: (data: ProfileInsertModel) => void;
@@ -17,18 +19,20 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
     profileImage: null as string | null
   })
   
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const initializeImage = async () => {
     try {
-      setIsLoading(true);
+      setIsUploading(true);
       const randomImage = getRandomProfileImage();
       setFormData(prev => ({ ...prev, profileImage: randomImage }));
     } catch (error) {
       console.error('이미지 초기화 실패:', error);
+      toast.error("프로필 이미지 초기화에 실패했습니다.")
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   };
 
@@ -44,23 +48,30 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
     };
   }, []);
   
-  const handleImgChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImgChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setIsLoading(true);
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const result = e.target?.result as string;
-        if (result) {
-          setFormData(prev => ({ ...prev, profileImage: result }));
-          setIsLoading(false);
-        }
-      };
-      reader.onerror = () => {
-        console.error('Error reading file');
-        setIsLoading(false);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+      // 파일 서버에 업로드
+      const uploadedFile = await fileService.uploadFile({
+        file,
+        entityType: 'PROFILE'
+      }, (progress) => {
+        setUploadProgress(progress);
+      });
+      // 업로드된 파일의 경로를 프로필 이미지로 설정
+      setFormData(prev => ({ 
+        ...prev, 
+        profileImage: uploadedFile.path 
+      }));
+    } catch (error) {
+      console.error('프로필 이미지 업로드 실패:', error);
+      toast.error('이미지 업로드에 실패했습니다.');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -81,10 +92,10 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4 text-center">
-        <div className="avatar group drop-shadow-sm" onClick={() => fileInput.current?.click()}>
+        <div className="avatar group drop-shadow-sm" onClick={() => isUploading && fileInput.current?.click()}>
           <div className="w-24 h-24 rounded-full bordered border-base-200 border-4">
 
-            {isLoading ? (
+            {formData.profileImage ? (
               <div className="skeleton w-full h-full"/>
             ) : formData.profileImage ? (
               <img 
@@ -93,14 +104,26 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
                 className="group-hover:brightness-50"
               />
             ) : (
-              <div className="bg-gray-200 w-full h-full rounded-full"/>
+              <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="text-gray-500">No Image</span>
+              </div>
+            )}
+            {isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                <div className="text-center text-white">
+                  <div className="loading loading-spinner loading-md"></div>
+                  <div className="text-xs mt-1">{uploadProgress}%</div>
+                </div>
+              </div>
             )}
 
           </div>
-          <FontAwesomeIcon 
-            icon={faPlus} 
-            className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
-          />
+          {!isUploading && (
+            <FontAwesomeIcon 
+              icon={faPlus} 
+              className="w-8 h-8 absolute text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+            />
+          )}
         </div>
         <input 
           ref={fileInput}
@@ -142,7 +165,7 @@ export default function ProfileCreateForm({ onSubmit, onPrevious }: ProfileCreat
           <button 
             type="submit" 
             className="btn w-[calc(50%-8px)] ml-2 bg-base-100" 
-            disabled={!formData.profileImage}
+            disabled={!formData.profileImage || isUploading}
           >
             완료
           </button>

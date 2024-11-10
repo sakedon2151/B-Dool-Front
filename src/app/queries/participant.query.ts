@@ -23,10 +23,11 @@ export const useParticipantById = (participantId: string) =>
     queryFn: () => participantService.getParticipantById(participantId),
   });
 
-export const useParticipantsByChannelId = (channelId: string) =>
+export const useParticipantsByChannelId = (channelId: string, option = {}) =>
   useQuery({
     queryKey: PARTICIPANT_KEYS.byChannelId(channelId),
     queryFn: () => participantService.getParticipantsByChannelId(channelId),
+    ...option
   });
 
 export const useParticipantsByProfileIdAndChannelId = (profileId: number, channelId: string, option = {}) =>
@@ -35,7 +36,6 @@ export const useParticipantsByProfileIdAndChannelId = (profileId: number, channe
     queryFn: () => participantService.getParticipantByProfileIdAndChannelId(profileId, channelId),
     ...option
   });
-
 
 // Mutations
 export const useCreateParticipant = () => {

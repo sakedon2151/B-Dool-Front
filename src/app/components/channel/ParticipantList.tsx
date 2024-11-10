@@ -9,7 +9,9 @@ export default function ParticipantList() {
   const [modalPosition, setModalPosition] = useState({ top: 'auto', bottom: 'auto' });
 
   const currentChannel = useChannelStore(state => state.currentChannel) // Zustand Store
-  const { data: participants, isLoading: isLoadingParticipants, error: participantsError } = useParticipantsByChannelId(currentChannel.channelId) // API Query
+  const { data: participants, isLoading: isLoadingParticipants, error: participantsError } = useParticipantsByChannelId(currentChannel?.channelId ?? '', {
+    enabled: !!currentChannel.channelId
+  }) // API Query
 
   const onlineParticipants = participants?.filter(participant => participant.isOnline) ?? [];
   const offlineParticipants = participants?.filter(participant => !participant.isOnline) ?? [];
@@ -36,32 +38,6 @@ export default function ParticipantList() {
     (document.getElementById('participant-modal') as HTMLDialogElement).showModal()
   };
 
-  // 기존 닉네임, 온라인 상태 변경에 대한 핸들러 함수 구독 로직
-  // const handleNicknameChange = (updatedProfile: ProfileModel) => {
-  //   setProfiles(prevProfiles => 
-  //     prevProfiles.map(profile =>
-  //       profile.id === updatedProfile.id
-  //         ? { ...profile, nickname: updatedProfile.nickname }
-  //         : profile
-  //     )
-  //   );
-  // };
-  // const handleOnlineStatusChange = (updatedProfile: ProfileModel) => {
-  //   setProfiles(prevProfiles => 
-  //     prevProfiles.map(profile =>
-  //       profile.id === updatedProfile.id
-  //         ? { ...profile, isOnline: updatedProfile.isOnline }
-  //         : profile
-  //     )
-  //   );
-  // };
-  // SSE Custom Hook
-  // const sseUrl = process.env.NEXT_PUBLIC_SERVER_A_SSE_URL as string
-  // useSSE(sseUrl, {
-  //   'nickname-change': handleNicknameChange,
-  //   'online-status-change': handleOnlineStatusChange
-  // });
-
   const renderContent = (title: string, filteredParticipant: ParticipantModel[]) => (
     <ul className="menu">
       <li className="menu-title">{title} - {filteredParticipant.length}</li>        
@@ -75,7 +51,7 @@ export default function ParticipantList() {
             알 수 없는 오류가 발생했습니다.
           </button>
         </li>
-      ) : !participants ? (
+      ) : !participants || !currentChannel?.channelId ? (
         <li>
           <button className="text-warning rounded-btn">
             데이터를 불러오지 못했습니다.
