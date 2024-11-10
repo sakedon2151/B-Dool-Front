@@ -11,10 +11,9 @@ import { useProfileStore } from "@/app/stores/profile.store";
 import { useWorkspaceStore } from "@/app/stores/workspace.store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { useProfileSSE } from "@/app/hooks/useProfileSSE";
-import toast from "react-hot-toast";
 import { useParticipantsByProfileIdAndChannelId } from "@/app/queries/participant.query";
 import { useParticipantStore } from "@/app/stores/participant.store";
+import { useIntegrateSSE } from "@/app/hooks/useIntegrateSSE";
 
 function LoadingWithTimeout() {
   useEffect(() => {
@@ -33,8 +32,6 @@ function DataLoader() {
   const setCurrentChannel = useChannelStore(state => state.setCurrentChannel); // Zustand Store
   const setCurrentParticipant = useParticipantStore(state => state.setCurrentParticipant); // Zustand Store
 
-  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
-
   const { data: profile } = useProfileByMemberIdAndWorkspaceId(currentMember.id, currentWorkspace.id, {
     enabled: !!currentMember.id && !!currentWorkspace.id,
     suspense: true,
@@ -50,26 +47,22 @@ function DataLoader() {
     suspense: true,
   })
 
-  useProfileSSE({
+  // SSE Connection
+  const { states, isFullyConnected } = useIntegrateSSE({
     workspaceId: currentWorkspace.id,
-    enabled: !!currentWorkspace?.id && !!profile,
-    onError: (error) => {
-      console.error('SSE 연결 오류:', error);
-      toast.error('실시간 연결에 문제가 발생했습니다');
-    },
-    onConnectionChange: (isConnected) => {
-      setConnectionStatus(isConnected ? 'connected' : 'disconnected');
-    }
+    profileId: profile?.id,
+    enabled: !!currentWorkspace?.id && !!profile
   });
 
-  // SSE Connecting
   useEffect(() => {
-    if (connectionStatus === 'disconnected') {
-      toast.error('실시간 연결이 끊어졌습니다.');
-    } else if (connectionStatus === 'connected') {
-      toast.success('실시간 연결이 복구되었습니다.');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('SSE Connection States:', {
+        profile: states.profile,
+        channel: states.channel,
+        isFullyConnected
+      });
     }
-  }, [connectionStatus]);
+  }, [states, isFullyConnected]);
 
   // METADATA Initialize
   useEffect(() => {
@@ -127,7 +120,7 @@ function DataLoader() {
     return () => {
       isSubscribed = false;
     };
-  }, [currentWorkspace, profile, channel, setCurrentProfile, setCurrentChannel]);
+  }, [currentWorkspace, profile, channel, participant, setCurrentProfile, setCurrentChannel, setCurrentParticipant]);
   return null;
 }
 

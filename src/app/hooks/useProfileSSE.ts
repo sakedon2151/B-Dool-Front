@@ -24,12 +24,8 @@ export const useProfileSSE = ({ workspaceId, enabled = true, onError, onConnecti
   const handleNicknameChange = useCallback(
     (event: MessageEvent) => {
       try {
-        const rawData = JSON.parse(event.data);
-        const data: ProfileSSENicknameModel = {
-          profileId: rawData.id,
-          workspaceId: rawData.workspaceId,
-          nickname: rawData.nickname,
-        };
+        const data: ProfileSSENicknameModel = JSON.parse(event.data);
+        
         // 현재 워크스페이스의 이벤트인지 확인
         if (data.workspaceId !== workspaceId) {
           console.warn(`Received nickname change event for different workspace: ${data.workspaceId}, current: ${workspaceId}`);
@@ -37,7 +33,7 @@ export const useProfileSSE = ({ workspaceId, enabled = true, onError, onConnecti
         }
         // 프로필 및 워크스페이스 데이터 갱신
         queryClient.invalidateQueries({
-          queryKey: PROFILE_KEYS.byId(data.profileId),
+          queryKey: PROFILE_KEYS.byId(data.id),
         });
         queryClient.invalidateQueries({
           queryKey: PROFILE_KEYS.byWorkspaceId(workspaceId),
@@ -53,12 +49,8 @@ export const useProfileSSE = ({ workspaceId, enabled = true, onError, onConnecti
   const handleOnlineStatusChange = useCallback(
     (event: MessageEvent) => {
       try {
-        const rawData = JSON.parse(event.data);
-        const data: ProfileSSEOnlineModel = {
-          profileId: rawData.id,
-          workspaceId: rawData.workspaceId,
-          isOnline: rawData.isOnline,
-        };
+        const data: ProfileSSEOnlineModel = JSON.parse(event.data);
+        
         // 현재 워크스페이스의 이벤트인지 확인
         if (data.workspaceId !== workspaceId) {
           console.warn(`Received online status event for different workspace: ${data.workspaceId}, current: ${workspaceId}`);
@@ -66,7 +58,7 @@ export const useProfileSSE = ({ workspaceId, enabled = true, onError, onConnecti
         }
         // 프로필 및 워크스페이스 데이터 갱신
         queryClient.invalidateQueries({
-          queryKey: PROFILE_KEYS.byId(data.profileId),
+          queryKey: PROFILE_KEYS.byId(data.id),
         });
         queryClient.invalidateQueries({
           queryKey: PROFILE_KEYS.byWorkspaceId(workspaceId),

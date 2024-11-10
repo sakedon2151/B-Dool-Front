@@ -50,8 +50,10 @@ export default function ChannelList({ workspaceId }: ChannelListProps) {
 
   const handleChannelSelect = async (channel: ChannelModel) => {
     try {
+      if (selectedChannelId === channel.channelId) {
+        return;
+      }
       setCurrentParticipant(null); // 이전 필드 초기화
-      
       setCurrentChannel(channel);
       setSelectedChannelId(channel.channelId);
     } catch (error) {

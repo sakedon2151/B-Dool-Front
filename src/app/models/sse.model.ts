@@ -1,11 +1,11 @@
 // profile sse model
 export interface ProfileSSENicknameModel {
-  profileId: number;
+  id: number;
   workspaceId: number;
   nickname: string;
 }
 export interface ProfileSSEOnlineModel {
-  profileId: number;
+  id: number;
   workspaceId: number;
   isOnline: boolean;
 }
@@ -14,13 +14,16 @@ export interface ProfileSSEOnlineModel {
 export interface ChannelSSEAddModel {
   channelId: string;
   channelName: string;
+  workspaceId: number
 }
 export interface ChannelSSERenameModel {
   channelId: string;
   newChannelName: string;
+  workspaceId: number
 }
 export interface ChannelSSEDeleteModel {
   channelId: string;
+  workspaceId: number
 }
 
 // participant sse model
