@@ -51,12 +51,11 @@ export const useProfileSSE = ({ workspaceId, enabled = true, onError, onConnecti
       try {
         const data: ProfileSSEOnlineModel = JSON.parse(event.data);
         
-        // 현재 워크스페이스의 이벤트인지 확인
         if (data.workspaceId !== workspaceId) {
           console.warn(`Received online status event for different workspace: ${data.workspaceId}, current: ${workspaceId}`);
           return;
         }
-        // 프로필 및 워크스페이스 데이터 갱신
+        
         queryClient.invalidateQueries({
           queryKey: PROFILE_KEYS.byId(data.id),
         });
