@@ -5,19 +5,17 @@ B-Dool is an MSA-based team collaboration web service.
 ## Details
 
 - **Framework**: Next.js(typescript)
-- **State Management**: Zustand
+- **State-Management**: Zustand
+- **Data Fetcher**: Axios, React-Query
+- **Real-Time Data Transfer**: SSE, WebSocket, Firebase/Supabase, 
 - **Styling**: TailwindCSS, DaisyUI
 - **Deploy**: Vercel(Next.js build)
-- **Schedule**: SSE, WebSocket, Firebase/Supabase, 쿠키 관리 라이브러리 
 
 ## Service
 
 - SPA 비동기 서비스
-- 실시간 채팅 시스템
-- 서비스별 실시간 알림
-- N:M 화상 회의 세션
-- 일정 관리 캘린더
-- ChatGPT 서비스 // TBC
+- 실시간 N:M 채팅 시스템
 - 파일 공유 및 관리
-
-## Add Vercel
+- 서비스별 실시간 알림 // TBC
+- 일정 관리 캘린더 // TBC
+- ChatGPT 서비스 // TBC
